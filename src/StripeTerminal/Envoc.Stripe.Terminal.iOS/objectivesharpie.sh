@@ -1,0 +1,2 @@
+﻿
+sharpie bind --namespace=StripeTerminal --sdk=iphoneos16.0 -scope ../../lib/iOS/StripeTerminal/2.19.1 -framework ../../lib/iOS/StripeTerminal/2.19.1/StripeTerminal.xcframework/ios-arm64/StripeTerminal.framework

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<!--<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>-->
+		<TargetFramework>net7.0-ios</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AssemblyName>Stripe.Terminal</AssemblyName>
+		<RootNamespace>StripeTerminal</RootNamespace>
+		<PackageId>Envoc.Stripe.Terminal</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Envoc</Authors>
+		<Company>Envoc</Company>
+		<CreatePackage>true</CreatePackage>
+		<PackOnBuild>true</PackOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+
+	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
+	</ItemGroup>
+
+<!--	<ItemGroup>
+		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
+	</ItemGroup>-->
+</Project>

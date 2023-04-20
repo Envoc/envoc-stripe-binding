@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1705.2
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Envoc.Stripe.Terminal.iOS", "Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj", "{5356E522-B254-4494-976B-34DC09D1CB95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Envoc.Stripe.Terminal", "Envoc.Stripe.Terminal\Envoc.Stripe.Terminal.csproj", "{D9626835-ACE9-4DC9-BA94-A40A4CD6E1B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5356E522-B254-4494-976B-34DC09D1CB95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5356E522-B254-4494-976B-34DC09D1CB95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5356E522-B254-4494-976B-34DC09D1CB95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5356E522-B254-4494-976B-34DC09D1CB95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9626835-ACE9-4DC9-BA94-A40A4CD6E1B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9626835-ACE9-4DC9-BA94-A40A4CD6E1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9626835-ACE9-4DC9-BA94-A40A4CD6E1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9626835-ACE9-4DC9-BA94-A40A4CD6E1B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CD06D023-6C75-42B1-B2B1-4737A36089D4}
+	EndGlobalSection
+EndGlobal
