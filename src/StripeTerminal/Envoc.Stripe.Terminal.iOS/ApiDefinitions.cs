@@ -653,23 +653,28 @@ namespace StripeTerminal
 		// -(SCPCancelable * _Nullable)discoverReaders:(SCPDiscoveryConfiguration * _Nonnull)configuration delegate:(id<SCPDiscoveryDelegate> _Nonnull)delegate completion:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("discoverReaders(_:delegate:completion:)")));
 		[Export ("discoverReaders:delegate:completion:")]
 		[return: NullAllowed]
+		[Async(ResultTypeName = "DiscoverResult")]
 		SCPCancelable DiscoverReaders (SCPDiscoveryConfiguration configuration, SCPDiscoveryDelegate @delegate, SCPErrorCompletionBlock completion);
 
 		// -(void)connectBluetoothReader:(SCPReader * _Nonnull)reader delegate:(id<SCPBluetoothReaderDelegate> _Nonnull)delegate connectionConfig:(SCPBluetoothConnectionConfiguration * _Nonnull)connectionConfig completion:(SCPReaderCompletionBlock _Nonnull)completion __attribute__((swift_name("connectBluetoothReader(_:delegate:connectionConfig:completion:)")));
 		[Export ("connectBluetoothReader:delegate:connectionConfig:completion:")]
-		void ConnectBluetoothReader (SCPReader reader, SCPBluetoothReaderDelegate @delegate, SCPBluetoothConnectionConfiguration connectionConfig, SCPReaderCompletionBlock completion);
+        [Async(ResultTypeName = "ReaderResult")]
+        void ConnectBluetoothReader (SCPReader reader, SCPBluetoothReaderDelegate @delegate, SCPBluetoothConnectionConfiguration connectionConfig, SCPReaderCompletionBlock completion);
 
 		// -(void)connectInternetReader:(SCPReader * _Nonnull)reader connectionConfig:(SCPInternetConnectionConfiguration * _Nullable)connectionConfig completion:(SCPReaderCompletionBlock _Nonnull)completion __attribute__((swift_name("connectInternetReader(_:connectionConfig:completion:)")));
 		[Export ("connectInternetReader:connectionConfig:completion:")]
-		void ConnectInternetReader (SCPReader reader, [NullAllowed] SCPInternetConnectionConfiguration connectionConfig, SCPReaderCompletionBlock completion);
+        [Async(ResultTypeName = "ReaderResult")]
+        void ConnectInternetReader (SCPReader reader, [NullAllowed] SCPInternetConnectionConfiguration connectionConfig, SCPReaderCompletionBlock completion);
 
 		// -(void)connectLocalMobileReader:(SCPReader * _Nonnull)reader delegate:(id<SCPLocalMobileReaderDelegate> _Nonnull)delegate connectionConfig:(SCPLocalMobileConnectionConfiguration * _Nonnull)connectionConfig completion:(SCPReaderCompletionBlock _Nonnull)completion __attribute__((swift_name("connectLocalMobileReader(_:delegate:connectionConfig:completion:)")));
 		[Export ("connectLocalMobileReader:delegate:connectionConfig:completion:")]
-		void ConnectLocalMobileReader (SCPReader reader, SCPLocalMobileReaderDelegate @delegate, SCPLocalMobileConnectionConfiguration connectionConfig, SCPReaderCompletionBlock completion);
+        [Async(ResultTypeName = "ReaderResult")]
+        void ConnectLocalMobileReader (SCPReader reader, SCPLocalMobileReaderDelegate @delegate, SCPLocalMobileConnectionConfiguration connectionConfig, SCPReaderCompletionBlock completion);
 
 		// -(void)listLocations:(SCPListLocationsParameters * _Nullable)parameters completion:(SCPLocationsCompletionBlock _Nonnull)completion __attribute__((swift_name("listLocations(parameters:completion:)")));
 		[Export ("listLocations:completion:")]
-		void ListLocations ([NullAllowed] SCPListLocationsParameters parameters, SCPLocationsCompletionBlock completion);
+        [Async(ResultTypeName="LocationResult")]
+        void ListLocations ([NullAllowed] SCPListLocationsParameters parameters, SCPLocationsCompletionBlock completion);
 
 		// -(void)installAvailableUpdate;
 		[Export ("installAvailableUpdate")]
@@ -677,76 +682,93 @@ namespace StripeTerminal
 
 		// -(void)disconnectReader:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("disconnectReader(_:)")));
 		[Export ("disconnectReader:")]
-		void DisconnectReader (SCPErrorCompletionBlock completion);
+        [Async]
+        void DisconnectReader (SCPErrorCompletionBlock completion);
 
 		// -(void)createPaymentIntent:(SCPPaymentIntentParameters * _Nonnull)parameters completion:(SCPPaymentIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("createPaymentIntent(_:completion:)")));
 		[Export ("createPaymentIntent:completion:")]
-		void CreatePaymentIntent (SCPPaymentIntentParameters parameters, SCPPaymentIntentCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentResult")]
+        void CreatePaymentIntent (SCPPaymentIntentParameters parameters, SCPPaymentIntentCompletionBlock completion);
 
 		// -(void)retrievePaymentIntent:(NSString * _Nonnull)clientSecret completion:(SCPPaymentIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("retrievePaymentIntent(clientSecret:completion:)")));
 		[Export ("retrievePaymentIntent:completion:")]
-		void RetrievePaymentIntent (string clientSecret, SCPPaymentIntentCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentResult")]
+        void RetrievePaymentIntent (string clientSecret, SCPPaymentIntentCompletionBlock completion);
 
 		// -(SCPCancelable * _Nullable)collectPaymentMethod:(SCPPaymentIntent * _Nonnull)paymentIntent completion:(SCPPaymentIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("collectPaymentMethod(_:completion:)")));
 		[Export ("collectPaymentMethod:completion:")]
 		[return: NullAllowed]
-		SCPCancelable CollectPaymentMethod (SCPPaymentIntent paymentIntent, SCPPaymentIntentCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentResult")]
+        SCPCancelable CollectPaymentMethod (SCPPaymentIntent paymentIntent, SCPPaymentIntentCompletionBlock completion);
 
 		// -(SCPCancelable * _Nullable)collectPaymentMethod:(SCPPaymentIntent * _Nonnull)paymentIntent collectConfig:(SCPCollectConfiguration * _Nullable)collectConfig completion:(SCPPaymentIntentCompletionBlock _Nonnull)completion;
 		[Export ("collectPaymentMethod:collectConfig:completion:")]
 		[return: NullAllowed]
-		SCPCancelable CollectPaymentMethod (SCPPaymentIntent paymentIntent, [NullAllowed] SCPCollectConfiguration collectConfig, SCPPaymentIntentCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentResult")]
+        SCPCancelable CollectPaymentMethod (SCPPaymentIntent paymentIntent, [NullAllowed] SCPCollectConfiguration collectConfig, SCPPaymentIntentCompletionBlock completion);
 
 		// -(void)processPayment:(SCPPaymentIntent * _Nonnull)paymentIntent completion:(SCPProcessPaymentCompletionBlock _Nonnull)completion __attribute__((swift_name("processPayment(_:completion:)")));
 		[Export ("processPayment:completion:")]
-		void ProcessPayment (SCPPaymentIntent paymentIntent, SCPProcessPaymentCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentProcessResult")]
+        void ProcessPayment (SCPPaymentIntent paymentIntent, SCPProcessPaymentCompletionBlock completion);
 
 		// -(void)cancelPaymentIntent:(SCPPaymentIntent * _Nonnull)paymentIntent completion:(SCPPaymentIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("cancelPaymentIntent(_:completion:)")));
 		[Export ("cancelPaymentIntent:completion:")]
-		void CancelPaymentIntent (SCPPaymentIntent paymentIntent, SCPPaymentIntentCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentResult")]
+        void CancelPaymentIntent (SCPPaymentIntent paymentIntent, SCPPaymentIntentCompletionBlock completion);
 
 		// -(SCPCancelable * _Nullable)readReusableCard:(SCPReadReusableCardParameters * _Nonnull)parameters completion:(SCPPaymentMethodCompletionBlock _Nonnull)completion __attribute__((swift_name("readReusableCard(_:completion:)")));
 		[Export ("readReusableCard:completion:")]
 		[return: NullAllowed]
-		SCPCancelable ReadReusableCard (SCPReadReusableCardParameters parameters, SCPPaymentMethodCompletionBlock completion);
+        [Async(ResultTypeName = "PaymentMethodResult")]
+        SCPCancelable ReadReusableCard (SCPReadReusableCardParameters parameters, SCPPaymentMethodCompletionBlock completion);
 
 		// -(void)createSetupIntent:(SCPSetupIntentParameters * _Nonnull)setupIntentParams completion:(SCPSetupIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("createSetupIntent(_:completion:)")));
 		[Export ("createSetupIntent:completion:")]
-		void CreateSetupIntent (SCPSetupIntentParameters setupIntentParams, SCPSetupIntentCompletionBlock completion);
+        [Async(ResultTypeName = "SetupIntentResult")]
+        void CreateSetupIntent (SCPSetupIntentParameters setupIntentParams, SCPSetupIntentCompletionBlock completion);
 
 		// -(void)retrieveSetupIntent:(NSString * _Nonnull)clientSecret completion:(SCPSetupIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("retrieveSetupIntent(clientSecret:completion:)")));
 		[Export ("retrieveSetupIntent:completion:")]
-		void RetrieveSetupIntent (string clientSecret, SCPSetupIntentCompletionBlock completion);
+        [Async(ResultTypeName = "SetupIntentResult")]
+        void RetrieveSetupIntent (string clientSecret, SCPSetupIntentCompletionBlock completion);
 
 		// -(void)cancelSetupIntent:(SCPSetupIntent * _Nonnull)intent completion:(SCPSetupIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("cancelSetupIntent(_:completion:)")));
 		[Export ("cancelSetupIntent:completion:")]
-		void CancelSetupIntent (SCPSetupIntent intent, SCPSetupIntentCompletionBlock completion);
+        [Async(ResultTypeName = "SetupIntentResult")]
+        void CancelSetupIntent (SCPSetupIntent intent, SCPSetupIntentCompletionBlock completion);
 
 		// -(SCPCancelable * _Nullable)collectSetupIntentPaymentMethod:(SCPSetupIntent * _Nonnull)setupIntent customerConsentCollected:(BOOL)customerConsentCollected completion:(SCPSetupIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("collectSetupIntentPaymentMethod(_:customerConsentCollected:completion:)")));
 		[Export ("collectSetupIntentPaymentMethod:customerConsentCollected:completion:")]
 		[return: NullAllowed]
-		SCPCancelable CollectSetupIntentPaymentMethod (SCPSetupIntent setupIntent, bool customerConsentCollected, SCPSetupIntentCompletionBlock completion);
+        [Async(ResultTypeName = "SetupIntentResult")]
+        SCPCancelable CollectSetupIntentPaymentMethod (SCPSetupIntent setupIntent, bool customerConsentCollected, SCPSetupIntentCompletionBlock completion);
 
 		// -(void)confirmSetupIntent:(SCPSetupIntent * _Nonnull)setupIntent completion:(SCPConfirmSetupIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("confirmSetupIntent(_:completion:)")));
 		[Export ("confirmSetupIntent:completion:")]
-		void ConfirmSetupIntent (SCPSetupIntent setupIntent, SCPConfirmSetupIntentCompletionBlock completion);
+        [Async (ResultTypeName="SetupConfirmIntentResult")]
+        void ConfirmSetupIntent (SCPSetupIntent setupIntent, SCPConfirmSetupIntentCompletionBlock completion);
 
 		// -(SCPCancelable * _Nullable)collectRefundPaymentMethod:(SCPRefundParameters * _Nonnull)refundParams completion:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("collectRefundPaymentMethod(_:completion:)")));
 		[Export ("collectRefundPaymentMethod:completion:")]
 		[return: NullAllowed]
-		SCPCancelable CollectRefundPaymentMethod (SCPRefundParameters refundParams, SCPErrorCompletionBlock completion);
+        [Async]
+        SCPCancelable CollectRefundPaymentMethod (SCPRefundParameters refundParams, SCPErrorCompletionBlock completion);
 
 		// -(void)processRefund:(SCPProcessRefundCompletionBlock _Nonnull)completion __attribute__((swift_name("processRefund(completion:)")));
 		[Export ("processRefund:")]
-		void ProcessRefund (SCPProcessRefundCompletionBlock completion);
+        [Async(ResultTypeName = "RefundResult")]
+        void ProcessRefund (SCPProcessRefundCompletionBlock completion);
 
 		// -(void)clearReaderDisplay:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("clearReaderDisplay(_:)")));
 		[Export ("clearReaderDisplay:")]
-		void ClearReaderDisplay (SCPErrorCompletionBlock completion);
+        [Async]
+        void ClearReaderDisplay (SCPErrorCompletionBlock completion);
 
 		// -(void)setReaderDisplay:(SCPCart * _Nonnull)cart completion:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("setReaderDisplay(_:completion:)")));
 		[Export ("setReaderDisplay:completion:")]
-		void SetReaderDisplay (SCPCart cart, SCPErrorCompletionBlock completion);
+        [Async]
+        void SetReaderDisplay (SCPCart cart, SCPErrorCompletionBlock completion);
 
 		// +(NSString * _Nonnull)stringFromReaderInputOptions:(SCPReaderInputOptions)options __attribute__((swift_name("stringFromReaderInputOptions(_:)")));
 		[Static]
@@ -1098,7 +1120,8 @@ namespace StripeTerminal
 		// @required -(void)fetchConnectionToken:(SCPConnectionTokenCompletionBlock _Nonnull)completion __attribute__((swift_name("fetchConnectionToken(_:)")));
 		[Abstract]
 		[Export ("fetchConnectionToken:")]
-		void FetchConnectionToken (SCPConnectionTokenCompletionBlock completion);
+        [Async]
+        void FetchConnectionToken (SCPConnectionTokenCompletionBlock completion);
 	}
 
 	// @interface SCPDiscoveryConfiguration : NSObject
@@ -1409,7 +1432,8 @@ namespace StripeTerminal
 
 		// @property (readonly, atomic) NSNumber * _Nullable isCharging;
 		[NullAllowed, Export ("isCharging")]
-		NSNumber IsCharging { get; }
+        [return: BindAs(typeof(bool))]
+        NSNumber IsCharging { get; }
 
 		// @property (readonly, nonatomic) NSString * _Nullable ipAddress;
 		[NullAllowed, Export ("ipAddress")]
@@ -1739,7 +1763,8 @@ namespace StripeTerminal
 
 		// @required +(void)discoverAvailableReaderIdentifiersWithCompletion:(void (^ _Nonnull)(NSSet<NSString *> * _Nullable, NSError * _Nullable))completion;
 		[Static, Abstract]
-		[Export ("discoverAvailableReaderIdentifiersWithCompletion:")]
+        [Async]
+        [Export ("discoverAvailableReaderIdentifiersWithCompletion:")]
 		void DiscoverAvailableReaderIdentifiersWithCompletion (Action<NSSet<NSString>, NSError> completion);
 
 		// @required @property (readonly, copy, nonatomic) NSString * _Nonnull readerIdentifier;
