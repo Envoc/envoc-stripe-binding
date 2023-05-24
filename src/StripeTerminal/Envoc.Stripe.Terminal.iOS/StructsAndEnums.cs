@@ -316,8 +316,8 @@ namespace StripeTerminal
 	[Native]
 	public enum SCPReaderNetworkStatus : ulong
 	{
-		ffline,
-		nline
+		Offline,
+		Online
 	}
 
 	[Native]

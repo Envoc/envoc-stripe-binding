@@ -73,41 +73,41 @@ namespace StripeTerminal
 		SCPTip Tip { get; }
 	}
 
-	// typedef void (^SCPConnectionTokenCompletionBlock)(NSString * _Nullable, NSError * _Nullable);
-	delegate void SCPConnectionTokenCompletionBlock ([NullAllowed] string arg0, [NullAllowed] NSError arg1);
+    // typedef void (^SCPConnectionTokenCompletionBlock)(NSString * _Nullable, NSError * _Nullable);
+    delegate void SCPConnectionTokenCompletionBlock([NullAllowed] string token, [NullAllowed] NSError error);
 
-	// typedef void (^SCPLogListenerBlock)(NSString * _Nonnull);
-	delegate void SCPLogListenerBlock (string arg0);
+    // typedef void (^SCPLogListenerBlock)(NSString * _Nonnull);
+    delegate void SCPLogListenerBlock(string listener);
 
-	// typedef void (^SCPPaymentMethodCompletionBlock)(SCPPaymentMethod * _Nullable, NSError * _Nullable);
-	delegate void SCPPaymentMethodCompletionBlock ([NullAllowed] SCPPaymentMethod arg0, [NullAllowed] NSError arg1);
+    // typedef void (^SCPPaymentMethodCompletionBlock)(SCPPaymentMethod * _Nullable, NSError * _Nullable);
+    delegate void SCPPaymentMethodCompletionBlock([NullAllowed] SCPPaymentMethod paymentMethod, [NullAllowed] NSError error);
 
-	// typedef void (^SCPErrorCompletionBlock)(NSError * _Nullable);
-	delegate void SCPErrorCompletionBlock ([NullAllowed] NSError arg0);
+    // typedef void (^SCPErrorCompletionBlock)(NSError * _Nullable);
+    delegate void SCPErrorCompletionBlock([NullAllowed] NSError error);
 
-	// typedef void (^SCPProcessPaymentCompletionBlock)(SCPPaymentIntent * _Nullable, SCPProcessPaymentError * _Nullable);
-	delegate void SCPProcessPaymentCompletionBlock ([NullAllowed] SCPPaymentIntent arg0, [NullAllowed] SCPProcessPaymentError arg1);
+    // typedef void (^SCPProcessPaymentCompletionBlock)(SCPPaymentIntent * _Nullable, SCPProcessPaymentError * _Nullable);
+    delegate void SCPProcessPaymentCompletionBlock([NullAllowed] SCPPaymentIntent paymentIntent, [NullAllowed] SCPProcessPaymentError error);
 
-	// typedef void (^SCPProcessRefundCompletionBlock)(SCPRefund * _Nullable, SCPProcessRefundError * _Nullable);
-	delegate void SCPProcessRefundCompletionBlock ([NullAllowed] SCPRefund arg0, [NullAllowed] SCPProcessRefundError arg1);
+    // typedef void (^SCPProcessRefundCompletionBlock)(SCPRefund * _Nullable, SCPProcessRefundError * _Nullable);
+    delegate void SCPProcessRefundCompletionBlock([NullAllowed] SCPRefund refund, [NullAllowed] SCPProcessRefundError error);
 
-	// typedef void (^SCPRefundCompletionBlock)(SCPRefund * _Nullable, NSError * _Nullable);
-	delegate void SCPRefundCompletionBlock ([NullAllowed] SCPRefund arg0, [NullAllowed] NSError arg1);
+    // typedef void (^SCPRefundCompletionBlock)(SCPRefund * _Nullable, NSError * _Nullable);
+    delegate void SCPRefundCompletionBlock([NullAllowed] SCPRefund refund, [NullAllowed] NSError error);
 
-	// typedef void (^SCPPaymentIntentCompletionBlock)(SCPPaymentIntent * _Nullable, NSError * _Nullable);
-	delegate void SCPPaymentIntentCompletionBlock ([NullAllowed] SCPPaymentIntent arg0, [NullAllowed] NSError arg1);
+    // typedef void (^SCPPaymentIntentCompletionBlock)(SCPPaymentIntent * _Nullable, NSError * _Nullable);
+    delegate void SCPPaymentIntentCompletionBlock([NullAllowed] SCPPaymentIntent paymentIntent, [NullAllowed] NSError error);
 
-	// typedef void (^SCPSetupIntentCompletionBlock)(SCPSetupIntent * _Nullable, NSError * _Nullable);
-	delegate void SCPSetupIntentCompletionBlock ([NullAllowed] SCPSetupIntent arg0, [NullAllowed] NSError arg1);
+    // typedef void (^SCPSetupIntentCompletionBlock)(SCPSetupIntent * _Nullable, NSError * _Nullable);
+    delegate void SCPSetupIntentCompletionBlock([NullAllowed] SCPSetupIntent setupIntent, [NullAllowed] NSError error);
 
-	// typedef void (^SCPConfirmSetupIntentCompletionBlock)(SCPSetupIntent * _Nullable, SCPConfirmSetupIntentError * _Nullable);
-	delegate void SCPConfirmSetupIntentCompletionBlock ([NullAllowed] SCPSetupIntent arg0, [NullAllowed] SCPConfirmSetupIntentError arg1);
+    // typedef void (^SCPConfirmSetupIntentCompletionBlock)(SCPSetupIntent * _Nullable, SCPConfirmSetupIntentError * _Nullable);
+    delegate void SCPConfirmSetupIntentCompletionBlock([NullAllowed] SCPSetupIntent setupIntent, [NullAllowed] SCPConfirmSetupIntentError error);
 
-	// typedef void (^SCPLocationsCompletionBlock)(NSArray<SCPLocation *> * _Nullable, BOOL, NSError * _Nullable);
-	delegate void SCPLocationsCompletionBlock ([NullAllowed] SCPLocation[] arg0, bool arg1, [NullAllowed] NSError arg2);
+    // typedef void (^SCPLocationsCompletionBlock)(NSArray<SCPLocation *> * _Nullable, BOOL, NSError * _Nullable);
+    delegate void SCPLocationsCompletionBlock([NullAllowed] SCPLocation[] locations, bool arg1, [NullAllowed] NSError error);
 
-	// typedef void (^SCPReaderCompletionBlock)(SCPReader * _Nullable, NSError * _Nullable);
-	delegate void SCPReaderCompletionBlock ([NullAllowed] SCPReader arg0, [NullAllowed] NSError arg1);
+    // typedef void (^SCPReaderCompletionBlock)(SCPReader * _Nullable, NSError * _Nullable);
+    delegate void SCPReaderCompletionBlock([NullAllowed] SCPReader reader, [NullAllowed] NSError error);
 
     // @protocol SCPBluetoothReaderDelegate <NSObject>
     [Protocol, Model]
