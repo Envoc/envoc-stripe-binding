@@ -71,11 +71,9 @@
 	<ItemGroup>
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(Version)" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-core" Version="$(Version)" />
+		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(Version)" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-common" Version="$(Version)" Bind="False" />
-		<!--<AndroidLibrary Include="..\..\..\lib\Android\StripeTerminal\$(Version)\com.stripe_stripeterminal-internal-models.aar"
-						JavaArtifact="com.stripe:stripeterminal-internal-models" JavaVersion="$(Version)" Bind="False" />-->
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(Version)" Bind="False" />
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(Version)" Bind="False" />
 	</ItemGroup>
 	<ItemGroup>
 		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.7.20" Bind="False" />
@@ -85,8 +83,6 @@
 		<AndroidMavenLibrary Include="com.squareup.wire:wire-moshi-adapter" Version="4.4.3" Bind="False" />
 		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime" Version="4.4.3" Bind="False" />
 		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime-jvm" Version="4.4.3" Bind="False" />
-		<!--<AndroidMavenLibrary Include="com.squareup.okio:okio" Version="3.4.0" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.okio:okio-jvm" Version="3.4.0" Bind="False" />-->
 		<AndroidMavenLibrary Include="com.jaredrummler:android-device-names" Version="1.1.9" Bind="False" />
 		<AndroidMavenLibrary Include="com.scottyab:rootbeer-lib" Version="0.0.9" Bind="False" />
 		<AndroidMavenLibrary Include="org.apache.commons:commons-compress" Version="1.22" Bind="False" />
