@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Android</PackageId>
-		<Version>2.18.1</Version>
+		<Version>2.19.0</Version>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>
@@ -36,7 +36,7 @@
 	<ItemGroup>
 		<PackageReference Include="XamPrototype.Android.MavenBinding.Tasks" Version="0.0.11" />
 
-		<PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.5.0.2" />
+		<PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.6.0" />
 
 		<PackageReference Include="Xamarin.AndroidX.Room.Runtime" Version="2.5.0" />
 		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.5.1" />
@@ -62,8 +62,8 @@
 		<PackageReference Include="Xamarin.Kotlin.StdLib.Common" Version="1.9.0" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-common" JavaVersion="1.9.0" />
 
 		<PackageReference Include="Square.OkHttp3" Version="4.10.0" JavaArtifact="com.squareup.okhttp3:okhttp" JavaVersion="4.10.0" />
-		<PackageReference Include="Square.Moshi.Adapters" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi-adapters" JavaVersion="1.13.0" />
-		<PackageReference Include="Square.Moshi" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi" JavaVersion="1.13.0" />
+		<PackageReference Include="Square.Moshi.Adapters" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi-adapters" JavaVersion="1.14.0" />
+		<PackageReference Include="Square.Moshi" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi" JavaVersion="1.14.0" />
 		<PackageReference Include="Square.OkIO" Version="3.3.0.2" JavaArtifact="com.squareup.okio:okio" JavaVersion="3.4.0" />
 	</ItemGroup>
 
@@ -76,13 +76,13 @@
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(Version)" Bind="False" />
 	</ItemGroup>
 	<ItemGroup>
-		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.7.20" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-android-extensions-runtime" Version="1.7.20" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.8.10" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-android-extensions-runtime" Version="1.8.10" Bind="False" />
 		<AndroidMavenLibrary Include="com.neovisionaries:nv-i18n" Version="1.29" Bind="False" />
 		<AndroidMavenLibrary Include="com.squareup.tape2:tape" Version="2.0.0-beta1" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.wire:wire-moshi-adapter" Version="4.4.3" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime" Version="4.4.3" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime-jvm" Version="4.4.3" Bind="False" />
+		<AndroidMavenLibrary Include="com.squareup.wire:wire-moshi-adapter" Version="4.5.2" Bind="False" />
+		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime" Version="4.5.2" Bind="False" />
+		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime-jvm" Version="4.5.2" Bind="False" />
 		<AndroidMavenLibrary Include="com.jaredrummler:android-device-names" Version="1.1.9" Bind="False" />
 		<AndroidMavenLibrary Include="com.scottyab:rootbeer-lib" Version="0.0.9" Bind="False" />
 		<AndroidMavenLibrary Include="org.apache.commons:commons-compress" Version="1.22" Bind="False" />
