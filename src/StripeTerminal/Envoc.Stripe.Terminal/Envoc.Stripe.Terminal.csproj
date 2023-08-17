@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<!--<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>-->
-		<TargetFramework>net7.0-ios</TargetFramework>
+		<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>
+		<!--<TargetFramework>net7.0-ios</TargetFramework>-->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -20,11 +20,13 @@
 	</PropertyGroup>
 
 
-	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+	<ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
 		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
 	</ItemGroup>
 
-<!--	<ItemGroup>
-		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
-	</ItemGroup>-->
+
+	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+	  <ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />
+	</ItemGroup>
+
 </Project>
