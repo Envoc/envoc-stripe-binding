@@ -1,0 +1,31 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- android
+
+pool:
+  vmImage: macos-13
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Setup .NET' 
+  inputs:
+    packageType: 'sdk'
+    version: '7.0.x'
+    includePreviewVersions: true
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+- script: |
+    dotnet workload install maui --source https://api.nuget.org/v3/index.json
+    dotnet workload list
+  displayName: 'Install MAUI Workload(s)'
+
+- script: dotnet restore Mobile/src/Maui/${{ parameters.client }}.Maui.csproj
+  displayName: 'Restore dependencies'
+- script: |
+    dotnet build 'src/StripeTerminal/Envoc.Stripe.Terminal.Android/Envoc.Stripe.Terminal.Android.csproj' -f net7.0-android -c Release 
+  displayName: 'Build'
+
