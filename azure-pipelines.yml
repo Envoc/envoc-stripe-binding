@@ -23,7 +23,7 @@ steps:
     dotnet workload list
   displayName: 'Install MAUI Workload(s)'
 
-- script: dotnet restore Mobile/src/Maui/${{ parameters.client }}.Maui.csproj
+- script: dotnet restore 'src/StripeTerminal/Envoc.Stripe.Terminal/Envoc.Stripe.Terminal.csproj'
   displayName: 'Restore dependencies'
 - script: |
     dotnet build 'src/StripeTerminal/Envoc.Stripe.Terminal.Android/Envoc.Stripe.Terminal.Android.csproj' -f net7.0-android -c Release 
