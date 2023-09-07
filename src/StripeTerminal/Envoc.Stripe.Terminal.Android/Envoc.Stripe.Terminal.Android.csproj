@@ -4,12 +4,14 @@
 		<SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<EmbedAllSources>True</EmbedAllSources>
 	</PropertyGroup>
 	
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Android</PackageId>
-		<Version>2.19.0</Version>
+		<Version>2.19.3</Version>
+		<StripeVersion>2.19.0</StripeVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>
@@ -50,7 +52,13 @@
 
 
 		<PackageReference Include="Xamarin.Google.Dagger" Version="2.46.1" JavaArtifact="com.google.dagger:dagger" JavaVersion="2.45" />
-		<PackageReference Include="Xamarin.Google.Guava" Version="31.1" JavaArtifact="com.google.guava:guava" JavaVersion="31.1-android" />
+		<!--<PackageReference Include="Xamarin.Google.Guava" Version="31.1.0.8" JavaArtifact="com.google.guava:guava" JavaVersion="31.1-android" />-->
+		<PackageReference Include="Xamarin.CheckerFramework.CheckerQual" Version="3.22.0" JavaArtifact="org.checkerframework:checker-qual" JavaVersion="3.12.0" />
+		<PackageReference Include="Xamarin.Google.Code.FindBugs.JSR305" Version="3.0.2" JavaArtifact="com.google.code.findbugs:jsr305" JavaVersion="3.0.2" />
+		<PackageReference Include="Xamarin.Google.Guava.FailureAccess" Version="1.0.1" JavaArtifact="com.google.guava:failureaccess" JavaVersion="1.0.1" />
+		<PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.11.0" JavaArtifact="com.google.errorprone:error_prone_annotations" JavaVersion="2.11.0" />
+		<PackageReference Include="Xamarin.Google.J2Objc.Annotations " Version="1.3" JavaArtifact="com.google.j2objc:j2objc-annotations" JavaVersion="1.3" />
+		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" Version="1.0.0.14" JavaArtifact="com.google.guava:listenablefuture" JavaVersion="9999.0-empty-to-avoid-conflict-with-guava" />
 		<PackageReference Include="GoogleGson" Version="2.10.1" JavaArtifact="com.google.code.gson:gson" JavaVersion="2.10.1" />
 
 		<PackageReference Include="Xamarin.Kotlin.StdLib" Version="1.9.0" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib" JavaVersion="1.9.0" />
@@ -69,11 +77,18 @@
 
 
 	<ItemGroup>
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(Version)" />
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal-core" Version="$(Version)" />
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(Version)" />
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-common" Version="$(Version)" Bind="False" />
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(Version)" Bind="False" />
+		<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(StripeVersion)" Pack="True" />
+		<AndroidMavenLibrary Include="com.stripe:stripeterminal-core" Version="$(StripeVersion)" Pack="True" />
+		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(StripeVersion)" Pack="True" />
+		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-common" Version="$(StripeVersion)" Bind="False" />
+		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(StripeVersion)" Bind="False" />
+
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-common/$(StripeVersion)/com.stripe_stripeterminal-internal-common.aar"
+			  Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-models/$(StripeVersion)/com.stripe_stripeterminal-internal-models.aar"
+			  Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+	
 	</ItemGroup>
 	<ItemGroup>
 		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.8.10" Bind="False" />
@@ -90,5 +105,19 @@
 		<AndroidMavenLibrary Include="org.brotli:dec" Version="0.1.2" Bind="False" />
 		<AndroidMavenLibrary Include="org.tukaani:xz" Version="1.9" Bind="False" />
 		<AndroidMavenLibrary Include="org.ow2.asm:asm" Version="9.4" Bind="False" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.jaredrummler/android-device-names/1.1.9/com.jaredrummler_android-device-names.aar"
+			Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+		
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.scottyab/rootbeer-lib/0.0.9/com.scottyab_rootbeer-lib.aar"
+			Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AndroidMavenLibrary Include="com.google.guava:guava" Version="31.1-android" Bind="False" />
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.google.guava/guava/31.1-android/com.google.guava_guava.jar"
+			Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
 	</ItemGroup>
 </Project>

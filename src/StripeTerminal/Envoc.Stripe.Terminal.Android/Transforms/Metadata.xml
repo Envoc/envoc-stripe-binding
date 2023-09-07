@@ -12,4 +12,5 @@
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='fromJson']" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='newBuilder']" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='build']" name="managedReturn">Java.Lang.Object</attr>
+
 </metadata>
