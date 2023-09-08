@@ -134,7 +134,7 @@ public partial class TerminalService : ITerminalService
 
     private void Trace(string message)
     {
-        logger?.Trace(message);
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + message);
     }
 
     private void Info(string message, Dictionary<string, object> parameters = null)
@@ -153,15 +153,16 @@ public partial class TerminalService : ITerminalService
 
 #if SUPPORTED_PLATFORM
 
-    private void OnDiscoveredReaders(int? count, IList<NativeReader> readers)
+    private void OnDiscoveredReaders(int? count, IList<NativeReader> readers, NativeReader connectedReader = null)
     {
         Trace($"Discovered {readers?.Count ?? -1} readers");
-
+        
         if (count > 0)
         {
-            var stripeReaders = readers.Select(x => x.FromNative()).ToList();
+            var stripeReaders = readers.Select(x => x.FromNative(connectedReader)).ToList();
 
             //Replace instead of add?
+            lastRetrievedReaders.Clear();
             lastRetrievedReaders.AddRange(readers);
 
             // Report Back
@@ -169,10 +170,6 @@ public partial class TerminalService : ITerminalService
             onReadersDiscoveredAction?.Invoke(stripeReaders);
 
             discoveryTask = null;
-        }
-        else
-        {
-            //Clear lastRetrievedReaders?
         }
     }
 

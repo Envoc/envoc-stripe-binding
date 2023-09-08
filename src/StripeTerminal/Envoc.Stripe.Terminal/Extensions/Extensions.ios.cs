@@ -2,6 +2,7 @@
 
 public static partial class Extensions
 {
+    //Should this log exception insted of info?
     public static void Info(this IStripeTerminalLogger logger, string message, NSError error)
     {
         Dictionary<string, object> parameters = null;
@@ -19,7 +20,7 @@ public static partial class Extensions
             };
         }
 
-        logger.Info(message);
+        logger.Info(message, parameters);
     }
 
     public static Dictionary<string, string> ToDictionary(this NSDictionary<NSString, NSString> nsDictionary) =>

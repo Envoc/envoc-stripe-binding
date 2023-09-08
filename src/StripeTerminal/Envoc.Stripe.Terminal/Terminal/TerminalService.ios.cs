@@ -109,18 +109,15 @@ public partial class TerminalService : SCPDiscoveryDelegate
             Timeout = (nuint)(config.TimeOut ?? 15),
         };
 
-        if (discoveryTask != null)
+        if (discoveryTask != null && !discoveryTask.Completed)
         {
-            if (!discoveryTask.Completed)
+            discoveryTask.Cancel(error =>
             {
-                discoveryTask.Cancel(error =>
+                if (error != null)
                 {
-                    if (error != null)
-                    {
-                        Error("reader_discover_cancel_error", error);
-                    }
-                });
-            }
+                    Error("reader_discover_cancel_error", error);
+                }
+            });
         }
 
         if (Instance.ConnectionStatus != SCPConnectionStatus.NotConnected && config.DiscoveryMethod == connectionType)
@@ -197,7 +194,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
         var locationId = request.CurrentStripeLocationId ?? selectedReader.LocationId;
         if (locationId == null)
         {
-            //logger.Log("reader_location_empty");
+            Info("reader_location_empty");
             return null;
         }
 
@@ -497,7 +494,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
     public override void DidUpdateDiscoveredReaders(SCPTerminal terminal, SCPReader[] readers)
     {
-        OnDiscoveredReaders(readers?.Length, readers);
+        OnDiscoveredReaders(readers?.Length, readers, terminal.ConnectedReader);
     }
 
     #endregion

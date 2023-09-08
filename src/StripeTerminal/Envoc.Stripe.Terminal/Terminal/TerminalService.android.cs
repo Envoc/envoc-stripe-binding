@@ -39,7 +39,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         this.readerReconnector.ConnectionStatusChangedEvent += OnConnectionStatusChanged;
     }
 
-    protected Terminal Instance = Terminal.Instance;
+    protected Terminal Instance => Terminal.Instance;
 
     public bool IsTerminalConnected => Terminal.IsInitialized && Instance.ConnectionStatus == ConnectionStatus.Connected;
 
@@ -119,11 +119,16 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
         var configuration = new DiscoveryConfiguration(config.TimeOut ?? 15, discoveryMethod, config.IsSimulated);
 
-        discoveryTask?.Cancel(new GenericCallback((ex) =>
+        if (discoveryTask != null && !discoveryTask.IsCompleted)
         {
-            // Do Nothing...
-            Trace($"Discovery cancel failed");
-        }));
+            discoveryTask.Cancel(new GenericCallback((ex) =>
+            {
+                if (ex != null)
+                {
+                    Exception($"Discovery cancel failed", ex);
+                }
+            }));
+        }
 
         if (Instance.ConnectionStatus != ConnectionStatus.NotConnected && config.DiscoveryMethod == connectionType)
         {
@@ -134,7 +139,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
         discoveryTask = Instance.DiscoverReaders(configuration, this, new GenericCallback((ex) =>
         {
-            logger.Trace($"Discovery timeout");
+            Trace($"Discovery timeout");
             if (ex != null)
             {
                 Trace($"Discovery ErrorCode: {ex.ErrorCode?.Name()}");
@@ -334,15 +339,14 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             throw new Exception($"You must call {nameof(InitializeContext)} and supply context and activity before we can request check permissions");
         }
 
-        var result = await RequestBluetoothPermission();
-        result &= await RequestLocationPermission();
+        var result = RequestBluetoothPermission();
+        result &= RequestLocationPermission();
         return result;
     }
 
-    private Task<bool> RequestBluetoothPermission()
+    private bool RequestBluetoothPermission()
     {
         int permissionRequestCode = 12347;
-        var permissionSource = new TaskCompletionSource<bool>();
         var currentActvity = activity ?? getActivity?.Invoke();
 
         if ((uint)Build.VERSION.SdkInt >= 31)
@@ -354,7 +358,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             }
             else
             {
-                permissionSource.TrySetResult(true);
+                return true;
             }
         }
         else
@@ -365,17 +369,16 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             }
             else
             {
-                permissionSource.TrySetResult(true);
+                return true;
             }
         }
 
-        return permissionSource.Task;
+        return false;
     }
 
-    private Task<bool> RequestLocationPermission()
+    private bool RequestLocationPermission()
     {
         int permissionRequestCode = 12348;
-        var permissionSource = new TaskCompletionSource<bool>();
         var currentActvity = activity ?? getActivity?.Invoke();
 
         if ((uint)Build.VERSION.SdkInt <= 28)
@@ -386,7 +389,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             }
             else
             {
-                permissionSource.TrySetResult(true);
+                return true;
             }
         }
         else
@@ -397,11 +400,11 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             }
             else
             {
-                permissionSource.TrySetResult(true);
+                return true;
             }
         }
 
-        return permissionSource.Task;
+        return false; 
     }
 
     #endregion
@@ -607,12 +610,12 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public void OnConnectionStatusChange(ConnectionStatus status)
     {
-        Trace("Connection Status Changed");
+        Trace($"Connection Status Changed to: {status?.Name()}");
     }
 
     public void OnPaymentStatusChange(PaymentStatus status)
     {
-        Trace("Payment Status Changed");
+        Trace($"Payment Status Changed to: {status?.Name()}");
     }
 
     #endregion
@@ -620,7 +623,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
     #region IDiscoveryListener
     public void OnUpdateDiscoveredReaders(IList<Com.Stripe.Stripeterminal.External.Models.Reader> readers)
     {
-        OnDiscoveredReaders(readers?.Count, readers);
+        OnDiscoveredReaders(readers?.Count, readers, Instance.ConnectedReader);
     }
 
     #endregion
