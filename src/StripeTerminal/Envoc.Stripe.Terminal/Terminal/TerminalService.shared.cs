@@ -22,6 +22,7 @@ public partial class TerminalService : ITerminalService
 
     public event EventHandler<RefreshReaderEventArgs> RefreshReader;
     public event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
+    public event EventHandler<ReaderUpdateLabelEventArgs> ReaderUpdateLabel;
     public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
     public TerminalService(IStripeTerminalLogger logger, IConnectionTokenProviderService connectionTokenProviderService)
@@ -111,6 +112,11 @@ public partial class TerminalService : ITerminalService
     private void OnReaderUpdateProgress(object sender, ReaderUpdateEventArgs e)
     {
         ReaderUpdateProgress?.Invoke(sender, e);
+    }
+
+    private void OnReaderUpdateLabel(object sender, ReaderUpdateLabelEventArgs e)
+    {
+        ReaderUpdateLabel?.Invoke(sender, e);
     }
 
     private void OnConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)

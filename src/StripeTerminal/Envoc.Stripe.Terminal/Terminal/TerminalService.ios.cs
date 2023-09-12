@@ -22,11 +22,12 @@ public partial class TerminalService : SCPDiscoveryDelegate
         ReaderReconnector readerReconnector) : this(logger, connectionTokenProviderService)
     {
         this.terminalDelegate = terminalDelegate; 
-        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector();
+        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger);
         this.readerReconnector = readerReconnector ?? new ReaderReconnector();
 
         this.bluetoothConnector.ReaderUpdateAvailable += OnReaderUpdateAvailable;
         this.bluetoothConnector.ReaderUpdateProgress += OnReaderUpdateProgress;
+        this.bluetoothConnector.ReaderUpdateLabel += OnReaderUpdateLabel;
         this.readerReconnector.ConnectionStatusChangedEvent += OnConnectionStatusChanged;
     }
 
@@ -129,7 +130,13 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
         discoveryTask = Instance.DiscoverReaders(configuration, this, error =>
         {
-            if (error != null && error.Code != (nint)SCPError.Canceled)
+            nint[] ignoreErrors =
+            {
+                (nint)SCPError.Canceled,
+                (nint)SCPError.BluetoothScanTimedOut
+            };
+
+            if (error != null && !ignoreErrors.Contains(error.Code))
             {
                 Error("reader_discover_error", error);
             }

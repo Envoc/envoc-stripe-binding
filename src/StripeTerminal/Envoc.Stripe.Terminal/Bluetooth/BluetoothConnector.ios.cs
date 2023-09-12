@@ -2,6 +2,13 @@
 
 public class BluetoothConnector : SCPBluetoothReaderDelegate
 {
+    private readonly IStripeTerminalLogger logger;
+
+    public BluetoothConnector(IStripeTerminalLogger logger)
+    {
+        this.logger = logger;
+    }
+
     public event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
     public event EventHandler<ReaderSoftwareUpdateEventArgs> ReaderUpdateAvailable;
     public event EventHandler<ReaderUpdateLabelEventArgs> ReaderUpdateLabel;
@@ -22,7 +29,7 @@ public class BluetoothConnector : SCPBluetoothReaderDelegate
     public override void Reader(SCPReader reader, SCPReaderDisplayMessage displayMessage)
     {
         var message = SCPTerminal.StringFromReaderDisplayMessage(displayMessage);
-        System.Diagnostics.Debug.WriteLine($"{nameof(SCPReaderDisplayMessage)}: {displayMessage} : {message}");
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(SCPReaderDisplayMessage)}: {displayMessage} : {message}");
 
         ReaderUpdateLabel?.Invoke(reader, new ReaderUpdateLabelEventArgs(message, showCancel: displayMessage != SCPReaderDisplayMessage.RemoveCard));
     }
@@ -30,13 +37,13 @@ public class BluetoothConnector : SCPBluetoothReaderDelegate
     public override void Reader(SCPReader reader, SCPReaderEvent @event, NSDictionary info)
     {
         var message = SCPTerminal.StringFromReaderEvent(@event);
-        System.Diagnostics.Debug.WriteLine($"{nameof(SCPReaderEvent)}: {@event} : {message}");
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(SCPReaderEvent)}: {@event} : {message}");
     }
 
     public override void Reader(SCPReader reader, SCPReaderInputOptions inputOptions)
     {
         var message = SCPTerminal.StringFromReaderInputOptions(inputOptions);
-        System.Diagnostics.Debug.WriteLine($"{nameof(SCPReaderInputOptions)}: {inputOptions} : {message}");
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(SCPReaderInputOptions)}: {inputOptions} : {message}");
 
         ReaderUpdateLabel?.Invoke(reader, new ReaderUpdateLabelEventArgs(message, showCancel: true));
     }

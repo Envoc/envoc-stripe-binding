@@ -7,6 +7,7 @@ public interface ITerminalService
 {
     event EventHandler<RefreshReaderEventArgs> RefreshReader;
     event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
+    event EventHandler<ReaderUpdateLabelEventArgs> ReaderUpdateLabel;
     event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
     bool IsTerminalConnected { get; }

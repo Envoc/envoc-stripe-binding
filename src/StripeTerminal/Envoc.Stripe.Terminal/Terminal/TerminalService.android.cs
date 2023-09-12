@@ -31,11 +31,12 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         BluetoothConnector bluetoothConnector, 
         ReaderReconnector readerReconnector) : this(logger, connectionTokenProviderService)
     {
-        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector();
+        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger);
         this.readerReconnector = readerReconnector ?? new ReaderReconnector();
 
         this.bluetoothConnector.ReaderUpdateAvailable += OnReaderUpdateAvailable;
         this.bluetoothConnector.ReaderUpdateProgress += OnReaderUpdateProgress;
+        this.bluetoothConnector.ReaderUpdateLabel += OnReaderUpdateLabel;
         this.readerReconnector.ConnectionStatusChangedEvent += OnConnectionStatusChanged;
     }
 
@@ -140,10 +141,17 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         discoveryTask = Instance.DiscoverReaders(configuration, this, new GenericCallback((ex) =>
         {
             Trace($"Discovery timeout");
-            if (ex != null)
+            string[] ignoreErrors =
+            {
+                TerminalException.TerminalErrorCode.BluetoothScanTimedOut.ToString(),
+                TerminalException.TerminalErrorCode.Canceled.ToString(),
+            };
+
+            if (ex != null && !ignoreErrors.Contains(ex.ErrorCode?.ToString()))
             {
                 Trace($"Discovery ErrorCode: {ex.ErrorCode?.Name()}");
                 Trace($"Discovery ErrorMessage: {ex.ErrorMessage}");
+                Exception("reader_discover_error", ex);
             }
         }));
 

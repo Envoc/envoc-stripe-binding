@@ -5,12 +5,12 @@ namespace StripeTerminal.Bluetooth;
 
 public class BluetoothConnector : Java.Lang.Object, IBluetoothReaderListener
 {
-    //private readonly IDialogService dialogService;
+    private readonly IStripeTerminalLogger logger;
 
-    //public BluetoothConnector(IDialogService dialogService)
-    //{
-    //    this.dialogService = dialogService;
-    //}
+    public BluetoothConnector(IStripeTerminalLogger logger)
+    {
+        this.logger = logger;
+    }
 
     public event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
     public event EventHandler<ReaderSoftwareUpdateEventArgs> ReaderUpdateAvailable;
@@ -32,7 +32,7 @@ public class BluetoothConnector : Java.Lang.Object, IBluetoothReaderListener
     public async void OnRequestReaderDisplayMessage(Models.ReaderDisplayMessage displayMessage)
     {
         var message = displayMessage.Name();
-        System.Diagnostics.Debug.WriteLine($"{nameof(Models.ReaderDisplayMessage)}: {displayMessage} : {message}");
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(Models.ReaderDisplayMessage)}: {displayMessage} : {message}");
 
         ReaderUpdateLabel?.Invoke(null, new ReaderUpdateLabelEventArgs(message, showCancel: displayMessage != Models.ReaderDisplayMessage.RemoveCard));
     }
@@ -40,13 +40,13 @@ public class BluetoothConnector : Java.Lang.Object, IBluetoothReaderListener
     public void OnReportReaderEvent(global::Com.Stripe.Stripeterminal.External.Models.ReaderEvent @event)
     {
         var message = @event.Name();
-        System.Diagnostics.Debug.WriteLine($"{nameof(Models.ReaderEvent)}: {@event} : {message}");
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(Models.ReaderEvent)}: {@event} : {message}");
     }
 
-    public async void OnRequestReaderInput(Models.ReaderInputOptions.ReaderInputOption inputOptions)
+    public void OnRequestReaderInput(Models.ReaderInputOptions inputOptions)
     {
-        var message = inputOptions.Name();
-        System.Diagnostics.Debug.WriteLine($"{nameof(Models.ReaderInputOptions)}: {inputOptions} : {message}");
+        var message = inputOptions.ToString();
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(Models.ReaderInputOptions)}: {inputOptions} : {message}");
 
         ReaderUpdateLabel?.Invoke(null, new ReaderUpdateLabelEventArgs(message, showCancel: true));
     }
