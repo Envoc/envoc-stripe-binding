@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<!--<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>-->
-		<TargetFramework>net7.0-ios</TargetFramework>
+		<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+		<!--<Nullable>enable</Nullable>-->
+
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -20,11 +20,40 @@
 	</PropertyGroup>
 
 
-	<ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
+	<ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
+		<PackageReference Include="Envoc.Stripe.Terminal.iOS" Version="2.19.2" />
+		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />-->
 	</ItemGroup>
 
-<!--	<ItemGroup>
-		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
-	</ItemGroup>-->
+
+	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />-->
+		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.2" />
+		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
+		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive">
+			<Version>1.0.0.14</Version>
+		</PackageReference>
+	</ItemGroup>
+
+	<!-- Android -->
+	<ItemGroup Condition="$(TargetFramework.Contains('-android')) != true">
+		<Compile Remove="**\**\*.android.cs" />
+		<Compile Remove="**\Android\*.cs" />
+		<None Include="**\**\*.android.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+	</ItemGroup>
+
+	<!-- iOS -->
+	<ItemGroup Condition="$(TargetFramework.Contains('-ios')) != true">
+		<Compile Remove="**\**\*.ios.cs" />
+		<Compile Remove="**\iOS\*.cs" />
+		<None Include="**\**\*.ios.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+	</ItemGroup>
+
+	<!-- .NET -->
+	<ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
+		<!-- e.g net6.0 or net7.0 -->
+		<Compile Remove="**\*.net.cs" />
+		<None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+	</ItemGroup>
+	
 </Project>
