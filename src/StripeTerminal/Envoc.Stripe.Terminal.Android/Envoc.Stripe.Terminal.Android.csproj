@@ -10,7 +10,7 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Android</PackageId>
-		<Version>2.19.3</Version>
+		<Version>2.19.2</Version>
 		<StripeVersion>2.19.0</StripeVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
@@ -46,10 +46,9 @@
 		<PackageReference Include="Xamarin.AndroidX.Room.Room.Ktx" Version="2.5.0" />
 		<PackageReference Include="Xamarin.AndroidX.Security.SecurityCrypto" Version="1.1.0-alpha03" />
 
-		<PackageReference Include="Xamarin.Android.ReactiveX.RxKotlin" Version="2.4.0.4" JavaArtifact="io.reactivex.rxjava3:rxkotlin" JavaVersion="3.0.1" />
+		<!--<PackageReference Include="Xamarin.Android.ReactiveX.RxKotlin" Version="2.4.0.4" JavaArtifact="io.reactivex.rxjava3:rxkotlin" JavaVersion="3.0.1" />-->
 		<PackageReference Include="Xamarin.Android.ReactiveX.RxAndroid" Version="2.1.1.5" JavaArtifact="io.reactivex.rxjava3:rxandroid" JavaVersion="3.0.2" />
 		<PackageReference Include="Xamarin.Android.ReactiveX.RxJava3.RxJava" Version="3.1.6" />
-
 
 		<PackageReference Include="Xamarin.Google.Dagger" Version="2.46.1" JavaArtifact="com.google.dagger:dagger" JavaVersion="2.45" />
 		<!--<PackageReference Include="Xamarin.Google.Guava" Version="31.1.0.8" JavaArtifact="com.google.guava:guava" JavaVersion="31.1-android" />-->
@@ -77,20 +76,20 @@
 
 
 	<ItemGroup>
+		<!-- Stripe files -->
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-core" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-common" Version="$(StripeVersion)" Bind="False" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(StripeVersion)" Bind="False" />
 
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-common/$(StripeVersion)/com.stripe_stripeterminal-internal-common.aar"
-			  Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+		<!-- Workaround to force nuget to include necessary aars in the package, https://github.com/xamarin/xamarin-android/issues/8308#issuecomment-1701616581-->
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-common/$(StripeVersion)/com.stripe_stripeterminal-internal-common.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-models/$(StripeVersion)/com.stripe_stripeterminal-internal-models.aar"
-			  Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
-	
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-models/$(StripeVersion)/com.stripe_stripeterminal-internal-models.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<!-- Manually added dependencies without nugets -->
 		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.8.10" Bind="False" />
 		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-android-extensions-runtime" Version="1.8.10" Bind="False" />
 		<AndroidMavenLibrary Include="com.neovisionaries:nv-i18n" Version="1.29" Bind="False" />
@@ -105,19 +104,19 @@
 		<AndroidMavenLibrary Include="org.brotli:dec" Version="0.1.2" Bind="False" />
 		<AndroidMavenLibrary Include="org.tukaani:xz" Version="1.9" Bind="False" />
 		<AndroidMavenLibrary Include="org.ow2.asm:asm" Version="9.4" Bind="False" />
-	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.jaredrummler/android-device-names/1.1.9/com.jaredrummler_android-device-names.aar"
-			Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.jaredrummler/android-device-names/1.1.9/com.jaredrummler_android-device-names.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 		
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.scottyab/rootbeer-lib/0.0.9/com.scottyab_rootbeer-lib.aar"
-			Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.scottyab/rootbeer-lib/0.0.9/com.scottyab_rootbeer-lib.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- Have to have these instead of Xamarin nugets or I get class not found exceptions -->
+		<!-- like: java.lang.NoClassDefFoundError: Failed resolution of: Lio/reactivex/rxjava3/kotlin/DisposableKt -->
 		<AndroidMavenLibrary Include="com.google.guava:guava" Version="31.1-android" Bind="False" />
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.google.guava/guava/31.1-android/com.google.guava_guava.jar"
-			Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0"  />
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.google.guava/guava/31.1-android/com.google.guava_guava.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+
+		<AndroidMavenLibrary Include="io.reactivex.rxjava3:rxkotlin" Version="3.0.1" Bind="False" />
+		<None Include="$(LocalAppData)/MavenCacheDirectory/central/io.reactivex.rxjava3/rxkotlin/3.0.1/io.reactivex.rxjava3_rxkotlin.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 		<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<!--<Nullable>enable</Nullable>-->
+
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -20,13 +21,14 @@
 
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
-		<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />
+		<PackageReference Include="Envoc.Stripe.Terminal.iOS" Version="2.19.2" />
+		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />-->
 	</ItemGroup>
 
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
-		<ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />
-		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.3" />
+		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />-->
+		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.2" />
 		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
 		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive">
 			<Version>1.0.0.14</Version>
