@@ -29,9 +29,9 @@ public class BluetoothConnector : Java.Lang.Object, IBluetoothReaderListener
         ReaderUpdateProgress?.Invoke(null, new ReaderUpdateEventArgs(progress));
     }
 
-    public async void OnRequestReaderDisplayMessage(Models.ReaderDisplayMessage displayMessage)
+    public void OnRequestReaderDisplayMessage(Models.ReaderDisplayMessage displayMessage)
     {
-        var message = displayMessage.Name();
+        var message = displayMessage.ToString();
         logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(Models.ReaderDisplayMessage)}: {displayMessage} : {message}");
 
         ReaderUpdateLabel?.Invoke(null, new ReaderUpdateLabelEventArgs(message, showCancel: displayMessage != Models.ReaderDisplayMessage.RemoveCard));
