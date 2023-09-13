@@ -31,7 +31,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
         this.readerReconnector.ConnectionStatusChangedEvent += OnConnectionStatusChanged;
     }
 
-    protected SCPTerminal Instance = SCPTerminal.Shared;
+    protected SCPTerminal Instance => SCPTerminal.Shared;
 
     public bool IsTerminalConnected => SCPTerminal.HasTokenProvider && Instance.ConnectionStatus == SCPConnectionStatus.Connected; 
 
