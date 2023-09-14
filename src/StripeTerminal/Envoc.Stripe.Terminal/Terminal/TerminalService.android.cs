@@ -160,7 +160,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public async Task CancelDiscovery()
     {
-        await Initialize();
+        if (!await Initialize())
+        {
+            return;
+        }
 
         if (discoveryTask != null && !discoveryTask.IsCompleted)
         {
@@ -180,7 +183,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public async Task<Reader> ConnectReader(ReaderConnectionRequest request)
     {
-        await Initialize();
+        if (!await Initialize())
+        {
+            return null;
+        }
 
         var reader = request.Reader;
         if (reader == null || lastRetrievedReaders == null || !lastRetrievedReaders.Any())
@@ -306,7 +312,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public async Task<bool> DisconnectReader()
     {
-        await Initialize();
+        if (!await Initialize())
+        {
+            return false;
+        }
 
         if (Instance.ConnectionStatus == ConnectionStatus.NotConnected)
         {
@@ -421,7 +430,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public async Task<PaymentResponse> CollectPayment(PaymentRequest payment)
     {
-        await Initialize();
+        if (!await Initialize())
+        {
+            return PaymentResponse.AsError("Payments not initialized.");
+        }
 
         if (Instance.ConnectionStatus != ConnectionStatus.Connected)
         {
@@ -577,7 +589,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public async Task UpdateConnectedReader()
     {
-        await Initialize();
+        if (!await Initialize())
+        {
+            return;
+        }
 
         //BUG: In case loading dialog was showing and just closed
         //https://github.com/CommunityToolkit/Maui/issues/1213#issuecomment-1580300733
@@ -591,7 +606,10 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public async Task SetSimulatedUpdate(bool updateRequired)
     {
-        await Initialize();
+        if (!await Initialize())
+        {
+            return;
+        }
 
         if (Instance.SimulatorConfiguration == null)
         {
