@@ -7,6 +7,8 @@ public partial class TerminalService
 {
     public bool IsTerminalConnected { get; private set; }
 
+    public bool IsTerminalInitialized { get; private set; }
+
     private void NotImplementedCheck()
     {
         if (StripeTerminalConfiguration.AllowNotImplementedMethodsToSucceed)

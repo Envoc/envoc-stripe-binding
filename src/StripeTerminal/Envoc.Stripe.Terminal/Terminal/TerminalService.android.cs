@@ -42,7 +42,9 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     protected Terminal Instance => Terminal.Instance;
 
-    public bool IsTerminalConnected => Terminal.IsInitialized && Instance.ConnectionStatus == ConnectionStatus.Connected;
+    public bool IsTerminalConnected => IsTerminalInitialized && Instance.ConnectionStatus == ConnectionStatus.Connected;
+
+    public bool IsTerminalInitialized => Terminal.IsInitialized;
 
     public static void InitializeContext(Context context, Func<Activity> getActivity)
     {
@@ -562,6 +564,11 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public void CancelPayment()
     {
+        if (!IsTerminalInitialized)
+        {
+            return;
+        }
+
         if (paymentTask == null)
         {
             return;

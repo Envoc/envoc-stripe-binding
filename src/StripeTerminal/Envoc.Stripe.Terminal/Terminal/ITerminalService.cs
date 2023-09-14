@@ -11,6 +11,7 @@ public interface ITerminalService
     event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
     bool IsTerminalConnected { get; }
+    bool IsTerminalInitialized { get; }
     ReaderConnectivityStatus GetConnectivityStatus();
 
     //Task Initialize(IConnectionTokenProviderService connectionTokenProviderService);

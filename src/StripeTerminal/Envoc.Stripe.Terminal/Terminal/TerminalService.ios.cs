@@ -33,7 +33,9 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
     protected SCPTerminal Instance => SCPTerminal.Shared;
 
-    public bool IsTerminalConnected => SCPTerminal.HasTokenProvider && Instance.ConnectionStatus == SCPConnectionStatus.Connected; 
+    public bool IsTerminalConnected => IsTerminalInitialized && Instance.ConnectionStatus == SCPConnectionStatus.Connected;
+
+    public bool IsTerminalInitialized => SCPTerminal.HasTokenProvider;
 
     public ReaderConnectivityStatus GetConnectivityStatus()
     {
