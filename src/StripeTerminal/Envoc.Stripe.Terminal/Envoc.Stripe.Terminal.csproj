@@ -11,7 +11,7 @@
 		<AssemblyName>Stripe.Terminal</AssemblyName>
 		<RootNamespace>StripeTerminal</RootNamespace>
 		<PackageId>Envoc.Stripe.Terminal</PackageId>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 		<CreatePackage>true</CreatePackage>
@@ -28,7 +28,7 @@
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
 		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />-->
-		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.2" />
+		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.3" />
 		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
 		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive">
 			<Version>9999.0.0</Version>
