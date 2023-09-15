@@ -74,6 +74,10 @@
 		<PackageReference Include="Square.OkIO" Version="3.3.0.2" JavaArtifact="com.squareup.okio:okio" JavaVersion="3.4.0" />
 	</ItemGroup>
 
+	<!-- https://github.com/jpobst/Prototype.Android.MavenBindings/blob/37da8d5ea14a87a754b28620bde12a9799079a99/src/Microsoft.Android.MavenBinding.Tasks/XamPrototype.Android.MavenBinding.Tasks.targets#L11C1-L13C162 -->
+	<CacheDirectory Condition="'$(OS)'=='Unix' and '$(MavenCacheDirectory)'==''">$(HOME)\Library\Caches\MavenCacheDirectory\</CacheDirectory>
+	<CacheDirectory Condition="'$(OS)'!='Unix' and '$(MavenCacheDirectory)'==''">$(LocalAppData)\MavenCacheDirectory\</CacheDirectory>
+	<CacheDirectory Condition="'$(MavenCacheDirectory)' != '' and !HasTrailingSlash('$(MavenCacheDirectory)')">$(MavenCacheDirectory)\</CacheDirectory>
 
 	<ItemGroup>
 		<!-- Stripe files -->
@@ -84,9 +88,9 @@
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(StripeVersion)" Bind="False" />
 
 		<!-- Workaround to force nuget to include necessary aars in the package, https://github.com/xamarin/xamarin-android/issues/8308#issuecomment-1701616581-->
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-common/$(StripeVersion)/com.stripe_stripeterminal-internal-common.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+		<None Include="$(CacheDirectory)/central/com.stripe/stripeterminal-internal-common/$(StripeVersion)/com.stripe_stripeterminal-internal-common.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.stripe/stripeterminal-internal-models/$(StripeVersion)/com.stripe_stripeterminal-internal-models.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+		<None Include="$(CacheDirectory)/central/com.stripe/stripeterminal-internal-models/$(StripeVersion)/com.stripe_stripeterminal-internal-models.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<!-- Manually added dependencies without nugets -->
@@ -105,18 +109,18 @@
 		<AndroidMavenLibrary Include="org.tukaani:xz" Version="1.9" Bind="False" />
 		<AndroidMavenLibrary Include="org.ow2.asm:asm" Version="9.4" Bind="False" />
 
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.jaredrummler/android-device-names/1.1.9/com.jaredrummler_android-device-names.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+		<None Include="$(CacheDirectory)/central/com.jaredrummler/android-device-names/1.1.9/com.jaredrummler_android-device-names.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 		
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.scottyab/rootbeer-lib/0.0.9/com.scottyab_rootbeer-lib.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+		<None Include="$(CacheDirectory)/central/com.scottyab/rootbeer-lib/0.0.9/com.scottyab_rootbeer-lib.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- Have to have these instead of Xamarin nugets or I get class not found exceptions -->
 		<!-- like: java.lang.NoClassDefFoundError: Failed resolution of: Lio/reactivex/rxjava3/kotlin/DisposableKt -->
 		<AndroidMavenLibrary Include="com.google.guava:guava" Version="31.1-android" Bind="False" />
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/com.google.guava/guava/31.1-android/com.google.guava_guava.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+		<None Include="$(CacheDirectory)/central/com.google.guava/guava/31.1-android/com.google.guava_guava.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 
 		<AndroidMavenLibrary Include="io.reactivex.rxjava3:rxkotlin" Version="3.0.1" Bind="False" />
-		<None Include="$(LocalAppData)/MavenCacheDirectory/central/io.reactivex.rxjava3/rxkotlin/3.0.1/io.reactivex.rxjava3_rxkotlin.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
+		<None Include="$(CacheDirectory)/central/io.reactivex.rxjava3/rxkotlin/3.0.1/io.reactivex.rxjava3_rxkotlin.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 </Project>
