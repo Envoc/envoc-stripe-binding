@@ -74,10 +74,11 @@
 		<PackageReference Include="Square.OkIO" Version="3.3.0.2" JavaArtifact="com.squareup.okio:okio" JavaVersion="3.4.0" />
 	</ItemGroup>
 
-	<!-- https://github.com/jpobst/Prototype.Android.MavenBindings/blob/37da8d5ea14a87a754b28620bde12a9799079a99/src/Microsoft.Android.MavenBinding.Tasks/XamPrototype.Android.MavenBinding.Tasks.targets#L11C1-L13C162 -->
-	<CacheDirectory Condition="'$(OS)'=='Unix' and '$(MavenCacheDirectory)'==''">$(HOME)\Library\Caches\MavenCacheDirectory\</CacheDirectory>
-	<CacheDirectory Condition="'$(OS)'!='Unix' and '$(MavenCacheDirectory)'==''">$(LocalAppData)\MavenCacheDirectory\</CacheDirectory>
-	<CacheDirectory Condition="'$(MavenCacheDirectory)' != '' and !HasTrailingSlash('$(MavenCacheDirectory)')">$(MavenCacheDirectory)\</CacheDirectory>
+	<PropertyGroup>
+		<!-- https://github.com/jpobst/Prototype.Android.MavenBindings/blob/37da8d5ea14a87a754b28620bde12a9799079a99/src/Microsoft.Android.MavenBinding.Tasks/XamPrototype.Android.MavenBinding.Tasks.targets#L11C1-L13C162 -->
+		<CacheDirectory Condition="'$(OS)'=='Unix'">$(HOME)\Library\Caches\MavenCacheDirectory\</CacheDirectory>
+		<CacheDirectory Condition="'$(OS)'!='Unix'">$(LocalAppData)\MavenCacheDirectory\</CacheDirectory>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<!-- Stripe files -->
