@@ -25,7 +25,15 @@ steps:
 
 - script: dotnet restore 'src/StripeTerminal/Envoc.Stripe.Terminal/Envoc.Stripe.Terminal.csproj'
   displayName: 'Restore dependencies'
+
 - script: |
     dotnet build 'src/StripeTerminal/Envoc.Stripe.Terminal.Android/Envoc.Stripe.Terminal.Android.csproj' -f net7.0-android -c Release 
   displayName: 'Build'
 
+- script: |
+    dotnet build 'src/StripeTerminal/Envoc.Stripe.Terminal.iOS/Envoc.Stripe.Terminal.iOS.csproj' -f net7.0-ios -c Release 
+  displayName: 'Build'
+
+- script: |
+    dotnet build 'src/StripeTerminal/Envoc.Stripe.Terminal/Envoc.Stripe.Terminal.csproj' -c Release 
+  displayName: 'Build'
