@@ -13,21 +13,23 @@ using NativeReader = SCPReader;
 public partial class TerminalService : ITerminalService
 {
     private IStripeTerminalLogger logger;
-    private IConnectionTokenProviderService connectionTokenProviderService { get; set; }
+    private IStripeReaderCache readerCache;
     private Action<IList<Reader>> onReadersDiscoveredAction;
     private List<Reader> discoveredReaders = new List<Reader>();
     private StripeDiscoveryConfiguration discoveryConfiguration;
     private Reader currentReader;
     private static DiscoveryType? connectionType = null;
+    private IConnectionTokenProviderService connectionTokenProviderService { get; set; }
 
     public event EventHandler<RefreshReaderEventArgs> RefreshReader;
     public event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
     public event EventHandler<ReaderUpdateLabelEventArgs> ReaderUpdateLabel;
     public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChanged;
 
-    public TerminalService(IStripeTerminalLogger logger, IConnectionTokenProviderService connectionTokenProviderService)
+    public TerminalService(IStripeTerminalLogger logger, IConnectionTokenProviderService connectionTokenProviderService, IStripeReaderCache readerCache)
     {
         this.logger = logger;
+        this.readerCache = readerCache;
         this.connectionTokenProviderService = connectionTokenProviderService;
     }
 
@@ -64,35 +66,51 @@ public partial class TerminalService : ITerminalService
         await DiscoverReaders(config);
     }
 
-    public async Task<Reader> ReconnectReader()
+    public async Task<Reader> ReconnectReader(Reader previousReader, DiscoveryType? discoveryType, bool waitForResponse = false)
     {
-        // determine discovery method
-        var discoveryMethod = connectionType.GetValueOrDefault();
+        if (previousReader == null)
+        {
+            return null;
+        }
 
+        // determine discovery method
+        var discoveryMethod = discoveryType.GetValueOrDefault();
+        var connectionType = GetConnectionType(discoveryMethod);
+
+        ConnectionStatusChanged?.Invoke(null, new ConnectionStatusEventArgs(Connectivity.ReaderConnectivityStatus.Connecting, connectionType));
+        
         // location must be null for bluetooth
         var locationId = discoveryMethod is DiscoveryType.Bluetooth
             ? null
-            : currentReader.LocationId;
+            : previousReader.LocationId;
+
+        var tcs = new TaskCompletionSource<Reader>();
 
         Reader reader = null;
         // discover readers
-        await GetReaders(new StripeDiscoveryConfiguration
+        await GetReaders(discoveryConfiguration = new StripeDiscoveryConfiguration
         {
-            DiscoveryMethod = discoveryMethod, 
-            IsSimulated = currentReader.Simulated,
+            DiscoveryMethod = discoveryMethod,
+            IsSimulated = previousReader.Simulated,
             LocationId = locationId
-        }, 
+        },
         async readers =>
         {
             if (readers == null)
             {
+                ConnectionStatusChanged?.Invoke(null, new ConnectionStatusEventArgs(Connectivity.ReaderConnectivityStatus.Disconnected, connectionType));
+
+                tcs.TrySetResult(null);
                 return;
             }
 
             // find reader
-            reader = readers.FirstOrDefault(x => x.SerialNumber == currentReader.SerialNumber);
+            reader = readers.FirstOrDefault(x => x.SerialNumber == previousReader.SerialNumber);
             if (reader == null)
             {
+                ConnectionStatusChanged?.Invoke(null, new ConnectionStatusEventArgs(Connectivity.ReaderConnectivityStatus.Disconnected, connectionType));
+
+                tcs.TrySetResult(null);
                 return;
             }
 
@@ -102,10 +120,40 @@ public partial class TerminalService : ITerminalService
                 Reader = reader,
                 CurrentStripeLocationId = reader.LocationId
             });
+
+            ConnectionStatusChanged?.Invoke(null, new ConnectionStatusEventArgs(GetConnectivityStatus(discoveryMethod), connectionType));
+
+            tcs.TrySetResult(reader);
         });
 
-        return reader;
+        if (!waitForResponse)
+        {
+            tcs.TrySetResult(reader);
+        }
+
+        return await tcs.Task;
     }
+
+    public Task<Reader> ReconnectReader() => ReconnectReader(currentReader, connectionType, false);
+
+    public virtual async Task<Reader> ReconnectToCachedReader()
+    {
+        if (readerCache == null)
+        {
+            return null;
+        }
+
+        var (lastReader, discoveryType) = await readerCache.GetLastConnectedReader();
+
+        if (lastReader == null || discoveryType == null)
+        {
+            return null;
+        }
+
+        return await ReconnectReader(lastReader, discoveryType, true);
+    }
+
+    public Connectivity.ReaderConnectivityStatus GetConnectivityStatus() => GetConnectivityStatus(connectionType);
 
     #region Events
 
@@ -122,6 +170,17 @@ public partial class TerminalService : ITerminalService
     private void OnConnectionStatusChanged(object sender, ConnectionStatusEventArgs e)
     {
         ConnectionStatusChanged?.Invoke(null, new ConnectionStatusEventArgs(e.Status, GetConnectionType()));
+    }
+
+    private ConnectionType GetConnectionType(DiscoveryType discoveryType)
+    {
+        return discoveryType switch
+        {
+            DiscoveryType.Bluetooth => ConnectionType.Bluetooth,
+            DiscoveryType.Local => ConnectionType.Local,
+            DiscoveryType.Internet => ConnectionType.Internet,
+            _ => ConnectionType.Internet
+        };
     }
 
     private ConnectionType GetConnectionType()

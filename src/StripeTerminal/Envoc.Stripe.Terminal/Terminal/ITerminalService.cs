@@ -25,6 +25,8 @@ public interface ITerminalService
     Task<Reader> ConnectReader(ReaderConnectionRequest request);
     Task<bool> DisconnectReader();
     Task<Reader> ReconnectReader();
+    Task<Reader> ReconnectReader(Reader previousReader, DiscoveryType? discoveryType, bool waitForResponse = false);
+    Task<Reader> ReconnectToCachedReader();
 
     Task<bool> RequestPermissions();
 

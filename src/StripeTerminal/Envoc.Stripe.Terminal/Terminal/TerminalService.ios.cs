@@ -19,7 +19,8 @@ public partial class TerminalService : SCPDiscoveryDelegate
         IConnectionTokenProviderService connectionTokenProviderService,
         SCPTerminalDelegate terminalDelegate,
         BluetoothConnector bluetoothConnector,
-        ReaderReconnector readerReconnector) : this(logger, connectionTokenProviderService)
+        ReaderReconnector readerReconnector,
+        IStripeReaderCache readerCache) : this(logger, connectionTokenProviderService, readerCache)
     {
         this.terminalDelegate = terminalDelegate; 
         this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger);
@@ -37,7 +38,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
     public bool IsTerminalInitialized => SCPTerminal.HasTokenProvider;
 
-    public ReaderConnectivityStatus GetConnectivityStatus()
+    public ReaderConnectivityStatus GetConnectivityStatus(DiscoveryType? discoveryType)
     {
         if (!IsTerminalConnected)
         {
@@ -56,12 +57,12 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
         if (Instance.ConnectionStatus == SCPConnectionStatus.Connected)
         {
-            if (connectionType == null)
+            if (discoveryType == null)
             {
                 return ReaderConnectivityStatus.Unknown;
             }
 
-            return connectionType switch
+            return discoveryType switch
             {
                 DiscoveryType.Bluetooth => ReaderConnectivityStatus.Bluetooth,
                 DiscoveryType.Internet => ReaderConnectivityStatus.Internet,
@@ -92,7 +93,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
     private void Error(string message, NSError error)
     {
-        logger?.Info(message, error);
+        logger?.Exception(message, error);
     }
 
     #region Discovery
@@ -239,7 +240,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
               readerReconnector
             );
 
-            Instance.ConnectBluetoothReader(selectedReader, @delegate: bluetoothConnector, connectionConfig: connectionConfig, (connectedReader, error) =>
+            Instance.ConnectBluetoothReader(selectedReader, @delegate: bluetoothConnector, connectionConfig: connectionConfig, async (connectedReader, error) =>
             {
                 if (error != null)
                 {
@@ -250,6 +251,8 @@ public partial class TerminalService : SCPDiscoveryDelegate
                 {
                     currentReader = request.Reader;
                     connectionType = discoveryConfiguration.DiscoveryMethod;
+                    await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
                     tcs.SetResult(connectedReader.FromNative());
                 }
                 else
@@ -262,7 +265,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
         {
             try
             {
-                Instance.ConnectInternetReader(selectedReader, connectionConfig: null, (connectedReader, error) =>
+                Instance.ConnectInternetReader(selectedReader, connectionConfig: null, async (connectedReader, error) =>
                 {
                     if (error != null)
                     {
@@ -273,6 +276,8 @@ public partial class TerminalService : SCPDiscoveryDelegate
                     {
                         currentReader = request.Reader;
                         connectionType = discoveryConfiguration.DiscoveryMethod;
+                        await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
                         tcs.SetResult(connectedReader.FromNative());
                     }
                     else
@@ -297,6 +302,8 @@ public partial class TerminalService : SCPDiscoveryDelegate
     public async Task<bool> DisconnectReader()
     {
         await Initialize();
+
+        await readerCache.SetLastConnectedReader(null, null);
 
         if (Instance.ConnectionStatus == SCPConnectionStatus.NotConnected)
         {

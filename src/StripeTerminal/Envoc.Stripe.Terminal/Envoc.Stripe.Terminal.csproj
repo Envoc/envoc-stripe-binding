@@ -11,9 +11,11 @@
 		<AssemblyName>Stripe.Terminal</AssemblyName>
 		<RootNamespace>StripeTerminal</RootNamespace>
 		<PackageId>Envoc.Stripe.Terminal</PackageId>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
+		<PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+		<PackageProjectUrl>https://github.com/Envoc/envoc-stripe-binding</PackageProjectUrl>
 		<CreatePackage>true</CreatePackage>
 		<PackOnBuild>true</PackOnBuild>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
