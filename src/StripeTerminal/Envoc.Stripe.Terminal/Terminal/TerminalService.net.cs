@@ -21,7 +21,7 @@ public partial class TerminalService
         }
     }
 
-    public ReaderConnectivityStatus GetConnectivityStatus()
+    public ReaderConnectivityStatus GetConnectivityStatus(DiscoveryType? discoveryType)
     {
         NotImplementedCheck();
         return ReaderConnectivityStatus.Unknown;

@@ -29,7 +29,8 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         IStripeTerminalLogger logger,
         IConnectionTokenProviderService connectionTokenProviderService, 
         BluetoothConnector bluetoothConnector, 
-        ReaderReconnector readerReconnector) : this(logger, connectionTokenProviderService)
+        ReaderReconnector readerReconnector,
+        IStripeReaderCache readerCache) : this(logger, connectionTokenProviderService, readerCache)
     {
         this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger);
         this.readerReconnector = readerReconnector ?? new ReaderReconnector();
@@ -73,7 +74,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         return true;
     }
 
-    public ReaderConnectivityStatus GetConnectivityStatus()
+    public ReaderConnectivityStatus GetConnectivityStatus(DiscoveryType? discoveryType)
     {
         if (!IsTerminalConnected)
         {
@@ -92,12 +93,12 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
         if (Instance.ConnectionStatus == ConnectionStatus.Connected)
         {
-            if (connectionType == null)
+            if (discoveryType == null)
             {
                 return ReaderConnectivityStatus.Unknown;
             }
 
-            return connectionType switch
+            return discoveryType switch
             {
                 DiscoveryType.Bluetooth => ReaderConnectivityStatus.Bluetooth,
                 DiscoveryType.Internet => ReaderConnectivityStatus.Internet,
@@ -255,7 +256,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
               readerReconnector
             );
 
-            Instance.ConnectBluetoothReader(selectedReader, config: connectionConfig, listener: bluetoothConnector, new ConnectionCallback((connectedReader, error) =>
+            Instance.ConnectBluetoothReader(selectedReader, config: connectionConfig, listener: bluetoothConnector, new ConnectionCallback(async (connectedReader, error) =>
             {
                 if (error != null)
                 {
@@ -266,6 +267,8 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
                 {
                     currentReader = request.Reader;
                     connectionType = discoveryConfiguration.DiscoveryMethod;
+                    await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
                     tcs.SetResult(connectedReader.FromNative());
                 }
                 else
@@ -280,7 +283,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
             try
             {
-                Instance.ConnectInternetReader(selectedReader, config: connectionConfig, new ConnectionCallback((connectedReader, error) =>
+                Instance.ConnectInternetReader(selectedReader, config: connectionConfig, new ConnectionCallback(async (connectedReader, error) =>
                 {
                     if (error != null)
                     {
@@ -291,6 +294,8 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
                     {
                         currentReader = request.Reader;
                         connectionType = discoveryConfiguration.DiscoveryMethod;
+                        await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
                         tcs.SetResult(connectedReader.FromNative());             
                     }
                     else
@@ -318,6 +323,8 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         {
             return false;
         }
+
+        await readerCache.SetLastConnectedReader(null, null);
 
         if (Instance.ConnectionStatus == ConnectionStatus.NotConnected)
         {

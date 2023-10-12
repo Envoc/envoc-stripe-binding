@@ -23,6 +23,11 @@ public static partial class Extensions
         logger.Info(message, parameters);
     }
 
+    public static void Exception(this IStripeTerminalLogger logger, string message, NSError error)
+    {
+        logger.Exception(message, new NSErrorException(error));
+    }
+
     public static Dictionary<string, string> ToDictionary(this NSDictionary<NSString, NSString> nsDictionary) =>
         nsDictionary.ToDictionary<KeyValuePair<NSString, NSString>, string, string>
             (item => item.Key, item => item.Value);
