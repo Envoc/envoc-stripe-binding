@@ -1,12 +1,20 @@
 ﻿<metadata>
 	<remove-node path="/api/package[@name='com.stripe.stripeterminal.dagger']"/>
 
+	<remove-node path="/api/package[starts-with(@name, 'com.google')]" />
+	<remove-node path="/api/package[starts-with(@name, 'kotlin')]" />
+	<remove-node path="/api/package[starts-with(@name, 'org.jetbrains')]" />
+	<remove-node path="/api/package[starts-with(@name, 'dagger')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.e.c')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.s.')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.mastercard')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.stripe.cots')]" />
+
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='get']" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='methodFromString']" name="managedReturn">Com.Stripe.Core.Aidlrpc.IAidlMethods</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='serviceFromString']" name="managedReturn">Com.Stripe.Core.Aidlrpc.IAidlServices</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='createFromParcel' and count(parameter)=1 and parameter[1][@type='android.os.Parcel']]" name="managedReturn">Java.Lang.Object?</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='newArray' and count(parameter)=1 and parameter[1][@type='int']]" name="managedReturn">Java.Lang.Object[]</attr>
-
 
 	<attr path="/api/package[starts-with(@name, 'com.stripe.stripeterminal')]/*/method[@name='toJson']/parameter[2]" name="managedType">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='fromJson']" name="managedReturn">Java.Lang.Object</attr>
