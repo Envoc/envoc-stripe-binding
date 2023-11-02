@@ -24,5 +24,6 @@ public enum DiscoveryType
 {
     Bluetooth,
     Internet,
-    Local
+    Local,
+    Handoff,
 }

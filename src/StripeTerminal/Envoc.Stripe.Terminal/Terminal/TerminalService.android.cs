@@ -14,7 +14,12 @@ using Models = Com.Stripe.Stripeterminal.External.Models;
 
 namespace StripeTerminal;
 
-public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDiscoveryListener
+public partial interface ITerminalService
+{
+    Task GetHandoffReaders(Action<IList<Reader>> readers, bool simulated = false);
+}
+
+public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDiscoveryListener, IHandoffReaderListener
 {
     private static ICancelable discoveryTask = null;
     private static ICancelable paymentTask = null;
@@ -27,8 +32,8 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     public TerminalService(
         IStripeTerminalLogger logger,
-        IConnectionTokenProviderService connectionTokenProviderService, 
-        BluetoothConnector bluetoothConnector, 
+        IConnectionTokenProviderService connectionTokenProviderService,
+        BluetoothConnector bluetoothConnector,
         ReaderReconnector readerReconnector,
         IStripeReaderCache readerCache) : this(logger, connectionTokenProviderService, readerCache)
     {
@@ -103,6 +108,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
                 DiscoveryType.Bluetooth => ReaderConnectivityStatus.Bluetooth,
                 DiscoveryType.Internet => ReaderConnectivityStatus.Internet,
                 DiscoveryType.Local => ReaderConnectivityStatus.Local,
+                DiscoveryType.Handoff => ReaderConnectivityStatus.Handoff,
                 _ => ReaderConnectivityStatus.Unknown
             };
         }
@@ -111,6 +117,19 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
     }
 
     #region Discovery
+
+    public Task GetHandoffReaders(Action<IList<Reader>> readers, bool simulated = false)
+    {
+        discoveryConfiguration = new StripeDiscoveryConfiguration
+        {
+            TimeOut = 15,
+            DiscoveryMethod = DiscoveryType.Handoff,
+            IsSimulated = simulated
+        };
+
+        return GetReaders(discoveryConfiguration, readers);
+    }
+
     private Task DiscoverReaders(StripeDiscoveryConfiguration config)
     {
         var discoveryMethod = config.DiscoveryMethod switch
@@ -118,6 +137,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             DiscoveryType.Bluetooth => DiscoveryMethod.BluetoothScan,
             DiscoveryType.Internet => DiscoveryMethod.Internet,
             DiscoveryType.Local => DiscoveryMethod.LocalMobile,
+            DiscoveryType.Handoff => DiscoveryMethod.Handoff,
             _ => throw new NotImplementedException(),
         };
 
@@ -194,7 +214,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         var reader = request.Reader;
         if (reader == null || lastRetrievedReaders == null || !lastRetrievedReaders.Any())
         {
-            Info("reader_connection_failure", new ()
+            Info("reader_connection_failure", new()
             {
                 ["reader_label"] = reader?.Label ?? StripeTerminalLoggerConfiguration.NullValueReplacement,
                 ["readers_count"] = lastRetrievedReaders?.Count ?? 0
@@ -206,7 +226,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         var selectedReader = lastRetrievedReaders.FirstOrDefault(x => x.SerialNumber == reader.SerialNumber);
         if (selectedReader == null)
         {
-            Info("reader_connection_mismatch", new ()
+            Info("reader_connection_mismatch", new()
             {
                 ["reader_label"] = reader.Label,
                 ["readers_count"] = lastRetrievedReaders.Count
@@ -296,7 +316,39 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
                         connectionType = discoveryConfiguration.DiscoveryMethod;
                         await readerCache.SetLastConnectedReader(currentReader, connectionType);
 
-                        tcs.SetResult(connectedReader.FromNative());             
+                        tcs.SetResult(connectedReader.FromNative());
+                    }
+                    else
+                    {
+                        tcs.SetResult(null);
+                    }
+                }));
+            }
+            catch (Exception ex)
+            {
+                tcs.SetResult(null);
+            }
+        }
+        else if (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Handoff)
+        {
+            var connectionConfig = new ConnectionConfiguration.HandoffConnectionConfiguration();
+
+            try
+            {
+                Instance.ConnectHandoffReader(selectedReader, config: connectionConfig, listener: this, new ConnectionCallback(async (connectedReader, error) =>
+                {
+                    if (error != null)
+                    {
+                        Exception("reader_handoff_connection_error", error);
+                    }
+
+                    if (connectedReader != null)
+                    {
+                        currentReader = request.Reader;
+                        connectionType = discoveryConfiguration.DiscoveryMethod;
+                        await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
+                        tcs.SetResult(connectedReader.FromNative());
                     }
                     else
                     {
@@ -430,7 +482,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             }
         }
 
-        return false; 
+        return false;
     }
 
     #endregion
@@ -664,6 +716,16 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
     public void OnUpdateDiscoveredReaders(IList<Com.Stripe.Stripeterminal.External.Models.Reader> readers)
     {
         OnDiscoveredReaders(readers?.Count, readers, Instance.ConnectedReader);
+    }
+
+    #endregion
+
+    #region IHandoffReaderListener
+
+    public void OnReportReaderEvent(global::Com.Stripe.Stripeterminal.External.Models.ReaderEvent @event)
+    {
+        var message = @event.Name();
+        logger?.Trace(StripeTerminalConfiguration.LoggerTracePrefix + $"{nameof(Models.ReaderEvent)}: {@event} : {message}");
     }
 
     #endregion

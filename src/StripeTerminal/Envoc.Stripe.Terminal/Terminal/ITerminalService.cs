@@ -3,7 +3,7 @@ using StripeTerminal.Payment;
 
 namespace StripeTerminal;
 
-public interface ITerminalService
+public partial interface ITerminalService
 {
     event EventHandler<RefreshReaderEventArgs> RefreshReader;
     event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
