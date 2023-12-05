@@ -15,4 +15,5 @@ public enum ReaderConnectivityStatus
     Bluetooth = 1 << 2,
     Internet = 1 << 3,
     Local = 1 << 4,
+    Handoff = 1 << 5,
 }

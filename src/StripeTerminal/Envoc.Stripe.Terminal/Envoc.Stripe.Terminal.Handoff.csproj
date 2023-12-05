@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net7.0-android</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<!--<Nullable>enable</Nullable>-->
+
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AssemblyName>Stripe.Terminal</AssemblyName>
+		<RootNamespace>StripeTerminal</RootNamespace>
+		<PackageId>Envoc.Stripe.Terminal.Handoff</PackageId>
+		<Version>1.0.1</Version>
+		<Authors>Envoc</Authors>
+		<Company>Envoc</Company>
+		<PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+		<PackageProjectUrl>https://github.com/Envoc/envoc-stripe-binding</PackageProjectUrl>
+		<CreatePackage>true</CreatePackage>
+		<PackOnBuild>true</PackOnBuild>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<DefineConstants>$(DefineConstants);APPONDEVICE</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
+		<PackageReference Include="Envoc.Stripe.Terminal.iOS" Version="2.19.2" />
+		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />-->
+	</ItemGroup>
+
+	<!-- Android app -->
+	<ItemGroup Condition="$(TargetFramework.Contains('-android')) AND $(DefineConstants.Contains(APPONDEVICE)) != true">
+		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.3" />
+		<PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.6.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.10.1.0" />
+		<PackageReference Include="Xamarin.AndroidX.Activity" Version="1.7.1" />
+		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.7.1" />
+		<PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.1.4" />
+		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive" Version="9999.0.0" />
+	</ItemGroup>
+
+	<!-- Android app on S700 -->
+	<ItemGroup Condition="$(TargetFramework.Contains('-android')) AND $(DefineConstants.Contains(APPONDEVICE)) == true">
+		<PackageReference Include="Envoc.Stripe.Terminal.Handoff.Android" Version="2.19.0" />
+		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.3" />
+		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive" Version="9999.0.0" />
+	</ItemGroup>
+
+	<!--<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
+		--><!--<ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />--><!--
+		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.3" />
+		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
+		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive">
+			<Version>9999.0.0</Version>
+		</PackageReference>
+	</ItemGroup>-->
+
+	<!-- Android -->
+	<ItemGroup Condition="$(TargetFramework.Contains('-android')) != true">
+		<Compile Remove="**\**\*.android.cs" />
+		<Compile Remove="**\Android\*.cs" />
+		<None Include="**\**\*.android.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+	</ItemGroup>
+
+	<!-- iOS -->
+	<ItemGroup Condition="$(TargetFramework.Contains('-ios')) != true">
+		<Compile Remove="**\**\*.ios.cs" />
+		<Compile Remove="**\iOS\*.cs" />
+		<None Include="**\**\*.ios.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+	</ItemGroup>
+
+	<!-- .NET -->
+	<ItemGroup Condition="!($(TargetFramework.StartsWith('net')) == true AND $(TargetFramework.EndsWith('.0')) == true AND $(TargetFramework.Contains('-')) != true)">
+		<!-- e.g net6.0 or net7.0 -->
+		<Compile Remove="**\*.net.cs" />
+		<None Include="**\*.net.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+	</ItemGroup>
+	
+</Project>

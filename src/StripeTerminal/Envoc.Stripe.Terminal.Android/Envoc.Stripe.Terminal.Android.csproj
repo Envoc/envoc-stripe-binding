@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<EmbedAllSources>True</EmbedAllSources>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Android</PackageId>
@@ -15,7 +15,7 @@
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>full</DebugType>
@@ -34,7 +34,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="XamPrototype.Android.MavenBinding.Tasks" Version="0.0.11" />
 
@@ -123,7 +123,7 @@
 		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-annotations" Version="2.14.1" Bind="False" />
 
 		<None Include="$(CacheDirectory)/central/com.jaredrummler/android-device-names/1.1.9/com.jaredrummler_android-device-names.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
-		
+
 		<None Include="$(CacheDirectory)/central/com.scottyab/rootbeer-lib/0.0.9/com.scottyab_rootbeer-lib.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
 
