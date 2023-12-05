@@ -11,7 +11,8 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.iOS</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.iOS</PackageId>
-		<Version>2.19.2</Version>
+		<Version>3.2.0</Version>
+		<StripeVersion>3.2.0</StripeVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>
@@ -22,7 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<NativeReference Include="..\..\..\lib\iOS\StripeTerminal\2.19.1\StripeTerminal.xcframework\ios-arm64\StripeTerminal.framework">
+		<NativeReference Include="..\..\..\lib\iOS\StripeTerminal\$(StripeVersion)\StripeTerminal.xcframework\ios-arm64\StripeTerminal.framework">
 			<Kind>Framework</Kind>
 			<Frameworks>UIKit Foundation CoreBluetooth ExternalAccessory</Frameworks>
 			<LinkerFlags>
