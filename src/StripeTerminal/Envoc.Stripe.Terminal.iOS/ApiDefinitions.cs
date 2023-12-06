@@ -87,10 +87,10 @@ namespace StripeTerminal
 
 
     // typedef void (^SCPConfirmPaymentIntentCompletionBlock)(SCPPaymentIntent * _Nullable, SCPConfirmPaymentIntentError * _Nullable);
-    delegate void SCPConfirmPaymentIntentCompletionBlock([NullAllowed] SCPPaymentIntent arg0, [NullAllowed] SCPConfirmPaymentIntentError error);
+    delegate void SCPConfirmPaymentIntentCompletionBlock([NullAllowed] SCPPaymentIntent paymentIntent, [NullAllowed] SCPConfirmPaymentIntentError error);
 
     // typedef void (^SCPConfirmRefundCompletionBlock)(SCPRefund * _Nullable, SCPConfirmRefundError * _Nullable);
-    delegate void SCPConfirmRefundCompletionBlock([NullAllowed] SCPRefund arg0, [NullAllowed] SCPConfirmRefundError error);
+    delegate void SCPConfirmRefundCompletionBlock([NullAllowed] SCPRefund refund, [NullAllowed] SCPConfirmRefundError error);
 
     /*
 	[Obsolete]
@@ -121,12 +121,12 @@ namespace StripeTerminal
 
     // audit-objc-generics: @interface SCPBuilder<__covariant T> : NSObject
     [BaseType(typeof(NSObject))]
-    interface SCPBuilder
+    interface SCPBuilder<T>
     {
         // -(T _Nullable)build:(NSError * _Nullable * _Nullable)error;
         [Export("build:")]
         [return: NullAllowed]
-        NSObject Build([NullAllowed] out NSError error);
+        T Build([NullAllowed] out NSError error);
     }
 
     // @interface SCPConnectionConfiguration : NSObject
@@ -232,7 +232,7 @@ namespace StripeTerminal
 	}
 
     // @interface SCPCartBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPCart>))]
     [DisableDefaultCtor]
     interface SCPCartBuilder
     {
@@ -259,7 +259,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPCartLineItemBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPCartLineItem>))]
     [DisableDefaultCtor]
     interface SCPCartLineItemBuilder
     {
@@ -338,7 +338,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPCollectConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPCollectConfiguration>))]
     interface SCPCollectConfigurationBuilder
     {
         // -(SCPCollectConfigurationBuilder * _Nonnull)setSkipTipping:(BOOL)skipTipping;
@@ -515,7 +515,7 @@ namespace StripeTerminal
 	}
 
     // @interface SCPCardPresentParametersBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPCardPresentParameters>))]
     interface SCPCardPresentParametersBuilder
     {
         // -(SCPCardPresentParametersBuilder * _Nonnull)setRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization;
@@ -643,7 +643,7 @@ namespace StripeTerminal
 	}
 
     // @interface SCPPaymentIntentParametersBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPPaymentIntentParameters>))]
     [DisableDefaultCtor]
     interface SCPPaymentIntentParametersBuilder
     {
@@ -727,7 +727,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPRefundConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPRefundConfiguration>))]
     interface SCPRefundConfigurationBuilder
     {
         // -(SCPRefundConfigurationBuilder * _Nonnull)setEnableCustomerCancellation:(BOOL)enableCustomerCancellation;
@@ -838,7 +838,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPRefundParametersBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPRefundParameters>))]
     [DisableDefaultCtor]
     interface SCPRefundParametersBuilder
     {
@@ -882,7 +882,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPSetupIntentConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPSetupIntentConfiguration>))]
     interface SCPSetupIntentConfigurationBuilder
     {
         // -(SCPSetupIntentConfigurationBuilder * _Nonnull)setEnableCustomerCancellation:(BOOL)enableCustomerCancellation;
@@ -1285,7 +1285,7 @@ namespace StripeTerminal
 	}
 
     // @interface SCPBluetoothConnectionConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPBluetoothConnectionConfiguration>))]
     interface SCPBluetoothConnectionConfigurationBuilder
     {
         // -(instancetype _Nonnull)initWithLocationId:(NSString * _Nonnull)locationId __attribute__((objc_designated_initializer));
@@ -1324,13 +1324,13 @@ namespace StripeTerminal
     }
 
     // @interface SCPBluetoothProximityDiscoveryConfiguration : NSObject <SCPDiscoveryConfiguration>
-    [BaseType(typeof(NSObject))]
+    [BaseType(typeof(SCPDiscoveryConfiguration))]
     interface SCPBluetoothProximityDiscoveryConfiguration : ISCPDiscoveryConfiguration
     {
     }
 
     // @interface SCPBluetoothProximityDiscoveryConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPDiscoveryConfiguration>))]
     interface SCPBluetoothProximityDiscoveryConfigurationBuilder
     {
         // -(SCPBluetoothProximityDiscoveryConfigurationBuilder * _Nonnull)setSimulated:(BOOL)simulated;
@@ -1339,7 +1339,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPBluetoothScanDiscoveryConfiguration : NSObject <SCPDiscoveryConfiguration>
-    [BaseType(typeof(NSObject))]
+    [BaseType(typeof(SCPDiscoveryConfiguration))]
     interface SCPBluetoothScanDiscoveryConfiguration : ISCPDiscoveryConfiguration
     {
         // @property (readonly, assign, nonatomic) NSUInteger timeout;
@@ -1348,7 +1348,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPBluetoothScanDiscoveryConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPDiscoveryConfiguration>))]
     interface SCPBluetoothScanDiscoveryConfigurationBuilder
     {
         // -(SCPBluetoothScanDiscoveryConfigurationBuilder * _Nonnull)setSimulated:(BOOL)simulated;
@@ -1716,7 +1716,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPCreateConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPCreateConfiguration>))]
     interface SCPCreateConfigurationBuilder
     {
         // -(SCPCreateConfigurationBuilder * _Nonnull)setOfflineBehavior:(SCPOfflineBehavior)offlineBehavior;
@@ -1765,7 +1765,7 @@ namespace StripeTerminal
 
 
     // @interface SCPInternetConnectionConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPInternetConnectionConfiguration>))]
     interface SCPInternetConnectionConfigurationBuilder
     {
         // -(SCPInternetConnectionConfigurationBuilder * _Nonnull)setFailIfInUse:(BOOL)failIfInUse;
@@ -1778,7 +1778,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPInternetDiscoveryConfiguration : NSObject <SCPDiscoveryConfiguration>
-    [BaseType(typeof(NSObject))]
+    [BaseType(typeof(SCPDiscoveryConfiguration))]
     interface SCPInternetDiscoveryConfiguration : ISCPDiscoveryConfiguration
     {
         // @property (readonly, copy, nonatomic) NSString * _Nullable locationId;
@@ -1787,7 +1787,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPInternetDiscoveryConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPDiscoveryConfiguration>))]
     interface SCPInternetDiscoveryConfigurationBuilder
     {
         // -(SCPInternetDiscoveryConfigurationBuilder * _Nonnull)setSimulated:(BOOL)simulated;
@@ -1865,7 +1865,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPLocalMobileConnectionConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPLocalMobileConnectionConfiguration>))]
     [DisableDefaultCtor]
     interface SCPLocalMobileConnectionConfigurationBuilder
     {
@@ -1896,13 +1896,13 @@ namespace StripeTerminal
     }
 
     // @interface SCPLocalMobileDiscoveryConfiguration : NSObject <SCPDiscoveryConfiguration>
-    [BaseType(typeof(NSObject))]
+    [BaseType(typeof(SCPDiscoveryConfiguration))]
     interface SCPLocalMobileDiscoveryConfiguration : ISCPDiscoveryConfiguration
     {
     }
 
     // @interface SCPLocalMobileDiscoveryConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPDiscoveryConfiguration>))]
     interface SCPLocalMobileDiscoveryConfigurationBuilder
     {
         // -(SCPLocalMobileDiscoveryConfigurationBuilder * _Nonnull)setSimulated:(BOOL)simulated;
@@ -2432,7 +2432,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPSetupIntentParametersBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPSetupIntentParameters>))]
     interface SCPSetupIntentParametersBuilder
     {
         // -(SCPSetupIntentParametersBuilder * _Nonnull)setCustomer:(NSString * _Nullable)customer;
@@ -2502,7 +2502,7 @@ namespace StripeTerminal
     }
 
     // @interface SCPTippingConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder))]
+    [BaseType(typeof(SCPBuilder<SCPTippingConfiguration>))]
     interface SCPTippingConfigurationBuilder
     {
         // -(instancetype _Nonnull)setEligibleAmount:(NSInteger)eligibleAmount;
