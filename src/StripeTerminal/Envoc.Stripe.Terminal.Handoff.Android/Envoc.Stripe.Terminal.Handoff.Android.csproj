@@ -10,8 +10,9 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Handoff.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Handoff.Android</PackageId>
-		<Version>2.23.3</Version>
-		<StripeVersion>2.23.2</StripeVersion>
+		<Version>3.2.0</Version>
+		<StripeVersion>3.2.0</StripeVersion>
+		<KtorVersion>2.3.4</KtorVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>
@@ -40,13 +41,13 @@
 		<PackageReference Include="XamPrototype.Android.MavenBinding.Tasks" Version="0.0.11" />
 
 		<!-- Android nugets-->
-		<PackageReference Include="Xamarin.Android.ReactiveX.RxJava3.RxJava" Version="3.1.7" />
+		<PackageReference Include="Xamarin.Android.ReactiveX.RxJava3.RxJava" Version="3.1.8" />
 		<!--<PackageReference Include="Xamarin.Android.ReactiveX.RxAndroid" Version="2.1.1.5" JavaArtifact="io.reactivex.rxjava3:rxandroid" JavaVersion="3.0.2" />-->
 
 		<PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.7.0" />
 		<PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.7.0" />
 		<PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.10.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.6.2" JavaArtifact="androidx.lifecycle:lifecycle-process" JavaVersion="2.6.1"/>
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.6.2" JavaArtifact="androidx.lifecycle:lifecycle-process" JavaVersion="2.6.2"/>
 		<!--<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Ktx" Version="2.6.1" />-->
 		<PackageReference Include="Xamarin.AndroidX.Room.Runtime" Version="2.5.2" />
 		<PackageReference Include="Xamarin.AndroidX.Room.Room.Ktx" Version="2.5.2" />
@@ -100,10 +101,6 @@
 		<None Include="$(CacheDirectory)/central/com.stripe/stripeterminal-internal-common/$(StripeVersion)/com.stripe_stripeterminal-internal-common.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 		<None Include="$(CacheDirectory)/central/com.stripe/stripeterminal-internal-models/$(StripeVersion)/com.stripe_stripeterminal-internal-models.aar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<KtorVersion>2.3.2</KtorVersion>
-	</PropertyGroup>
 	
 	<ItemGroup>
 		<!-- Manually added dependencies without nugets -->
@@ -117,7 +114,7 @@
 		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm" Version="1.5.1" Bind="False" />
 		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-json" Version="1.5.1" Bind="False" />
 		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm" Version="1.5.1" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j" Version="1.7.1" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j" Version="1.7.2" Bind="False" />
 		
 		<!--<AndroidMavenLibrary Include="com.squareup.okio:okio-jvm" Version="3.4.0" Bind="False" />-->
 		<AndroidMavenLibrary Include="com.squareup.tape2:tape" Version="2.0.0-beta1" Bind="False" />
