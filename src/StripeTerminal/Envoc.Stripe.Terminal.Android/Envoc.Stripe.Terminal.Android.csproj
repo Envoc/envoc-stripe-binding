@@ -10,8 +10,8 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Android</PackageId>
-		<Version>3.2.0</Version>
-		<StripeVersion>3.2.0</StripeVersion>
+		<Version>3.2.1.2</Version>
+		<StripeVersion>3.2.1</StripeVersion>
 		<KtorVersion>2.3.4</KtorVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
@@ -96,7 +96,7 @@
 
 	<ItemGroup>
 		<!-- Stripe files -->
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(StripeVersion)" Pack="True" />
+		<!--<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(StripeVersion)" Pack="True" />-->
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-core" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-handoffclient" Version="$(StripeVersion)" Pack="True" />
