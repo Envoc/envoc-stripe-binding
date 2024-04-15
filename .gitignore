@@ -64,3 +64,5 @@ packages/
 *.orig
 
 .mfractor
+
+lib/

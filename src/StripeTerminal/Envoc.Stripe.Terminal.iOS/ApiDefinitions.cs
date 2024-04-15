@@ -85,21 +85,11 @@ namespace StripeTerminal
     // typedef void (^SCPErrorCompletionBlock)(NSError * _Nullable);
     delegate void SCPErrorCompletionBlock([NullAllowed] NSError error);
 
-
     // typedef void (^SCPConfirmPaymentIntentCompletionBlock)(SCPPaymentIntent * _Nullable, SCPConfirmPaymentIntentError * _Nullable);
     delegate void SCPConfirmPaymentIntentCompletionBlock([NullAllowed] SCPPaymentIntent paymentIntent, [NullAllowed] SCPConfirmPaymentIntentError error);
 
     // typedef void (^SCPConfirmRefundCompletionBlock)(SCPRefund * _Nullable, SCPConfirmRefundError * _Nullable);
     delegate void SCPConfirmRefundCompletionBlock([NullAllowed] SCPRefund refund, [NullAllowed] SCPConfirmRefundError error);
-
-    /*
-	[Obsolete]
-    // typedef void (^SCPProcessPaymentCompletionBlock)(SCPPaymentIntent * _Nullable, SCPProcessPaymentError * _Nullable);
-    delegate void SCPProcessPaymentCompletionBlock([NullAllowed] SCPPaymentIntent paymentIntent, [NullAllowed] SCPProcessPaymentError error);
-
-    // typedef void (^SCPProcessRefundCompletionBlock)(SCPRefund * _Nullable, SCPProcessRefundError * _Nullable);
-    delegate void SCPProcessRefundCompletionBlock([NullAllowed] SCPRefund refund, [NullAllowed] SCPProcessRefundError error);
-	*/
 
     // typedef void (^SCPRefundCompletionBlock)(SCPRefund * _Nullable, NSError * _Nullable);
     delegate void SCPRefundCompletionBlock([NullAllowed] SCPRefund refund, [NullAllowed] NSError error);
@@ -118,6 +108,12 @@ namespace StripeTerminal
 
     // typedef void (^SCPReaderCompletionBlock)(SCPReader * _Nullable, NSError * _Nullable);
     delegate void SCPReaderCompletionBlock([NullAllowed] SCPReader reader, [NullAllowed] NSError error);
+
+    // typedef void (^SCPCollectInputsCompletionBlock)(NSArray<SCPCollectInputsResult *> * _Nullable, NSError * _Nullable);
+    delegate void SCPCollectInputsCompletionBlock([NullAllowed] SCPCollectInputsResult[] collectInputsResults, [NullAllowed] NSError error);
+
+    // typedef void (^SCPReaderSettingsCompletionBlock)(SCPReaderSettings * _Nullable, NSError * _Nullable);
+    delegate void SCPReaderSettingsCompletionBlock([NullAllowed] SCPReaderSettings settings, [NullAllowed] NSError error);
 
     // audit-objc-generics: @interface SCPBuilder<__covariant T> : NSObject
     [BaseType(typeof(NSObject))]
@@ -144,92 +140,71 @@ namespace StripeTerminal
 		// @required -(void)reader:(SCPReader * _Nonnull)reader didReportAvailableUpdate:(SCPReaderSoftwareUpdate * _Nonnull)update;
 		[Abstract]
 		[Export ("reader:didReportAvailableUpdate:")]
-		void Reader (SCPReader reader, SCPReaderSoftwareUpdate update);
+		void AvailableUpdate(SCPReader reader, SCPReaderSoftwareUpdate update);
 
 		// @required -(void)reader:(SCPReader * _Nonnull)reader didStartInstallingUpdate:(SCPReaderSoftwareUpdate * _Nonnull)update cancelable:(SCPCancelable * _Nullable)cancelable;
 		[Abstract]
 		[Export ("reader:didStartInstallingUpdate:cancelable:")]
-		void Reader (SCPReader reader, SCPReaderSoftwareUpdate update, [NullAllowed] SCPCancelable cancelable);
+		void StartInstallingUpdate(SCPReader reader, SCPReaderSoftwareUpdate update, [NullAllowed] SCPCancelable cancelable);
 
 		// @required -(void)reader:(SCPReader * _Nonnull)reader didReportReaderSoftwareUpdateProgress:(float)progress __attribute__((swift_name("reader(_:didReportReaderSoftwareUpdateProgress:)")));
 		[Abstract]
 		[Export ("reader:didReportReaderSoftwareUpdateProgress:")]
-		void Reader (SCPReader reader, float progress);
+		void SoftwareUpdateProgress(SCPReader reader, float progress);
 
 		// @required -(void)reader:(SCPReader * _Nonnull)reader didFinishInstallingUpdate:(SCPReaderSoftwareUpdate * _Nullable)update error:(NSError * _Nullable)error __attribute__((swift_name("reader(_:didFinishInstallingUpdate:error:)")));
 		[Abstract]
 		[Export ("reader:didFinishInstallingUpdate:error:")]
-		void Reader (SCPReader reader, [NullAllowed] SCPReaderSoftwareUpdate update, [NullAllowed] NSError error);
+		void FinishInstallingUpdate(SCPReader reader, [NullAllowed] SCPReaderSoftwareUpdate update, [NullAllowed] NSError error);
 
 		// @required -(void)reader:(SCPReader * _Nonnull)reader didRequestReaderInput:(SCPReaderInputOptions)inputOptions __attribute__((swift_name("reader(_:didRequestReaderInput:)")));
 		[Abstract]
 		[Export ("reader:didRequestReaderInput:")]
-		void Reader (SCPReader reader, SCPReaderInputOptions inputOptions);
+		void ReaderInput(SCPReader reader, SCPReaderInputOptions inputOptions);
 
 		// @required -(void)reader:(SCPReader * _Nonnull)reader didRequestReaderDisplayMessage:(SCPReaderDisplayMessage)displayMessage __attribute__((swift_name("reader(_:didRequestReaderDisplayMessage:)")));
 		[Abstract]
 		[Export ("reader:didRequestReaderDisplayMessage:")]
-		void Reader (SCPReader reader, SCPReaderDisplayMessage displayMessage);
+		void ReaderDisplayMessage(SCPReader reader, SCPReaderDisplayMessage displayMessage);
 
 		// @optional -(void)reader:(SCPReader * _Nonnull)reader didReportReaderEvent:(SCPReaderEvent)event info:(NSDictionary * _Nullable)info __attribute__((swift_name("reader(_:didReportReaderEvent:info:)")));
 		[Export ("reader:didReportReaderEvent:info:")]
-		void Reader (SCPReader reader, SCPReaderEvent @event, [NullAllowed] NSDictionary info);
+		void ReaderEvent(SCPReader reader, SCPReaderEvent @event, [NullAllowed] NSDictionary info);
 
 		// @optional -(void)reader:(SCPReader * _Nonnull)reader didReportBatteryLevel:(float)batteryLevel status:(SCPBatteryStatus)status isCharging:(BOOL)isCharging __attribute__((swift_name("reader(_:didReportBatteryLevel:status:isCharging:)")));
 		[Export ("reader:didReportBatteryLevel:status:isCharging:")]
-		void Reader (SCPReader reader, float batteryLevel, SCPBatteryStatus status, bool isCharging);
+		void BatteryLevel(SCPReader reader, float batteryLevel, SCPBatteryStatus status, bool isCharging);
 
 		// @optional -(void)readerDidReportLowBatteryWarning:(SCPReader * _Nonnull)reader __attribute__((swift_name("readerDidReportLowBatteryWarning(_:)")));
 		[Export ("readerDidReportLowBatteryWarning:")]
-		void ReaderDidReportLowBatteryWarning (SCPReader reader);
-	}
+		void LowBatteryWarning (SCPReader reader);
 
-	// @interface SCPCartLineItem : NSObject
-	[BaseType (typeof(NSObject))]
-	interface SCPCartLineItem : INativeObject
+        // @optional -(void)reader:(SCPReader * _Nonnull)reader didDisconnect:(SCPDisconnectReason)reason __attribute__((swift_name("reader(_:didDisconnect:)")));
+        [Export("reader:didDisconnect:")]
+        void Disconnect(SCPReader reader, SCPDisconnectReason reason);
+    }
+
+    // @interface SCPCart : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPCart
     {
-		// @property (assign, readwrite, nonatomic) NSInteger quantity;
-		[Export ("quantity")]
-		nint Quantity { get; set; }
-
-		// @property (copy, nonatomic) NSString * _Nonnull displayName;
-		[Export ("displayName")]
-		string DisplayName { get; set; }
-
-		// @property (assign, readwrite, nonatomic) NSInteger amount;
-		[Export ("amount")]
-		nint Amount { get; set; }
-
-		// -(instancetype _Nonnull)initWithDisplayName:(NSString * _Nonnull)displayName quantity:(NSInteger)quantity amount:(NSInteger)amount;
-		[Export ("initWithDisplayName:quantity:amount:")]
-		NativeHandle Constructor (string displayName, nint quantity, nint amount);
-	}
-
-	// @interface SCPCart : NSObject
-	[BaseType (typeof(NSObject))]
-	[DisableDefaultCtor]
-	interface SCPCart
-	{
         // @property (readonly, nonatomic, strong) NSArray<SCPCartLineItem *> * _Nonnull lineItems;
         [Export("lineItems", ArgumentSemantic.Strong)]
         SCPCartLineItem[] LineItems { get; }
 
         // @property (assign, readwrite, nonatomic) NSInteger tax;
-        [Export ("tax")]
-		nint Tax { get; set; }
+        [Export("tax")]
+        nint Tax { get; set; }
 
-		// @property (assign, readwrite, nonatomic) NSInteger total;
-		[Export ("total")]
-		nint Total { get; set; }
+        // @property (assign, readwrite, nonatomic) NSInteger total;
+        [Export("total")]
+        nint Total { get; set; }
 
-		// @property (copy, nonatomic) NSString * _Nonnull currency;
-		[Export ("currency")]
-		string Currency { get; set; }
-
-		// -(instancetype _Nonnull)initWithCurrency:(NSString * _Nonnull)currency tax:(NSInteger)tax total:(NSInteger)total;
-		[Export ("initWithCurrency:tax:total:")]
-		NativeHandle Constructor (string currency, nint tax, nint total);
-	}
+        // @property (copy, nonatomic) NSString * _Nonnull currency;
+        [Export("currency")]
+        string Currency { get; set; }
+    }
 
     // @interface SCPCartBuilder : SCPBuilder
     [BaseType(typeof(SCPBuilder<SCPCart>))]
@@ -257,6 +232,24 @@ namespace StripeTerminal
         [Export("setLineItems:")]
         SCPCartBuilder SetLineItems(SCPCartLineItem[] lineItems);
     }
+
+    // @interface SCPCartLineItem : NSObject
+    [BaseType (typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPCartLineItem : INativeObject
+    {
+		// @property (assign, readwrite, nonatomic) NSInteger quantity;
+		[Export ("quantity")]
+		nint Quantity { get; set; }
+
+		// @property (copy, nonatomic) NSString * _Nonnull displayName;
+		[Export ("displayName")]
+		string DisplayName { get; set; }
+
+		// @property (assign, readwrite, nonatomic) NSInteger amount;
+		[Export ("amount")]
+		nint Amount { get; set; }
+	}
 
     // @interface SCPCartLineItemBuilder : SCPBuilder
     [BaseType(typeof(SCPBuilder<SCPCartLineItem>))]
@@ -302,39 +295,9 @@ namespace StripeTerminal
         [Export("enableCustomerCancellation")]
         bool EnableCustomerCancellation { get; }
 
-        /*
-		// -(instancetype _Nonnull)initWithSkipTipping:(BOOL)skipTipping;
-		[Export ("initWithSkipTipping:")]
-		NativeHandle Constructor (bool skipTipping);
-		*/
-        //// -(instancetype _Nonnull)initWithUpdatePaymentIntent:(BOOL)updatePaymentIntent;
-        //[Export ("initWithUpdatePaymentIntent:")]
-        //NativeHandle Constructor (bool updatePaymentIntent);
-
-        /*
-		// -(instancetype _Nonnull)initWithTippingConfiguration:(SCPTippingConfiguration * _Nonnull)tippingConfiguration;
-		[Export ("initWithTippingConfiguration:")]
-		NativeHandle Constructor (SCPTippingConfiguration tippingConfiguration);
-
-		// -(instancetype _Nonnull)initWithSkipTipping:(BOOL)skipTipping updatePaymentIntent:(BOOL)updatePaymentIntent;
-		[Export ("initWithSkipTipping:updatePaymentIntent:")]
-		NativeHandle Constructor (bool skipTipping, bool updatePaymentIntent);
-
-		// -(instancetype _Nonnull)initWithSkipTipping:(BOOL)skipTipping tippingConfiguration:(SCPTippingConfiguration * _Nullable)tippingConfiguration;
-		[Export ("initWithSkipTipping:tippingConfiguration:")]
-		NativeHandle Constructor (bool skipTipping, [NullAllowed] SCPTippingConfiguration tippingConfiguration);
-		*/
-
-        //// -(instancetype _Nonnull)initWithUpdatePaymentIntent:(BOOL)updatePaymentIntent tippingConfiguration:(SCPTippingConfiguration * _Nullable)tippingConfiguration;
-        //[Export ("initWithUpdatePaymentIntent:tippingConfiguration:")]
-        //NativeHandle Constructor (bool updatePaymentIntent, [NullAllowed] SCPTippingConfiguration tippingConfiguration);
-
-        /*
-		// -(instancetype _Nonnull)initWithSkipTipping:(BOOL)skipTipping updatePaymentIntent:(BOOL)updatePaymentIntent tippingConfiguration:(SCPTippingConfiguration * _Nullable)tippingConfiguration __attribute__((objc_designated_initializer));
-		[Export ("initWithSkipTipping:updatePaymentIntent:tippingConfiguration:")]
-		[DesignatedInitializer]
-		NativeHandle Constructor (bool skipTipping, bool updatePaymentIntent, [NullAllowed] SCPTippingConfiguration tippingConfiguration);
-		*/
+        // @property (readonly, assign, nonatomic) BOOL requestDynamicCurrencyConversion;
+        [Export("requestDynamicCurrencyConversion")]
+        bool RequestDynamicCurrencyConversion { get; }
     }
 
     // @interface SCPCollectConfigurationBuilder : SCPBuilder
@@ -356,6 +319,63 @@ namespace StripeTerminal
         // -(SCPCollectConfigurationBuilder * _Nonnull)setEnableCustomerCancellation:(BOOL)enableCustomerCancellation;
         [Export("setEnableCustomerCancellation:")]
         SCPCollectConfigurationBuilder SetEnableCustomerCancellation(bool enableCustomerCancellation);
+
+        // -(SCPCollectConfigurationBuilder * _Nonnull)setRequestDynamicCurrencyConversion:(BOOL)requestDynamicCurrencyConversion;
+        [Export("setRequestDynamicCurrencyConversion:")]
+        SCPCollectConfigurationBuilder SetRequestDynamicCurrencyConversion(bool requestDynamicCurrencyConversion);
+    }
+
+    // @interface SCPInput : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPInput
+    {
+        // @property (readonly, nonatomic) BOOL required;
+        [Export("required")]
+        bool Required { get; }
+    }
+
+    // @interface SCPCollectInputsParameters : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPCollectInputsParameters
+    {
+        // @property (readonly, copy, nonatomic) NSArray<SCPInput *> * _Nonnull inputs;
+        [Export("inputs", ArgumentSemantic.Copy)]
+        SCPInput[] Inputs { get; }
+    }
+
+    // @interface SCPCollectInputsParametersBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPCollectInputsParameters>))]
+    [DisableDefaultCtor]
+    interface SCPCollectInputsParametersBuilder
+    {
+        // -(instancetype _Nonnull)initWithInputs:(NSArray<SCPInput *> * _Nonnull)inputs;
+        [Export("initWithInputs:")]
+        NativeHandle Constructor(SCPInput[] inputs);
+
+        // -(SCPCollectInputsParametersBuilder * _Nonnull)setInputs:(NSArray<SCPInput *> * _Nonnull)inputs;
+        [Export("setInputs:")]
+        SCPCollectInputsParametersBuilder SetInputs(SCPInput[] inputs);
+    }
+
+    // @interface SCPCreateConfiguration : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPCreateConfiguration
+    {
+        // @property (readonly, nonatomic) SCPOfflineBehavior offlineBehavior;
+        [Export("offlineBehavior")]
+        SCPOfflineBehavior OfflineBehavior { get; }
+    }
+
+    // @interface SCPCreateConfigurationBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPCreateConfiguration>))]
+    interface SCPCreateConfigurationBuilder
+    {
+        // -(SCPCreateConfigurationBuilder * _Nonnull)setOfflineBehavior:(SCPOfflineBehavior)offlineBehavior;
+        [Export("setOfflineBehavior:")]
+        SCPCreateConfigurationBuilder SetOfflineBehavior(SCPOfflineBehavior offlineBehavior);
     }
 
     // @protocol SCPLocalMobileReaderDelegate <NSObject>
@@ -466,52 +486,6 @@ namespace StripeTerminal
 		// @property (nonatomic, strong) NSNumber * _Nullable requestedPriority;
 		[NullAllowed, Export ("requestedPriority", ArgumentSemantic.Strong)]
 		NSNumber RequestedPriority { get; set; }
-
-		/*
-		// -(instancetype _Nonnull)initWithRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization requestIncrementalAuthorizationSupport:(BOOL)requestIncrementalAuthorizationSupport;
-		[Export ("initWithRequestExtendedAuthorization:requestIncrementalAuthorizationSupport:")]
-		NativeHandle Constructor (bool requestExtendedAuthorization, bool requestIncrementalAuthorizationSupport);
-
-		// -(instancetype _Nonnull)initWithRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization;
-		[Export ("initWithRequestExtendedAuthorization:")]
-		NativeHandle Constructor (bool requestExtendedAuthorization);
-
-		//// -(instancetype _Nonnull)initWithRequestIncrementalAuthorizationSupport:(BOOL)requestIncrementalAuthorizationSupport;
-		//[Export ("initWithRequestIncrementalAuthorizationSupport:")]
-		//NativeHandle Constructor (bool requestIncrementalAuthorizationSupport);
-
-		// -(instancetype _Nonnull)initWithRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization requestIncrementalAuthorizationSupport:(BOOL)requestIncrementalAuthorizationSupport captureMethod:(SCPCardPresentCaptureMethod)captureMethod;
-		[Export ("initWithRequestExtendedAuthorization:requestIncrementalAuthorizationSupport:captureMethod:")]
-		NativeHandle Constructor (bool requestExtendedAuthorization, bool requestIncrementalAuthorizationSupport, SCPCardPresentCaptureMethod captureMethod);
-
-		// -(instancetype _Nonnull)initWithRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization captureMethod:(SCPCardPresentCaptureMethod)captureMethod;
-		[Export ("initWithRequestExtendedAuthorization:captureMethod:")]
-		NativeHandle Constructor (bool requestExtendedAuthorization, SCPCardPresentCaptureMethod captureMethod);
-
-		//// -(instancetype _Nonnull)initWithRequestIncrementalAuthorizationSupport:(BOOL)requestIncrementalAuthorizationSupport captureMethod:(SCPCardPresentCaptureMethod)captureMethod;
-		//[Export ("initWithRequestIncrementalAuthorizationSupport:captureMethod:")]
-		//NativeHandle Constructor (bool requestIncrementalAuthorizationSupport, SCPCardPresentCaptureMethod captureMethod);
-
-		// -(instancetype _Nonnull)initWithCaptureMethod:(SCPCardPresentCaptureMethod)captureMethod;
-		[Export ("initWithCaptureMethod:")]
-		NativeHandle Constructor (SCPCardPresentCaptureMethod captureMethod);
-
-		// -(instancetype _Nonnull)initWithRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization requestIncrementalAuthorizationSupport:(BOOL)requestIncrementalAuthorizationSupport captureMethod:(SCPCardPresentCaptureMethod)captureMethod requestedPriority:(SCPCardPresentRouting)requestedPriority;
-		[Export ("initWithRequestExtendedAuthorization:requestIncrementalAuthorizationSupport:captureMethod:requestedPriority:")]
-		NativeHandle Constructor (bool requestExtendedAuthorization, bool requestIncrementalAuthorizationSupport, SCPCardPresentCaptureMethod captureMethod, SCPCardPresentRouting requestedPriority);
-
-		// -(instancetype _Nonnull)initWithRequestExtendedAuthorization:(BOOL)requestExtendedAuthorization requestIncrementalAuthorizationSupport:(BOOL)requestIncrementalAuthorizationSupport requestedPriority:(SCPCardPresentRouting)requestedPriority;
-		[Export ("initWithRequestExtendedAuthorization:requestIncrementalAuthorizationSupport:requestedPriority:")]
-		NativeHandle Constructor (bool requestExtendedAuthorization, bool requestIncrementalAuthorizationSupport, SCPCardPresentRouting requestedPriority);
-
-		// -(instancetype _Nonnull)initWithCaptureMethod:(SCPCardPresentCaptureMethod)captureMethod requestedPriority:(SCPCardPresentRouting)requestedPriority;
-		[Export ("initWithCaptureMethod:requestedPriority:")]
-		NativeHandle Constructor (SCPCardPresentCaptureMethod captureMethod, SCPCardPresentRouting requestedPriority);
-
-		// -(instancetype _Nonnull)initWithRequestedPriority:(SCPCardPresentRouting)requestedPriority;
-		[Export ("initWithRequestedPriority:")]
-		NativeHandle Constructor (SCPCardPresentRouting requestedPriority);
-		*/
 	}
 
     // @interface SCPCardPresentParametersBuilder : SCPBuilder
@@ -543,16 +517,24 @@ namespace StripeTerminal
 		// @property (nonatomic, strong) SCPCardPresentParameters * _Nonnull cardPresentParameters;
 		[Export ("cardPresentParameters", ArgumentSemantic.Strong)]
 		SCPCardPresentParameters CardPresentParameters { get; }
+    }
 
-		/*
-		// -(instancetype _Nonnull)initWithCardPresentParameters:(SCPCardPresentParameters * _Nonnull)cardPresentParameters;
-		[Export ("initWithCardPresentParameters:")]
-		NativeHandle Constructor (SCPCardPresentParameters cardPresentParameters);
-		*/
-	}
+    // @interface SCPPaymentMethodOptionsParametersBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPPaymentMethodOptionsParameters>))]
+    [DisableDefaultCtor]
+    interface SCPPaymentMethodOptionsParametersBuilder
+    {
+        // -(instancetype _Nonnull)initWithCardPresentParameters:(SCPCardPresentParameters * _Nonnull)cardPresentParameters;
+        [Export("initWithCardPresentParameters:")]
+        NativeHandle Constructor(SCPCardPresentParameters cardPresentParameters);
 
-	// @interface SCPPaymentIntentParameters : NSObject
-	[BaseType (typeof(NSObject))]
+        // -(SCPPaymentMethodOptionsParametersBuilder * _Nonnull)setCardPresentParameters:(SCPCardPresentParameters * _Nonnull)cardPresentParameters;
+        [Export("setCardPresentParameters:")]
+        SCPPaymentMethodOptionsParametersBuilder SetCardPresentParameters(SCPCardPresentParameters cardPresentParameters);
+    }
+
+    // @interface SCPPaymentIntentParameters : NSObject
+    [BaseType (typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface SCPPaymentIntentParameters
 	{
@@ -620,24 +602,8 @@ namespace StripeTerminal
         [Export("paymentMethodOptionsParameters")]
         SCPPaymentMethodOptionsParameters PaymentMethodOptionsParameters { get; }
 
-        /*
-		// -(instancetype _Nonnull)initWithAmount:(NSUInteger)amount currency:(NSString * _Nonnull)currency;
-		[Export ("initWithAmount:currency:")]
-		NativeHandle Constructor (nuint amount, string currency);
-
-		// -(instancetype _Nonnull)initWithAmount:(NSUInteger)amount currency:(NSString * _Nonnull)currency paymentMethodTypes:(NSArray<NSString *> * _Nonnull)paymentMethodTypes;
-		[Export ("initWithAmount:currency:paymentMethodTypes:")]
-		NativeHandle Constructor (nuint amount, string currency, string[] paymentMethodTypes);
-
-		// -(instancetype _Nonnull)initWithAmount:(NSUInteger)amount currency:(NSString * _Nonnull)currency captureMethod:(SCPCaptureMethod)captureMethod;
-		[Export ("initWithAmount:currency:captureMethod:")]
-		NativeHandle Constructor (nuint amount, string currency, SCPCaptureMethod captureMethod);
-
-		// -(instancetype _Nonnull)initWithAmount:(NSUInteger)amount currency:(NSString * _Nonnull)currency paymentMethodTypes:(NSArray<NSString *> * _Nonnull)paymentMethodTypes captureMethod:(SCPCaptureMethod)captureMethod;
-		[Export ("initWithAmount:currency:paymentMethodTypes:captureMethod:")]
-		NativeHandle Constructor (nuint amount, string currency, string[] paymentMethodTypes, SCPCaptureMethod captureMethod);
-		*/
         // @property (readonly, copy, nonatomic) DEPRECATED_MSG_ATTRIBUTE("Did you mean to use stripeDescription?") NSString * description __attribute__((deprecated("Did you mean to use stripeDescription?")));
+        [Obsolete("Did you mean to use stripeDescription?")]
         [Export ("description")]
 		string Description { get; }
 	}
@@ -714,6 +680,13 @@ namespace StripeTerminal
         // -(SCPPaymentIntentParametersBuilder * _Nonnull)setPaymentMethodOptionsParameters:(SCPPaymentMethodOptionsParameters * _Nonnull)paymentMethodOptionsParameters;
         [Export("setPaymentMethodOptionsParameters:")]
         SCPPaymentIntentParametersBuilder SetPaymentMethodOptionsParameters(SCPPaymentMethodOptionsParameters paymentMethodOptionsParameters);
+    }
+
+    // @protocol SCPReaderSettingsParameters <NSObject>
+    [Protocol]
+    [BaseType(typeof(NSObject))]
+    interface SCPReaderSettingsParameters
+    {
     }
 
     // @interface SCPRefundConfiguration : NSObject <NSCopying>
@@ -806,35 +779,33 @@ namespace StripeTerminal
 	[DisableDefaultCtor]
 	interface SCPRefundParameters
 	{
-		// @property (readonly, nonatomic) NSString * _Nullable chargeId;
-		[NullAllowed, Export ("chargeId")]
-		string ChargeId { get; }
+        // @property (readonly, nonatomic) NSString * _Nullable paymentIntentId;
+        [NullAllowed, Export("paymentIntentId")]
+        string PaymentIntentId { get; }
 
-		// @property (readonly, nonatomic) NSUInteger amount;
-		[Export ("amount")]
-		nuint Amount { get; }
+        // @property (readonly, nonatomic) NSString * _Nullable chargeId;
+        [NullAllowed, Export("chargeId")]
+        string ChargeId { get; }
 
-		// @property (readonly, nonatomic) NSString * _Nonnull currency;
-		[Export ("currency")]
-		string Currency { get; }
+        // @property (readonly, nonatomic) NSUInteger amount;
+        [Export("amount")]
+        nuint Amount { get; }
 
-		// @property (readwrite, copy, nonatomic) NSDictionary<NSString *,NSString *> * _Nullable metadata;
-		[NullAllowed, Export ("metadata", ArgumentSemantic.Copy)]
-		NSDictionary<NSString, NSString> Metadata { get; set; }
+        // @property (readonly, nonatomic) NSString * _Nonnull currency;
+        [Export("currency")]
+        string Currency { get; }
 
-		// @property (readwrite, nonatomic) NSNumber * _Nullable reverseTransfer;
-		[NullAllowed, Export ("reverseTransfer", ArgumentSemantic.Assign)]
-		NSNumber ReverseTransfer { get; set; }
+        // @property (readonly, nonatomic) NSDictionary<NSString *,NSString *> * _Nullable metadata;
+        [NullAllowed, Export("metadata")]
+        NSDictionary<NSString, NSString> Metadata { get; }
 
-		// @property (readwrite, nonatomic) NSNumber * _Nullable refundApplicationFee;
-		[NullAllowed, Export ("refundApplicationFee", ArgumentSemantic.Assign)]
-		NSNumber RefundApplicationFee { get; set; }
+        // @property (readonly, nonatomic) NSNumber * _Nullable reverseTransfer;
+        [NullAllowed, Export("reverseTransfer")]
+        NSNumber ReverseTransfer { get; }
 
-        /*
-		// -(instancetype _Nonnull)initWithChargeId:(NSString * _Nonnull)chargeId amount:(NSUInteger)amount currency:(NSString * _Nonnull)currency;
-		[Export ("initWithChargeId:amount:currency:")]
-		NativeHandle Constructor (string chargeId, nuint amount, string currency);
-		*/
+        // @property (readonly, nonatomic) NSNumber * _Nullable refundApplicationFee;
+        [NullAllowed, Export("refundApplicationFee")]
+        NSNumber RefundApplicationFee { get; }
     }
 
     // @interface SCPRefundParametersBuilder : SCPBuilder
@@ -842,13 +813,23 @@ namespace StripeTerminal
     [DisableDefaultCtor]
     interface SCPRefundParametersBuilder
     {
-        // -(instancetype _Nonnull)initWithChargeId:(NSString * _Nonnull)chargeId amount:(NSUInteger)amount currency:(NSString * _Nonnull)currency;
-        [Export("initWithChargeId:amount:currency:")]
-        NativeHandle Constructor(string chargeId, nuint amount, string currency);
+		//Duplicate Signature
+
+        //// -(instancetype _Nonnull)initWithPaymentIntentId:(NSString * _Nonnull)paymentIntentId amount:(NSUInteger)amount currency:(NSString * _Nonnull)currency;
+        //[Export("initWithPaymentIntentId:amount:currency:")]
+        //NativeHandle Constructor(string paymentIntentId, nuint amount, string currency);
+
+        //// -(instancetype _Nonnull)initWithChargeId:(NSString * _Nonnull)chargeId amount:(NSUInteger)amount currency:(NSString * _Nonnull)currency;
+        //[Export("initWithChargeId:amount:currency:")]
+        //NativeHandle Constructor(string chargeId, nuint amount, string currency);
 
         // -(SCPRefundParametersBuilder * _Nonnull)setChargeId:(NSString * _Nonnull)chargeId;
         [Export("setChargeId:")]
         SCPRefundParametersBuilder SetChargeId(string chargeId);
+
+        // -(SCPRefundParametersBuilder * _Nonnull)setPaymentIntentId:(NSString * _Nonnull)paymentIntentId;
+        [Export("setPaymentIntentId:")]
+        SCPRefundParametersBuilder SetPaymentIntentId(string paymentIntentId);
 
         // -(SCPRefundParametersBuilder * _Nonnull)setAmount:(NSUInteger)amount;
         [Export("setAmount:")]
@@ -1022,8 +1003,13 @@ namespace StripeTerminal
 		[Export ("installAvailableUpdate")]
 		void InstallAvailableUpdate ();
 
-		// -(void)disconnectReader:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("disconnectReader(_:)")));
-		[Export ("disconnectReader:")]
+        // -(void)rebootReader:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("rebootReader(_:)")));
+        [Export("rebootReader:")]
+		[Async]
+        void RebootReader(SCPErrorCompletionBlock completion);
+
+        // -(void)disconnectReader:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("disconnectReader(_:)")));
+        [Export ("disconnectReader:")]
         [Async]
         void DisconnectReader (SCPErrorCompletionBlock completion);
 
@@ -1049,14 +1035,6 @@ namespace StripeTerminal
         [Async(ResultTypeName = "PaymentResult")]
         SCPCancelable CollectPaymentMethod (SCPPaymentIntent paymentIntent, [NullAllowed] SCPCollectConfiguration collectConfig, SCPPaymentIntentCompletionBlock completion);
 
-        /*
-		[Obsolete]
-		// -(void)processPayment:(SCPPaymentIntent * _Nonnull)paymentIntent completion:(SCPProcessPaymentCompletionBlock _Nonnull)completion __attribute__((swift_name("processPayment(_:completion:)")));
-		[Export ("processPayment:completion:")]
-        [Async(ResultTypeName = "PaymentProcessResult")]
-        void ProcessPayment (SCPPaymentIntent paymentIntent, SCPProcessPaymentCompletionBlock completion);
-		*/
-
         // -(void)confirmPaymentIntent:(SCPPaymentIntent * _Nonnull)paymentIntent completion:(SCPConfirmPaymentIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("confirmPaymentIntent(_:completion:)")));
         [Export("confirmPaymentIntent:completion:")]
         [Async(ResultTypeName = "PaymentProcessResult")]
@@ -1066,14 +1044,6 @@ namespace StripeTerminal
         [Export ("cancelPaymentIntent:completion:")]
         [Async(ResultTypeName = "PaymentResult")]
         void CancelPaymentIntent (SCPPaymentIntent paymentIntent, SCPPaymentIntentCompletionBlock completion);
-
-		/*
-		// -(SCPCancelable * _Nullable)readReusableCard:(SCPReadReusableCardParameters * _Nonnull)parameters completion:(SCPPaymentMethodCompletionBlock _Nonnull)completion __attribute__((swift_name("readReusableCard(_:completion:)")));
-		[Export ("readReusableCard:completion:")]
-		[return: NullAllowed]
-        [Async(ResultTypeName = "PaymentMethodResult")]
-        SCPCancelable ReadReusableCard (SCPReadReusableCardParameters parameters, SCPPaymentMethodCompletionBlock completion);
-		*/
 
 		// -(void)createSetupIntent:(SCPSetupIntentParameters * _Nonnull)setupIntentParams completion:(SCPSetupIntentCompletionBlock _Nonnull)completion __attribute__((swift_name("createSetupIntent(_:completion:)")));
 		[Export ("createSetupIntent:completion:")]
@@ -1119,19 +1089,10 @@ namespace StripeTerminal
 		[Async]
         SCPCancelable CollectRefundPaymentMethod(SCPRefundParameters refundParams, [NullAllowed] SCPRefundConfiguration refundConfig, SCPErrorCompletionBlock completion);
 
-        /*
-		[Obsolete]
-        // -(void)processRefund:(SCPProcessRefundCompletionBlock _Nonnull)completion __attribute__((swift_name("processRefund(completion:)")));
-        [Export ("processRefund:")]
-        [Async(ResultTypeName = "RefundResult")]
-        void ProcessRefund (SCPProcessRefundCompletionBlock completion);
-		*/
-
         // -(void)confirmRefund:(SCPConfirmRefundCompletionBlock _Nonnull)completion __attribute__((swift_name("confirmRefund(completion:)")));
         [Export("confirmRefund:")]
         [Async(ResultTypeName = "RefundResult")]
         void ConfirmRefund(SCPConfirmRefundCompletionBlock completion);
-
 
         [Wrap("WeakOfflineDelegate")]
         [NullAllowed]
@@ -1150,7 +1111,6 @@ namespace StripeTerminal
         [Async(ResultTypeName = "PaymentResult")]
         void CreatePaymentIntent(SCPPaymentIntentParameters parameters, [NullAllowed] SCPCreateConfiguration createConfig, SCPPaymentIntentCompletionBlock completion);
 
-
         // -(void)clearReaderDisplay:(SCPErrorCompletionBlock _Nonnull)completion __attribute__((swift_name("clearReaderDisplay(_:)")));
         [Export ("clearReaderDisplay:")]
         [Async]
@@ -1161,8 +1121,24 @@ namespace StripeTerminal
         [Async]
         void SetReaderDisplay (SCPCart cart, SCPErrorCompletionBlock completion);
 
-		// +(NSString * _Nonnull)stringFromReaderInputOptions:(SCPReaderInputOptions)options __attribute__((swift_name("stringFromReaderInputOptions(_:)")));
-		[Static]
+        // -(void)setReaderSettings:(id<SCPReaderSettingsParameters> _Nonnull)params completion:(SCPReaderSettingsCompletionBlock _Nonnull)completion __attribute__((swift_name("setReaderSettings(_:completion:)")));
+        [Export("setReaderSettings:completion:")]
+		[Async(ResultTypeName = "ReaderSettingsResult")]
+        void SetReaderSettings(SCPReaderSettingsParameters parameters, SCPReaderSettingsCompletionBlock completion);
+
+        // -(void)retrieveReaderSettings:(SCPReaderSettingsCompletionBlock _Nonnull)completion __attribute__((swift_name("retrieveReaderSettings(_:)")));
+        [Export("retrieveReaderSettings:")]
+        [Async(ResultTypeName = "ReaderSettingsResult")]
+        void RetrieveReaderSettings(SCPReaderSettingsCompletionBlock completion);
+
+        // -(SCPCancelable * _Nullable)collectInputs:(SCPCollectInputsParameters * _Nonnull)collectInputsParams completion:(SCPCollectInputsCompletionBlock _Nonnull)completion __attribute__((swift_name("collectInputs(_:completion:)")));
+        [Export("collectInputs:completion:")]
+        [return: NullAllowed]
+        [Async(ResultTypeName = "CollectInputsResult")]
+        SCPCancelable CollectInputs(SCPCollectInputsParameters collectInputsParams, SCPCollectInputsCompletionBlock completion);
+
+        // +(NSString * _Nonnull)stringFromReaderInputOptions:(SCPReaderInputOptions)options __attribute__((swift_name("stringFromReaderInputOptions(_:)")));
+        [Static]
 		[Export ("stringFromReaderInputOptions:")]
 		string StringFromReaderInputOptions (SCPReaderInputOptions options);
 
@@ -1220,6 +1196,16 @@ namespace StripeTerminal
         [Static]
         [Export("stringFromNetworkStatus:")]
         string StringFromNetworkStatus(SCPNetworkStatus networkStatus);
+
+        // +(NSString * _Nonnull)stringFromDisconnectReason:(SCPDisconnectReason)reason __attribute__((swift_name("stringFromDisconnectReason(_:)")));
+        [Static]
+        [Export("stringFromDisconnectReason:")]
+        string StringFromDisconnectReason(SCPDisconnectReason reason);
+
+        // +(NSString * _Nonnull)stringFromOfflineBehavior:(SCPOfflineBehavior)behavior __attribute__((swift_name("stringFromOfflineBehavior(_:)")));
+        [Static]
+        [Export("stringFromOfflineBehavior:")]
+        string StringFromOfflineBehavior(SCPOfflineBehavior behavior);
     }
 
     // @protocol SCPReconnectionDelegate <NSObject>
@@ -1227,11 +1213,6 @@ namespace StripeTerminal
     [BaseType (typeof(NSObject))]
 	interface SCPReconnectionDelegate
 	{
-        // @required -(void)reader:(SCPReader * _Nonnull)reader didStartReconnect:(SCPCancelable * _Nonnull)cancelable __attribute__((swift_name("reader(_:didStartReconnect:)")));
-        [Abstract]
-        [Export("reader:didStartReconnect:")]
-        void Reader(SCPReader reader, SCPCancelable cancelable);
-
         // @required -(void)readerDidSucceedReconnect:(SCPReader * _Nonnull)reader __attribute__((swift_name("readerDidSucceedReconnect(_:)")));
         [Abstract]
         [Export("readerDidSucceedReconnect:")]
@@ -1241,17 +1222,15 @@ namespace StripeTerminal
         [Abstract]
         [Export("readerDidFailReconnect:")]
         void ReaderDidFailReconnect(SCPReader reader);
-    }
 
-	/*
-	// @interface SCPConnectionConfiguration : NSObject
-	[BaseType (typeof(NSObject))]
-	[DisableDefaultCtor]
-	[Obsolete]
-	interface SCPConnectionConfiguration
-	{
-	}
-	*/
+        // @optional -(void)reader:(SCPReader * _Nonnull)reader didStartReconnect:(SCPCancelable * _Nonnull)cancelable __attribute__((swift_name("reader(_:didStartReconnect:)"))) __attribute__((deprecated("Use reader:didStartReconnect:disconnectReason: instead.")));
+        [Export("reader:didStartReconnect:")]
+        void Reader(SCPReader reader, SCPCancelable cancelable);
+
+        // @optional -(void)reader:(SCPReader * _Nonnull)reader didStartReconnect:(SCPCancelable * _Nonnull)cancelable disconnectReason:(SCPDisconnectReason)disconnectReason __attribute__((swift_name("reader(_:didStartReconnect:disconnectReason:)")));
+        [Export("reader:didStartReconnect:disconnectReason:")]
+        void Reader(SCPReader reader, SCPCancelable cancelable, SCPDisconnectReason disconnectReason);
+    }
 
 	// @interface SCPBluetoothConnectionConfiguration : SCPConnectionConfiguration
 	[BaseType (typeof(SCPConnectionConfiguration))]
@@ -1272,16 +1251,6 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic, weak) id<SCPReconnectionDelegate> _Nullable autoReconnectionDelegate;
 		[NullAllowed, Export ("autoReconnectionDelegate", ArgumentSemantic.Weak)]
 		NSObject WeakAutoReconnectionDelegate { get; }
-
-		/*
-		// -(instancetype _Nonnull)initWithLocationId:(NSString * _Nonnull)locationId;
-		[Export ("initWithLocationId:")]
-		NativeHandle Constructor (string locationId);
-
-		// -(instancetype _Nonnull)initWithLocationId:(NSString * _Nonnull)locationId autoReconnectOnUnexpectedDisconnect:(BOOL)autoReconnectOnUnexpectedDisconnect autoReconnectionDelegate:(id<SCPReconnectionDelegate> _Nullable)autoReconnectionDelegate;
-		[Export ("initWithLocationId:autoReconnectOnUnexpectedDisconnect:autoReconnectionDelegate:")]
-		NativeHandle Constructor (string locationId, bool autoReconnectOnUnexpectedDisconnect, [NullAllowed] SCPReconnectionDelegate autoReconnectionDelegate);
-		*/
 	}
 
     // @interface SCPBluetoothConnectionConfigurationBuilder : SCPBuilder
@@ -1360,10 +1329,6 @@ namespace StripeTerminal
         SCPBluetoothScanDiscoveryConfigurationBuilder SetTimeout(nuint timeout);
     }
 
-
-
-
-
     // @interface SCPCancelable : NSObject
     [BaseType (typeof(NSObject))]
 	interface SCPCancelable
@@ -1406,12 +1371,6 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic) NSString * _Nullable last4;
 		[NullAllowed, Export ("last4")]
 		string Last4 { get; }
-
-		/*
-		// @property (readonly, nonatomic) NSString * _Nullable fingerprint;
-		[NullAllowed, Export ("fingerprint")]
-		string Fingerprint { get; }
-		*/
 	}
 
 	// @interface SCPCardPresentDetails : NSObject <SCPJSONDecodable>
@@ -1442,12 +1401,6 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic) SCPCardBrand brand;
 		[Export ("brand")]
 		SCPCardBrand Brand { get; }
-
-		/*
-		// @property (readonly, nonatomic) NSString * _Nonnull fingerprint;
-		[Export ("fingerprint")]
-		string Fingerprint { get; }
-		*/
 
 		// @property (readonly, nonatomic) NSString * _Nullable generatedCard;
 		[NullAllowed, Export ("generatedCard")]
@@ -1548,7 +1501,17 @@ namespace StripeTerminal
         string AuthorizationCode { get; }
     }
 
-	[Static]
+    // @interface SCPCollectInputsResult : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPCollectInputsResult
+    {
+        // @property (readonly, nonatomic) BOOL skipped;
+        [Export("skipped")]
+        bool Skipped { get; }
+    }
+
+    [Static]
 	partial interface Constants
 	{
 		// extern NSString *const _Nonnull SCPErrorDomain __attribute__((swift_name("ErrorDomain")));
@@ -1587,8 +1550,12 @@ namespace StripeTerminal
 		[Field ("SCPErrorKeyStripeAPIErrorParameter", "__Internal")]
 		NSString SCPErrorKeyStripeAPIErrorParameter { get; }
 
-		// extern SCPErrorKey _Nonnull SCPErrorKeyHttpStatusCode;
-		[Field ("SCPErrorKeyHttpStatusCode", "__Internal")]
+        // extern SCPErrorKey _Nonnull SCPErrorKeyOfflineDeclineReason;
+        [Field("SCPErrorKeyOfflineDeclineReason", "__Internal")]
+        NSString SCPErrorKeyOfflineDeclineReason { get; }
+
+        // extern SCPErrorKey _Nonnull SCPErrorKeyHttpStatusCode;
+        [Field ("SCPErrorKeyHttpStatusCode", "__Internal")]
 		NSString SCPErrorKeyHttpStatusCode { get; }
 
 		// extern SCPErrorKey _Nonnull SCPErrorKeyStripeAPIPaymentIntent;
@@ -1602,6 +1569,10 @@ namespace StripeTerminal
 		// extern SCPErrorKey _Nonnull SCPErrorKeyDeviceBannedUntilDate;
 		[Field ("SCPErrorKeyDeviceBannedUntilDate", "__Internal")]
 		NSString SCPErrorKeyDeviceBannedUntilDate { get; }
+
+        // extern SCPErrorKey _Nonnull SCPErrorKeyPrepareFailedReason;
+        [Field("SCPErrorKeyPrepareFailedReason", "__Internal")]
+        NSString SCPErrorKeyPrepareFailedReason { get; }
     }
 
     // @interface SCPConfirmPaymentIntentError : NSError
@@ -1654,15 +1625,6 @@ namespace StripeTerminal
 	}
 
     // @protocol SCPConnectionTokenProvider
-    /*
-  Check whether adding [Model] to this declaration is appropriate.
-  [Model] is used to generate a C# class that implements this protocol,
-  and might be useful for protocols that consumers are supposed to implement,
-  since consumers can subclass the generated class instead of implementing
-  the generated interface. If consumers are not supposed to implement this
-  protocol, then [Model] is redundant and will generate code that will never
-  be used.
-*/
     [Protocol, Model]
     [BaseType(typeof(NSObject))]
     interface SCPConnectionTokenProvider
@@ -1672,7 +1634,19 @@ namespace StripeTerminal
 		[Export ("fetchConnectionToken:")]
         [Async]
         void FetchConnectionToken (SCPConnectionTokenCompletionBlock completion);
-	}
+    }
+
+    // @protocol SCPDiscoveryDelegate <NSObject>
+    [Protocol, Model]
+    [BaseType(typeof(NSObject))]
+    interface SCPDiscoveryDelegate
+    {
+        // @required -(void)terminal:(SCPTerminal * _Nonnull)terminal didUpdateDiscoveredReaders:(NSArray<SCPReader *> * _Nonnull)readers __attribute__((swift_name("terminal(_:didUpdateDiscoveredReaders:)")));
+        [Abstract]
+        [Export("terminal:didUpdateDiscoveredReaders:")]
+        void DidUpdateDiscoveredReaders(SCPTerminal terminal, SCPReader[] readers);
+    }
+
     /*
 	// @interface SCPDiscoveryConfiguration : NSObject
 	[BaseType (typeof(NSObject))]
@@ -1705,38 +1679,125 @@ namespace StripeTerminal
 	}
 	*/
 
-    // @interface SCPCreateConfiguration : NSObject
+
+    // @interface SCPToggle : NSObject
     [BaseType(typeof(NSObject))]
     [DisableDefaultCtor]
-    interface SCPCreateConfiguration
+    interface SCPToggle
     {
-        // @property (readonly, nonatomic) SCPOfflineBehavior offlineBehavior;
-        [Export("offlineBehavior")]
-        SCPOfflineBehavior OfflineBehavior { get; }
+        // @property (readonly, nonatomic) NSString * _Nullable title;
+        [NullAllowed, Export("title")]
+        string Title { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
+
+        // @property (readonly, assign, nonatomic) SCPToggleValue defaultValue;
+        [Export("defaultValue", ArgumentSemantic.Assign)]
+        SCPToggleValue DefaultValue { get; }
     }
 
-    // @interface SCPCreateConfigurationBuilder : SCPBuilder
-    [BaseType(typeof(SCPBuilder<SCPCreateConfiguration>))]
-    interface SCPCreateConfigurationBuilder
+    // @interface SCPToggleBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPToggle>))]
+    [DisableDefaultCtor]
+    interface SCPToggleBuilder
     {
-        // -(SCPCreateConfigurationBuilder * _Nonnull)setOfflineBehavior:(SCPOfflineBehavior)offlineBehavior;
-        [Export("setOfflineBehavior:")]
-        SCPCreateConfigurationBuilder SetOfflineBehavior(SCPOfflineBehavior offlineBehavior);
+        // -(instancetype _Nonnull)initWithDefaultValue:(SCPToggleValue)defaultValue __attribute__((objc_designated_initializer));
+        [Export("initWithDefaultValue:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(SCPToggleValue defaultValue);
+
+        // -(SCPToggleBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPToggleBuilder SetTitle(string title);
+
+        // -(SCPToggleBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPToggleBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPToggleBuilder * _Nonnull)setDefaultValue:(SCPToggleValue)defaultValue;
+        [Export("setDefaultValue:")]
+        SCPToggleBuilder SetDefaultValue(SCPToggleValue defaultValue);
     }
 
-    // @protocol SCPDiscoveryDelegate <NSObject>
-    [Protocol, Model]
-	[BaseType (typeof(NSObject))]
-	interface SCPDiscoveryDelegate
-	{
-		// @required -(void)terminal:(SCPTerminal * _Nonnull)terminal didUpdateDiscoveredReaders:(NSArray<SCPReader *> * _Nonnull)readers __attribute__((swift_name("terminal(_:didUpdateDiscoveredReaders:)")));
-		[Abstract]
-		[Export ("terminal:didUpdateDiscoveredReaders:")]
-		void DidUpdateDiscoveredReaders (SCPTerminal terminal, SCPReader[] readers);
-	}
+    // @interface SCPEmailInput : SCPInput
+    [BaseType(typeof(SCPInput))]
+    [DisableDefaultCtor]
+    interface SCPEmailInput
+    {
+        // @property (readonly, nonatomic) NSString * _Nonnull title;
+        [Export("title")]
+        string Title { get; }
 
-	// @interface SCPInternetConnectionConfiguration : SCPConnectionConfiguration
-	[BaseType (typeof(SCPConnectionConfiguration))]
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable skipButtonText;
+        [NullAllowed, Export("skipButtonText")]
+        string SkipButtonText { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable submitButtonText;
+        [NullAllowed, Export("submitButtonText")]
+        string SubmitButtonText { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<SCPToggle *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        SCPToggle[] Toggles { get; }
+    }
+
+    // @interface SCPEmailInputBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPEmailInput>))]
+    [DisableDefaultCtor]
+    interface SCPEmailInputBuilder
+    {
+        // -(instancetype _Nonnull)initWithTitle:(NSString * _Nonnull)title __attribute__((objc_designated_initializer));
+        [Export("initWithTitle:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(string title);
+
+        // -(SCPEmailInputBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPEmailInputBuilder SetTitle(string title);
+
+        // -(SCPEmailInputBuilder * _Nonnull)setRequired:(BOOL)required;
+        [Export("setRequired:")]
+        SCPEmailInputBuilder SetRequired(bool required);
+
+        // -(SCPEmailInputBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPEmailInputBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPEmailInputBuilder * _Nonnull)setSkipButtonText:(NSString * _Nonnull)skipButtonText;
+        [Export("setSkipButtonText:")]
+        SCPEmailInputBuilder SetSkipButtonText(string skipButtonText);
+
+        // -(SCPEmailInputBuilder * _Nonnull)setSubmitButtonText:(NSString * _Nonnull)submitButtonText;
+        [Export("setSubmitButtonText:")]
+        SCPEmailInputBuilder SetSubmitButtonText(string submitButtonText);
+
+        // -(SCPEmailInputBuilder * _Nonnull)setToggles:(NSArray<SCPToggle *> * _Nonnull)toggles;
+        [Export("setToggles:")]
+        SCPEmailInputBuilder SetToggles(SCPToggle[] toggles);
+    }
+
+    // @interface SCPEmailResult : SCPCollectInputsResult
+    [BaseType(typeof(SCPCollectInputsResult))]
+    [DisableDefaultCtor]
+    interface SCPEmailResult
+    {
+        // @property (readonly, nonatomic) NSString * _Nullable email;
+        [NullAllowed, Export("email")]
+        string Email { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        NSNumber[] Toggles { get; }
+    }
+
+    // @interface SCPInternetConnectionConfiguration : SCPConnectionConfiguration
+    [BaseType (typeof(SCPConnectionConfiguration))]
 	interface SCPInternetConnectionConfiguration
 	{
 		// @property (readonly, nonatomic) BOOL failIfInUse;
@@ -1746,23 +1807,7 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic) BOOL allowCustomerCancel;
 		[Export ("allowCustomerCancel")]
 		bool AllowCustomerCancel { get; }
-
-		/*
-		// -(instancetype _Nonnull)initWithFailIfInUse:(BOOL)failIfInUse allowCustomerCancel:(BOOL)allowCustomerCancel;
-		[Export ("initWithFailIfInUse:allowCustomerCancel:")]
-		NativeHandle Constructor (bool failIfInUse, bool allowCustomerCancel);
-		*/
-
-		//// -(instancetype _Nonnull)initWithFailIfInUse:(BOOL)failIfInUse;
-		//[Export ("initWithFailIfInUse:")]
-		//NativeHandle Constructor (bool failIfInUse);
-
-		//// -(instancetype _Nonnull)initWithAllowCustomerCancel:(BOOL)allowCustomerCancel;
-		//[Export ("initWithAllowCustomerCancel:")]
-		//NativeHandle Constructor (bool allowCustomerCancel);
 	}
-
-
 
     // @interface SCPInternetConnectionConfigurationBuilder : SCPBuilder
     [BaseType(typeof(SCPBuilder<SCPInternetConnectionConfiguration>))]
@@ -1799,8 +1844,6 @@ namespace StripeTerminal
         SCPInternetDiscoveryConfigurationBuilder SetLocationId([NullAllowed] string locationId);
     }
 
-
-
     // @interface SCPListLocationsParameters : NSObject
     [BaseType (typeof(NSObject))]
 	interface SCPListLocationsParameters
@@ -1816,16 +1859,27 @@ namespace StripeTerminal
 		// @property (readwrite, copy, nonatomic) NSString * _Nullable startingAfter;
 		[NullAllowed, Export ("startingAfter")]
 		string StartingAfter { get; set; }
+    }
 
-		/*
-		// -(instancetype _Nonnull)initWithLimit:(NSNumber * _Nullable)limit endingBefore:(NSString * _Nullable)endingBefore startingAfter:(NSString * _Nullable)startingAfter;
-		[Export ("initWithLimit:endingBefore:startingAfter:")]
-		NativeHandle Constructor ([NullAllowed] NSNumber limit, [NullAllowed] string endingBefore, [NullAllowed] string startingAfter);
-		*/
-	}
+    // @interface SCPListLocationsParametersBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPListLocationsParameters>))]
+    interface SCPListLocationsParametersBuilder
+    {
+        // -(SCPListLocationsParametersBuilder * _Nonnull)setLimit:(NSUInteger)limit;
+        [Export("setLimit:")]
+        SCPListLocationsParametersBuilder SetLimit(nuint limit);
 
-	// @interface SCPLocalMobileConnectionConfiguration : SCPConnectionConfiguration
-	[BaseType (typeof(SCPConnectionConfiguration))]
+        // -(SCPListLocationsParametersBuilder * _Nonnull)setEndingBefore:(NSString * _Nullable)endingBefore;
+        [Export("setEndingBefore:")]
+        SCPListLocationsParametersBuilder SetEndingBefore([NullAllowed] string endingBefore);
+
+        // -(SCPListLocationsParametersBuilder * _Nonnull)setStartingAfter:(NSString * _Nullable)startingAfter;
+        [Export("setStartingAfter:")]
+        SCPListLocationsParametersBuilder SetStartingAfter([NullAllowed] string startingAfter);
+    }
+
+    // @interface SCPLocalMobileConnectionConfiguration : SCPConnectionConfiguration
+    [BaseType (typeof(SCPConnectionConfiguration))]
 	interface SCPLocalMobileConnectionConfiguration
 	{
 		// @property (readonly, copy, nonatomic) NSString * _Nonnull locationId;
@@ -1848,20 +1902,17 @@ namespace StripeTerminal
         [Export("returnReadResultImmediatelyEnabled")]
         bool ReturnReadResultImmediatelyEnabled { [Bind("isReturnReadResultImmediatelyEnabled")] get; }
 
-        /*
-        // -(instancetype _Nonnull)initWithLocationId:(NSString * _Nonnull)locationId;
-        [Export ("initWithLocationId:")]
-		NativeHandle Constructor (string locationId);
+        // @property (readonly, getter = isAutoReconnectOnUnexpectedDisconnect, assign, nonatomic) BOOL autoReconnectOnUnexpectedDisconnect;
+        [Export("autoReconnectOnUnexpectedDisconnect")]
+        bool AutoReconnectOnUnexpectedDisconnect { [Bind("isAutoReconnectOnUnexpectedDisconnect")] get; }
 
-		// -(instancetype _Nonnull)initWithLocationId:(NSString * _Nonnull)locationId merchantDisplayName:(NSString * _Nullable)merchantDisplayName onBehalfOf:(NSString * _Nullable)onBehalfOf;
-		[Export ("initWithLocationId:merchantDisplayName:onBehalfOf:")]
-		NativeHandle Constructor (string locationId, [NullAllowed] string merchantDisplayName, [NullAllowed] string onBehalfOf);
+        [Wrap("WeakAutoReconnectionDelegate")]
+        [NullAllowed]
+        SCPReconnectionDelegate AutoReconnectionDelegate { get; }
 
-		// -(instancetype _Nonnull)initWithLocationId:(NSString * _Nonnull)locationId merchantDisplayName:(NSString * _Nullable)merchantDisplayName onBehalfOf:(NSString * _Nullable)onBehalfOf tosAcceptancePermitted:(BOOL)tosAcceptancePermitted __attribute__((objc_designated_initializer));
-		[Export ("initWithLocationId:merchantDisplayName:onBehalfOf:tosAcceptancePermitted:")]
-		[DesignatedInitializer]
-		NativeHandle Constructor (string locationId, [NullAllowed] string merchantDisplayName, [NullAllowed] string onBehalfOf, bool tosAcceptancePermitted);
-		*/
+        // @property (readonly, nonatomic, weak) id<SCPReconnectionDelegate> _Nullable autoReconnectionDelegate;
+        [NullAllowed, Export("autoReconnectionDelegate", ArgumentSemantic.Weak)]
+        NSObject WeakAutoReconnectionDelegate { get; }
     }
 
     // @interface SCPLocalMobileConnectionConfigurationBuilder : SCPBuilder
@@ -1893,6 +1944,14 @@ namespace StripeTerminal
         // -(SCPLocalMobileConnectionConfigurationBuilder * _Nonnull)setReturnReadResultImmediatelyEnabled:(BOOL)returnReadResultImmediatelyEnabled;
         [Export("setReturnReadResultImmediatelyEnabled:")]
         SCPLocalMobileConnectionConfigurationBuilder SetReturnReadResultImmediatelyEnabled(bool returnReadResultImmediatelyEnabled);
+
+        // -(SCPLocalMobileConnectionConfigurationBuilder * _Nonnull)setAutoReconnectOnUnexpectedDisconnect:(BOOL)autoReconnectOnUnexpectedDisconnect;
+        [Export("setAutoReconnectOnUnexpectedDisconnect:")]
+        SCPLocalMobileConnectionConfigurationBuilder SetAutoReconnectOnUnexpectedDisconnect(bool autoReconnectOnUnexpectedDisconnect);
+
+        // -(SCPLocalMobileConnectionConfigurationBuilder * _Nonnull)setAutoReconnectionDelegate:(id<SCPReconnectionDelegate> _Nullable)autoReconnectionDelegate;
+        [Export("setAutoReconnectionDelegate:")]
+        SCPLocalMobileConnectionConfigurationBuilder SetAutoReconnectionDelegate([NullAllowed] SCPReconnectionDelegate autoReconnectionDelegate);
     }
 
     // @interface SCPLocalMobileDiscoveryConfiguration : NSObject <SCPDiscoveryConfiguration>
@@ -1909,8 +1968,6 @@ namespace StripeTerminal
         [Export("setSimulated:")]
         SCPLocalMobileDiscoveryConfigurationBuilder SetSimulated(bool simulated);
     }
-
-
 
     // @interface SCPLocation : NSObject <SCPJSONDecodable>
     [BaseType (typeof(NSObject))]
@@ -1946,9 +2003,82 @@ namespace StripeTerminal
 		// @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nullable available;
 		[NullAllowed, Export ("available", ArgumentSemantic.Copy)]
 		NSNumber[] Available { get; }
-	}
+    }
 
+    // @interface SCPNumericInput : SCPInput
+    [BaseType(typeof(SCPInput))]
+    [DisableDefaultCtor]
+    interface SCPNumericInput
+    {
+        // @property (readonly, nonatomic) NSString * _Nonnull title;
+        [Export("title")]
+        string Title { get; }
 
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable skipButtonText;
+        [NullAllowed, Export("skipButtonText")]
+        string SkipButtonText { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable submitButtonText;
+        [NullAllowed, Export("submitButtonText")]
+        string SubmitButtonText { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<SCPToggle *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        SCPToggle[] Toggles { get; }
+    }
+
+    // @interface SCPNumericInputBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPNumericInput>))]
+    [DisableDefaultCtor]
+    interface SCPNumericInputBuilder
+    {
+        // -(instancetype _Nonnull)initWithTitle:(NSString * _Nonnull)title __attribute__((objc_designated_initializer));
+        [Export("initWithTitle:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(string title);
+
+        // -(SCPNumericInputBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPNumericInputBuilder SetTitle(string title);
+
+        // -(SCPNumericInputBuilder * _Nonnull)setRequired:(BOOL)required;
+        [Export("setRequired:")]
+        SCPNumericInputBuilder SetRequired(bool required);
+
+        // -(SCPNumericInputBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPNumericInputBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPNumericInputBuilder * _Nonnull)setSkipButtonText:(NSString * _Nonnull)skipButtonText;
+        [Export("setSkipButtonText:")]
+        SCPNumericInputBuilder SetSkipButtonText(string skipButtonText);
+
+        // -(SCPNumericInputBuilder * _Nonnull)setSubmitButtonText:(NSString * _Nonnull)submitButtonText;
+        [Export("setSubmitButtonText:")]
+        SCPNumericInputBuilder SetSubmitButtonText(string submitButtonText);
+
+        // -(SCPNumericInputBuilder * _Nonnull)setToggles:(NSArray<SCPToggle *> * _Nonnull)toggles;
+        [Export("setToggles:")]
+        SCPNumericInputBuilder SetToggles(SCPToggle[] toggles);
+    }
+
+    // @interface SCPNumericResult : SCPCollectInputsResult
+    [BaseType(typeof(SCPCollectInputsResult))]
+    [DisableDefaultCtor]
+    interface SCPNumericResult
+    {
+        // @property (readonly, nonatomic) NSString * _Nullable numericString;
+        [NullAllowed, Export("numericString")]
+        string NumericString { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        NSNumber[] Toggles { get; }
+    }
 
     // @interface SCPOfflineCardPresentDetails : NSObject <NSCopying>
     [BaseType(typeof(NSObject))]
@@ -2004,9 +2134,6 @@ namespace StripeTerminal
         [NullAllowed, Export("cardPresentDetails", ArgumentSemantic.Strong)]
         SCPOfflineCardPresentDetails CardPresentDetails { get; }
     }
-
-
-
 
     // @interface SCPPaymentMethod : NSObject <SCPJSONDecodable>
     [BaseType (typeof(NSObject))]
@@ -2064,55 +2191,84 @@ namespace StripeTerminal
 		SCPCardPresentDetails InteracPresent { get; }
 	}
 
-	/*
-	[Obsolete]
-	// @interface SCPProcessPaymentError : NSError
-	[BaseType (typeof(NSError))]
-	[DisableDefaultCtor]
-	interface SCPProcessPaymentError
-	{
-		// @property (readonly, nonatomic) SCPPaymentIntent * _Nullable paymentIntent;
-		[NullAllowed, Export ("paymentIntent")]
-		SCPPaymentIntent PaymentIntent { get; }
+    // @interface SCPPhoneInput : SCPInput
+    [BaseType(typeof(SCPInput))]
+    [DisableDefaultCtor]
+    interface SCPPhoneInput
+    {
+        // @property (readonly, nonatomic) NSString * _Nonnull title;
+        [Export("title")]
+        string Title { get; }
 
-		// @property (readonly, nonatomic) NSError * _Nullable requestError;
-		[NullAllowed, Export ("requestError")]
-		NSError RequestError { get; }
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
 
-		// @property (readonly, nonatomic) NSString * _Nullable declineCode;
-		[NullAllowed, Export ("declineCode")]
-		string DeclineCode { get; }
-	}
+        // @property (readonly, nonatomic) NSString * _Nullable skipButtonText;
+        [NullAllowed, Export("skipButtonText")]
+        string SkipButtonText { get; }
 
-	// @interface SCPProcessRefundError : NSError
-	[BaseType (typeof(NSError))]
-	interface SCPProcessRefundError
-	{
-		// @property (readonly, nonatomic) SCPRefund * _Nullable refund;
-		[NullAllowed, Export ("refund")]
-		SCPRefund Refund { get; }
+        // @property (readonly, nonatomic) NSString * _Nullable submitButtonText;
+        [NullAllowed, Export("submitButtonText")]
+        string SubmitButtonText { get; }
 
-		// @property (readonly, nonatomic) NSError * _Nullable requestError;
-		[NullAllowed, Export ("requestError")]
-		NSError RequestError { get; }
-	}
+        // @property (readonly, copy, nonatomic) NSArray<SCPToggle *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        SCPToggle[] Toggles { get; }
+    }
 
-	// @interface SCPReadReusableCardParameters : NSObject
-	[BaseType (typeof(NSObject))]
-	interface SCPReadReusableCardParameters
-	{
-		// @property (readwrite, copy, nonatomic) NSString * _Nullable customer;
-		[NullAllowed, Export ("customer")]
-		string Customer { get; set; }
+    // @interface SCPPhoneInputBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPPhoneInput>))]
+    [DisableDefaultCtor]
+    interface SCPPhoneInputBuilder
+    {
+        // -(instancetype _Nonnull)initWithTitle:(NSString * _Nonnull)title __attribute__((objc_designated_initializer));
+        [Export("initWithTitle:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(string title);
 
-		// @property (readwrite, copy, nonatomic) NSDictionary<NSString *,NSString *> * _Nullable metadata;
-		[NullAllowed, Export ("metadata", ArgumentSemantic.Copy)]
-		NSDictionary<NSString, NSString> Metadata { get; set; }
-	}
-	*/
+        // -(SCPPhoneInputBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPPhoneInputBuilder SetTitle(string title);
 
-	// @interface SCPReader : NSObject <SCPJSONDecodable>
-	[BaseType (typeof(NSObject))]
+        // -(SCPPhoneInputBuilder * _Nonnull)setRequired:(BOOL)required;
+        [Export("setRequired:")]
+        SCPPhoneInputBuilder SetRequired(bool required);
+
+        // -(SCPPhoneInputBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPPhoneInputBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPPhoneInputBuilder * _Nonnull)setSkipButtonText:(NSString * _Nonnull)skipButtonText;
+        [Export("setSkipButtonText:")]
+        SCPPhoneInputBuilder SetSkipButtonText(string skipButtonText);
+
+        // -(SCPPhoneInputBuilder * _Nonnull)setSubmitButtonText:(NSString * _Nonnull)submitButtonText;
+        [Export("setSubmitButtonText:")]
+        SCPPhoneInputBuilder SetSubmitButtonText(string submitButtonText);
+
+        // -(SCPPhoneInputBuilder * _Nonnull)setToggles:(NSArray<SCPToggle *> * _Nonnull)toggles;
+        [Export("setToggles:")]
+        SCPPhoneInputBuilder SetToggles(SCPToggle[] toggles);
+    }
+
+    // @interface SCPPhoneResult : SCPCollectInputsResult
+    [BaseType(typeof(SCPCollectInputsResult))]
+    [DisableDefaultCtor]
+    interface SCPPhoneResult
+    {
+        // @property (readonly, nonatomic) NSString * _Nullable phone;
+        [NullAllowed, Export("phone")]
+        string Phone { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        NSNumber[] Toggles { get; }
+    }
+
+
+    // @interface SCPReader : NSObject <SCPJSONDecodable>
+    [BaseType (typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface SCPReader : ISCPJSONDecodable
 	{
@@ -2176,10 +2332,55 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic) NSString * _Nullable label;
 		[NullAllowed, Export ("label")]
 		string Label { get; }
-	}
+    }
 
-	// @interface SCPReaderSoftwareUpdate : NSObject
-	[BaseType (typeof(NSObject))]
+    // @interface SCPReaderAccessibility : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPReaderAccessibility
+    {
+        // @property (readonly, nonatomic) SCPReaderTextToSpeechStatus textToSpeechStatus;
+        [Export("textToSpeechStatus")]
+        SCPReaderTextToSpeechStatus TextToSpeechStatus { get; }
+
+        // @property (readonly, nonatomic) NSError * _Nullable error;
+        [NullAllowed, Export("error")]
+        NSError Error { get; }
+    }
+
+	public partial interface ISCPReaderSettingsParameters { }
+
+    // @interface SCPReaderAccessibilityParameters : NSObject <SCPReaderSettingsParameters>
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPReaderAccessibilityParameters : ISCPReaderSettingsParameters
+    {
+        // @property (readonly, assign, nonatomic) BOOL textToSpeechViaSpeakers;
+        [Export("textToSpeechViaSpeakers")]
+        bool TextToSpeechViaSpeakers { get; }
+    }
+
+    // @interface SCPReaderAccessibilityParametersBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPReaderAccessibilityParameters>))]
+    interface SCPReaderAccessibilityParametersBuilder
+    {
+        // -(SCPReaderAccessibilityParametersBuilder * _Nonnull)setTextToSpeechViaSpeakers:(BOOL)textToSpeechViaSpeakers;
+        [Export("setTextToSpeechViaSpeakers:")]
+        SCPReaderAccessibilityParametersBuilder SetTextToSpeechViaSpeakers(bool textToSpeechViaSpeakers);
+    }
+
+    // @interface SCPReaderSettings : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPReaderSettings
+    {
+        // @property (readonly, nonatomic) SCPReaderAccessibility * _Nonnull accessibility;
+        [Export("accessibility")]
+        SCPReaderAccessibility Accessibility { get; }
+    }
+
+    // @interface SCPReaderSoftwareUpdate : NSObject
+    [BaseType (typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface SCPReaderSoftwareUpdate
 	{
@@ -2287,10 +2488,118 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic) NSString * _Nullable failureReason;
 		[NullAllowed, Export ("failureReason")]
 		string FailureReason { get; }
-	}
+    }
 
-	// @interface SCPSetupAttempt : NSObject <SCPJSONDecodable>
-	[BaseType (typeof(NSObject))]
+    // @interface SCPSelectionButton : NSObject
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface SCPSelectionButton
+    {
+        // @property (readonly, assign, nonatomic) SCPSelectionButtonStyle style;
+        [Export("style", ArgumentSemantic.Assign)]
+        SCPSelectionButtonStyle Style { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nonnull text;
+        [Export("text")]
+        string Text { get; }
+    }
+
+    // @interface SCPSelectionButtonBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPSelectionButton>))]
+    [DisableDefaultCtor]
+    interface SCPSelectionButtonBuilder
+    {
+        // -(instancetype _Nonnull)initWithStyle:(SCPSelectionButtonStyle)style text:(NSString * _Nonnull)text __attribute__((objc_designated_initializer));
+        [Export("initWithStyle:text:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(SCPSelectionButtonStyle style, string text);
+
+        // -(SCPSelectionButtonBuilder * _Nonnull)setStyle:(SCPSelectionButtonStyle)style;
+        [Export("setStyle:")]
+        SCPSelectionButtonBuilder SetStyle(SCPSelectionButtonStyle style);
+
+        // -(SCPSelectionButtonBuilder * _Nonnull)setText:(NSString * _Nonnull)text;
+        [Export("setText:")]
+        SCPSelectionButtonBuilder SetText(string text);
+    }
+
+    // @interface SCPSelectionInput : SCPInput
+    [BaseType(typeof(SCPInput))]
+    [DisableDefaultCtor]
+    interface SCPSelectionInput
+    {
+        // @property (readonly, nonatomic) NSString * _Nonnull title;
+        [Export("title")]
+        string Title { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable skipButtonText;
+        [NullAllowed, Export("skipButtonText")]
+        string SkipButtonText { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<SCPSelectionButton *> * _Nonnull selectionButtons;
+        [Export("selectionButtons", ArgumentSemantic.Copy)]
+        SCPSelectionButton[] SelectionButtons { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<SCPToggle *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        SCPToggle[] Toggles { get; }
+    }
+
+    // @interface SCPSelectionInputBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPSelectionInput>))]
+    [DisableDefaultCtor]
+    interface SCPSelectionInputBuilder
+    {
+        // -(instancetype _Nonnull)initWithTitle:(NSString * _Nonnull)title __attribute__((objc_designated_initializer));
+        [Export("initWithTitle:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(string title);
+
+        // -(SCPSelectionInputBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPSelectionInputBuilder SetTitle(string title);
+
+        // -(SCPSelectionInputBuilder * _Nonnull)setRequired:(BOOL)required;
+        [Export("setRequired:")]
+        SCPSelectionInputBuilder SetRequired(bool required);
+
+        // -(SCPSelectionInputBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPSelectionInputBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPSelectionInputBuilder * _Nonnull)setSkipButtonText:(NSString * _Nonnull)skipButtonText;
+        [Export("setSkipButtonText:")]
+        SCPSelectionInputBuilder SetSkipButtonText(string skipButtonText);
+
+        // -(SCPSelectionInputBuilder * _Nonnull)setSelectionButtons:(NSArray<SCPSelectionButton *> * _Nonnull)selectionButton;
+        [Export("setSelectionButtons:")]
+        SCPSelectionInputBuilder SetSelectionButtons(SCPSelectionButton[] selectionButton);
+
+        // -(SCPSelectionInputBuilder * _Nonnull)setToggles:(NSArray<SCPToggle *> * _Nonnull)toggles;
+        [Export("setToggles:")]
+        SCPSelectionInputBuilder SetToggles(SCPToggle[] toggles);
+    }
+
+    // @interface SCPSelectionResult : SCPCollectInputsResult
+    [BaseType(typeof(SCPCollectInputsResult))]
+    [DisableDefaultCtor]
+    interface SCPSelectionResult
+    {
+        // @property (readonly, nonatomic) NSString * _Nullable selection;
+        [NullAllowed, Export("selection")]
+        string Selection { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        NSNumber[] Toggles { get; }
+    }
+
+    // @interface SCPSetupAttempt : NSObject <SCPJSONDecodable>
+    [BaseType (typeof(NSObject))]
 	interface SCPSetupAttempt : ISCPJSONDecodable
 	{
 		// @property (readonly, nonatomic) NSString * _Nullable application;
@@ -2394,7 +2703,11 @@ namespace StripeTerminal
 		// @property (readonly, nonatomic) SCPSetupAttempt * _Nullable latestAttempt;
 		[NullAllowed, Export ("latestAttempt")]
 		SCPSetupAttempt LatestAttempt { get; }
-	}
+
+        // @property (readonly, nonatomic) NSArray<NSString *> * _Nonnull paymentMethodTypes;
+        [Export("paymentMethodTypes")]
+        string[] PaymentMethodTypes { get; }
+    }
 
 	// @interface SCPSetupIntentParameters : NSObject
 	[BaseType (typeof(NSObject))]
@@ -2421,14 +2734,14 @@ namespace StripeTerminal
 		[NullAllowed, Export ("onBehalfOf")]
 		string OnBehalfOf { get; set; }
 
-		/*
-		// -(instancetype _Nonnull)initWithCustomer:(NSString * _Nullable)customerId;
-		[Export ("initWithCustomer:")]
-		NativeHandle Constructor ([NullAllowed] string customerId);
-		*/
-		// @property (readonly, copy, nonatomic) DEPRECATED_MSG_ATTRIBUTE("Did you mean to use stripeDescription?") NSString * description __attribute__((deprecated("Did you mean to use stripeDescription?")));
-		[Export ("description")]
-		string Description { get; }
+        // @property (readonly, nonatomic) NSArray<NSString *> * _Nonnull paymentMethodTypes;
+        [Export("paymentMethodTypes")]
+        string[] PaymentMethodTypes { get; }
+
+        // @property (readonly, copy, nonatomic) DEPRECATED_MSG_ATTRIBUTE("Did you mean to use stripeDescription?") NSString * description __attribute__((deprecated("Did you mean to use stripeDescription?")));
+        [Obsolete("Did you mean to use stripeDescription?")]
+        [Export("description")]
+        string Description { get; }
     }
 
     // @interface SCPSetupIntentParametersBuilder : SCPBuilder
@@ -2454,6 +2767,85 @@ namespace StripeTerminal
         // -(SCPSetupIntentParametersBuilder * _Nonnull)setOnBehalfOf:(NSString * _Nullable)onBehalfOf;
         [Export("setOnBehalfOf:")]
         SCPSetupIntentParametersBuilder SetOnBehalfOf([NullAllowed] string onBehalfOf);
+
+        // -(SCPSetupIntentParametersBuilder * _Nonnull)setPaymentMethodTypes:(NSArray<NSString *> * _Nonnull)paymentMethodTypes;
+        [Export("setPaymentMethodTypes:")]
+        SCPSetupIntentParametersBuilder SetPaymentMethodTypes(string[] paymentMethodTypes);
+    }
+
+    // @interface SCPSignatureInput : SCPInput
+    [BaseType(typeof(SCPInput))]
+    [DisableDefaultCtor]
+    interface SCPSignatureInput
+    {
+        // @property (readonly, nonatomic) NSString * _Nonnull title;
+        [Export("title")]
+        string Title { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable skipButtonText;
+        [NullAllowed, Export("skipButtonText")]
+        string SkipButtonText { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable submitButtonText;
+        [NullAllowed, Export("submitButtonText")]
+        string SubmitButtonText { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<SCPToggle *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        SCPToggle[] Toggles { get; }
+    }
+
+    // @interface SCPSignatureInputBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPSignatureInput>))]
+    [DisableDefaultCtor]
+    interface SCPSignatureInputBuilder
+    {
+        // -(instancetype _Nonnull)initWithTitle:(NSString * _Nonnull)title __attribute__((objc_designated_initializer));
+        [Export("initWithTitle:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(string title);
+
+        // -(SCPSignatureInputBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPSignatureInputBuilder SetTitle(string title);
+
+        // -(SCPSignatureInputBuilder * _Nonnull)setRequired:(BOOL)required;
+        [Export("setRequired:")]
+        SCPSignatureInputBuilder SetRequired(bool required);
+
+        // -(SCPSignatureInputBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPSignatureInputBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPSignatureInputBuilder * _Nonnull)setSkipButtonText:(NSString * _Nonnull)skipButtonText;
+        [Export("setSkipButtonText:")]
+        SCPSignatureInputBuilder SetSkipButtonText(string skipButtonText);
+
+        // -(SCPSignatureInputBuilder * _Nonnull)setSubmitButtonText:(NSString * _Nonnull)submitButtonText;
+        [Export("setSubmitButtonText:")]
+        SCPSignatureInputBuilder SetSubmitButtonText(string submitButtonText);
+
+        // -(SCPSignatureInputBuilder * _Nonnull)setToggles:(NSArray<SCPToggle *> * _Nonnull)toggles;
+        [Export("setToggles:")]
+        SCPSignatureInputBuilder SetToggles(SCPToggle[] toggles);
+    }
+
+    // @interface SCPSignatureResult : SCPCollectInputsResult
+    [BaseType(typeof(SCPCollectInputsResult))]
+    [DisableDefaultCtor]
+    interface SCPSignatureResult
+    {
+        // @property (readonly, nonatomic) NSString * _Nullable signatureSvg;
+        [NullAllowed, Export("signatureSvg")]
+        string SignatureSvg { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        NSNumber[] Toggles { get; }
     }
 
     // @protocol SCPTerminalDelegate <NSObject>
@@ -2473,10 +2865,85 @@ namespace StripeTerminal
 		// @optional -(void)terminal:(SCPTerminal * _Nonnull)terminal didChangePaymentStatus:(SCPPaymentStatus)status __attribute__((swift_name("terminal(_:didChangePaymentStatus:)")));
 		[Export ("terminal:didChangePaymentStatus:")]
 		void DidChangePaymentStatus (SCPTerminal terminal, SCPPaymentStatus status);
-	}
+    }
 
-	// @interface SCPTip : NSObject <SCPJSONDecodable, NSCopying>
-	[BaseType (typeof(NSObject))]
+    // @interface SCPTextInput : SCPInput
+    [BaseType(typeof(SCPInput))]
+    [DisableDefaultCtor]
+    interface SCPTextInput
+    {
+        // @property (readonly, nonatomic) NSString * _Nonnull title;
+        [Export("title")]
+        string Title { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable stripeDescription;
+        [NullAllowed, Export("stripeDescription")]
+        string StripeDescription { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable skipButtonText;
+        [NullAllowed, Export("skipButtonText")]
+        string SkipButtonText { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable submitButtonText;
+        [NullAllowed, Export("submitButtonText")]
+        string SubmitButtonText { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<SCPToggle *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        SCPToggle[] Toggles { get; }
+    }
+
+    // @interface SCPTextInputBuilder : SCPBuilder
+    [BaseType(typeof(SCPBuilder<SCPTextInput>))]
+    [DisableDefaultCtor]
+    interface SCPTextInputBuilder
+    {
+        // -(instancetype _Nonnull)initWithTitle:(NSString * _Nonnull)title __attribute__((objc_designated_initializer));
+        [Export("initWithTitle:")]
+        [DesignatedInitializer]
+        NativeHandle Constructor(string title);
+
+        // -(SCPTextInputBuilder * _Nonnull)setTitle:(NSString * _Nonnull)title;
+        [Export("setTitle:")]
+        SCPTextInputBuilder SetTitle(string title);
+
+        // -(SCPTextInputBuilder * _Nonnull)setRequired:(BOOL)required;
+        [Export("setRequired:")]
+        SCPTextInputBuilder SetRequired(bool required);
+
+        // -(SCPTextInputBuilder * _Nonnull)setStripeDescription:(NSString * _Nonnull)stripeDescription;
+        [Export("setStripeDescription:")]
+        SCPTextInputBuilder SetStripeDescription(string stripeDescription);
+
+        // -(SCPTextInputBuilder * _Nonnull)setSkipButtonText:(NSString * _Nonnull)skipButtonText;
+        [Export("setSkipButtonText:")]
+        SCPTextInputBuilder SetSkipButtonText(string skipButtonText);
+
+        // -(SCPTextInputBuilder * _Nonnull)setSubmitButtonText:(NSString * _Nonnull)submitButtonText;
+        [Export("setSubmitButtonText:")]
+        SCPTextInputBuilder SetSubmitButtonText(string submitButtonText);
+
+        // -(SCPTextInputBuilder * _Nonnull)setToggles:(NSArray<SCPToggle *> * _Nonnull)toggles;
+        [Export("setToggles:")]
+        SCPTextInputBuilder SetToggles(SCPToggle[] toggles);
+    }
+
+    // @interface SCPTextResult : SCPCollectInputsResult
+    [BaseType(typeof(SCPCollectInputsResult))]
+    [DisableDefaultCtor]
+    interface SCPTextResult
+    {
+        // @property (readonly, nonatomic) NSString * _Nullable text;
+        [NullAllowed, Export("text")]
+        string Text { get; }
+
+        // @property (readonly, copy, nonatomic) NSArray<NSNumber *> * _Nonnull toggles;
+        [Export("toggles", ArgumentSemantic.Copy)]
+        NSNumber[] Toggles { get; }
+    }
+
+    // @interface SCPTip : NSObject <SCPJSONDecodable, NSCopying>
+    [BaseType (typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface SCPTip : ISCPJSONDecodable, INSCopying
 	{
@@ -2493,12 +2960,6 @@ namespace StripeTerminal
 		// @property (assign, nonatomic) NSInteger eligibleAmount;
 		[Export ("eligibleAmount")]
 		nint EligibleAmount { get; set; }
-
-        /*
-		// -(instancetype _Nonnull)initWithEligibleAmount:(NSInteger)eligibleAmount;
-		[Export ("initWithEligibleAmount:")]
-		NativeHandle Constructor (nint eligibleAmount);
-		*/
     }
 
     // @interface SCPTippingConfigurationBuilder : SCPBuilder
@@ -2840,8 +3301,13 @@ namespace StripeTerminal
 		[Export ("scp_appleBuiltInReaderErrorUserInfoDeviceBannedUntilDateKey")]
 		string Scp_appleBuiltInReaderErrorUserInfoDeviceBannedUntilDateKey { get; }
 
-		// +(NSError * _Nonnull)scp_unknownAppleBuiltInReaderError __attribute__((warn_unused_result("")));
-		[Static]
+        // @property (readonly, copy, nonatomic, class) NSString * _Nonnull scp_appleBuiltInReaderErrorUserInfoPrepareFailedReasonKey;
+        [Static]
+        [Export("scp_appleBuiltInReaderErrorUserInfoPrepareFailedReasonKey")]
+        string Scp_appleBuiltInReaderErrorUserInfoPrepareFailedReasonKey { get; }
+
+        // +(NSError * _Nonnull)scp_unknownAppleBuiltInReaderError __attribute__((warn_unused_result("")));
+        [Static]
 		[Export ("scp_unknownAppleBuiltInReaderError")]
 		NSError Scp_unknownAppleBuiltInReaderError { get; }
 
