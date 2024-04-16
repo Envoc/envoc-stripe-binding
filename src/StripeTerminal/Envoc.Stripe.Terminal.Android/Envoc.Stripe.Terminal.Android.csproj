@@ -10,9 +10,9 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.Android</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.Android</PackageId>
-		<Version>3.2.1.2</Version>
-		<StripeVersion>3.2.1</StripeVersion>
-		<KtorVersion>2.3.4</KtorVersion>
+		<Version>3.5.0</Version>
+		<StripeVersion>3.5.0</StripeVersion>
+		<KtorVersion>2.3.9</KtorVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>
@@ -41,27 +41,27 @@
 
 		<!-- Android nugets-->
 		<PackageReference Include="Xamarin.Android.ReactiveX.RxAndroid" Version="2.1.1.5" JavaArtifact="io.reactivex.rxjava3:rxandroid" JavaVersion="3.0.2" />
-		<PackageReference Include="Xamarin.Android.ReactiveX.RxJava3.RxJava" Version="3.1.8" />
-		<PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.7.0.1" />
-		<PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.1.4.7" />
-		<PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.12.0.1" />
-		<PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="7.4.2" />
-		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.6.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Ktx" Version="2.6.2.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.6.2.1" />
-		<PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.6.2.1" />
-		<PackageReference Include="Xamarin.AndroidX.Room.Room.Ktx" Version="2.5.2" />
-		<PackageReference Include="Xamarin.AndroidX.Room.Runtime" Version="2.5.2" />
+		<PackageReference Include="Xamarin.Android.ReactiveX.RxJava3.RxJava" Version="3.1.8.3" />
+		<PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.7.1.1" />
+		<PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.1.4.10" />
+		<PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.12.0.4" />
+		<PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.3.1" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.6.2" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Ktx" Version="2.7.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.Process" Version="2.7.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.7.0.1" />
+		<PackageReference Include="Xamarin.AndroidX.Room.Room.Ktx" Version="2.6.1" />
+		<PackageReference Include="Xamarin.AndroidX.Room.Runtime" Version="2.6.1" />
 		<PackageReference Include="Xamarin.AndroidX.Security.SecurityCrypto" Version="1.1.0-alpha03" />
 
 		<!-- Google nugets-->
 		<PackageReference Include="Xamarin.Google.Android.Play.Integrity" Version="1.1.0" JavaArtifact="com.google.android.play:integrity" JavaVersion="1.1.0" />
-		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0" JavaArtifact="com.google.android.material:material" JavaVersion="1.10.0" />
+		<PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.3" JavaArtifact="com.google.android.material:material" JavaVersion="1.11.0" />
 		<PackageReference Include="Xamarin.Google.Code.FindBugs.JSR305" Version="3.0.2" JavaArtifact="com.google.code.findbugs:jsr305" JavaVersion="3.0.2" />
-		<PackageReference Include="Xamarin.Google.Dagger" Version="2.47" JavaArtifact="com.google.dagger:dagger" JavaVersion="2.47" />
-		<PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.20.0.1" JavaArtifact="com.google.errorprone:error_prone_annotations" JavaVersion="2.20.0.1" />
+		<PackageReference Include="Xamarin.Google.Dagger" Version="2.48.1.2" JavaArtifact="com.google.dagger:dagger" JavaVersion="2.51.0" />
+		<PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.23.0.1" JavaArtifact="com.google.errorprone:error_prone_annotations" JavaVersion="2.23.0.1" />
 		<PackageReference Include="Xamarin.Google.Guava.FailureAccess" Version="1.0.1" JavaArtifact="com.google.guava:failureaccess" JavaVersion="1.0.1" />
-		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" Version="1.0.0.15" JavaArtifact="com.google.guava:listenablefuture" JavaVersion="9999.0-empty-to-avoid-conflict-with-guava" />
+		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" Version="1.0.0.18" JavaArtifact="com.google.guava:listenablefuture" JavaVersion="9999.0-empty-to-avoid-conflict-with-guava" />
 		<PackageReference Include="Xamarin.Google.J2Objc.Annotations " Version="2.8" JavaArtifact="com.google.j2objc:j2objc-annotations" JavaVersion="2.8" />
 		<PackageReference Include="Xamarin.GooglePlayServices.SafetyNet" Version="118.0.1" />
 		<PackageReference Include="Xamarin.CheckerFramework.CheckerQual" Version="3.33.0" JavaArtifact="org.checkerframework:checker-qual" JavaVersion="3.33.0" />
@@ -69,22 +69,22 @@
 		<!--<PackageReference Include="Xamarin.Google.Guava" Version="31.1.0.8" JavaArtifact="com.google.guava:guava" JavaVersion="31.1-android" />-->
 
 		<!-- Kotlin nugets-->
-		<PackageReference Include="Xamarin.Kotlin.StdLib" Version="1.9.10.2" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib" JavaVersion="1.9.10" />
-		<PackageReference Include="Xamarin.Kotlin.StdLib.Common" Version="1.9.10.2" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-common" JavaVersion="1.9.10" />
-		<PackageReference Include="Xamarin.Kotlin.StdLib.Jdk7" Version="1.9.10.2" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-jdk7" JavaVersion="1.9.10" />
-		<PackageReference Include="Xamarin.Kotlin.StdLib.Jdk8" Version="1.9.10.2" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-jdk8" JavaVersion="1.9.10" />
-		<PackageReference Include="Xamarin.KotlinX.Coroutines.Android" Version="1.7.3.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-android" JavaVersion="1.7.3.1" />
-		<PackageReference Include="Xamarin.KotlinX.Coroutines.Core" Version="1.7.3.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-core" JavaVersion="1.7.3.1" />
-		<PackageReference Include="Xamarin.KotlinX.Coroutines.Core.Jvm" Version="1.7.3.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm" JavaVersion="1.7.3.1" />
-		<PackageReference Include="Xamarin.KotlinX.Coroutines.Jdk8" Version="1.7.3.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" JavaVersion="1.7.3.1" />
-		<PackageReference Include="Xamarin.KotlinX.Coroutines.Rx3" Version="1.7.3.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-rx3" JavaVersion="1.7.3.1" />
+		<PackageReference Include="Xamarin.Kotlin.StdLib" Version="1.9.23" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib" JavaVersion="1.9.23" />
+		<PackageReference Include="Xamarin.Kotlin.StdLib.Common" Version="1.9.23" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-common" JavaVersion="1.9.23" />
+		<PackageReference Include="Xamarin.Kotlin.StdLib.Jdk7" Version="1.9.23" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-jdk7" JavaVersion="1.9.23" />
+		<PackageReference Include="Xamarin.Kotlin.StdLib.Jdk8" Version="1.9.23" JavaArtifact="org.jetbrains.kotlin:kotlin-stdlib-jdk8" JavaVersion="1.9.23" />
+		<PackageReference Include="Xamarin.KotlinX.Coroutines.Android" Version="1.8.0.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-android" JavaVersion="1.8.0.1" />
+		<PackageReference Include="Xamarin.KotlinX.Coroutines.Core" Version="1.8.0.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-core" JavaVersion="1.8.0.1" />
+		<PackageReference Include="Xamarin.KotlinX.Coroutines.Core.Jvm" Version="1.8.0.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm" JavaVersion="1.8.0.1" />
+		<PackageReference Include="Xamarin.KotlinX.Coroutines.Jdk8" Version="1.8.0.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" JavaVersion="1.8.0.1" />
+		<PackageReference Include="Xamarin.KotlinX.Coroutines.Rx3" Version="1.8.0.1" JavaArtifact="org.jetbrains.kotlinx:kotlinx-coroutines-rx3" JavaVersion="1.8.0.1" />
 
 		<!-- Square nugets-->
-		<PackageReference Include="Square.Moshi.Adapters" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi-adapters" JavaVersion="1.15.0" />
-		<PackageReference Include="Square.Moshi" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi" JavaVersion="1.15.0" />
-		<PackageReference Include="Square.OkHttp3" Version="4.11.0" JavaArtifact="com.squareup.okhttp3:okhttp" JavaVersion="4.11.0" />
-		<PackageReference Include="Square.OkIO" Version="3.5.0.1" JavaArtifact="com.squareup.okio:okio" JavaVersion="3.4.0" />
-		<PackageReference Include="Square.OkIO.Jvm" Version="3.5.0.1" JavaArtifact="com.squareup.okio:okio-jvm" JavaVersion="3.4.0" />
+		<PackageReference Include="Square.Moshi.Adapters" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi-adapters" JavaVersion="1.15.1" />
+		<PackageReference Include="Square.Moshi" Version="1.13.0" JavaArtifact="com.squareup.moshi:moshi" JavaVersion="1.15.1" />
+		<PackageReference Include="Square.OkHttp3" Version="4.12.0" JavaArtifact="com.squareup.okhttp3:okhttp" JavaVersion="4.12.0" />
+		<PackageReference Include="Square.OkIO" Version="3.6.0.1" JavaArtifact="com.squareup.okio:okio" JavaVersion="3.7.0" />
+		<PackageReference Include="Square.OkIO.Jvm" Version="3.6.0.1" JavaArtifact="com.squareup.okio:okio-jvm" JavaVersion="3.7.0" />
 
 	</ItemGroup>
 
@@ -99,7 +99,7 @@
 		<!--<AndroidMavenLibrary Include="com.stripe:stripeterminal" Version="$(StripeVersion)" Pack="True" />-->
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-core" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-external" Version="$(StripeVersion)" Pack="True" />
-		<AndroidMavenLibrary Include="com.stripe:stripeterminal-handoffclient" Version="$(StripeVersion)" Pack="True" />
+		<!--<AndroidMavenLibrary Include="com.stripe:stripeterminal-handoffclient" Version="$(StripeVersion)" Pack="True" />-->
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-localmobile" Version="$(StripeVersion)" Pack="True" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-common" Version="$(StripeVersion)" Bind="False" />
 		<AndroidMavenLibrary Include="com.stripe:stripeterminal-internal-models" Version="$(StripeVersion)" Bind="False" />
@@ -112,37 +112,37 @@
 	<ItemGroup>
 		<!-- Manually added dependencies without nugets -->
 		<AndroidMavenLibrary Include="com.squareup.tape2:tape" Version="2.0.0-beta1" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.wire:wire-moshi-adapter" Version="4.8.1" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime" Version="4.8.1" Bind="False" />
-		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime-jvm" Version="4.8.1" Bind="False" />
-		
-		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.8.22" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-android-extensions-runtime" Version="1.8.22" Bind="False" />
+		<AndroidMavenLibrary Include="com.squareup.wire:wire-moshi-adapter" Version="4.9.8" Bind="False" />
+		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime" Version="4.9.8" Bind="False" />
+		<AndroidMavenLibrary Include="com.squareup.wire:wire-runtime-jvm" Version="4.9.8" Bind="False" />
+
+		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-parcelize-runtime" Version="1.9.23" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlin:kotlin-android-extensions-runtime" Version="1.9.23" Bind="False" />
 		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:atomicfu" Version="0.19.0" Bind="False" />
 		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:atomicfu-jvm" Version="0.19.0" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-datetime" Version="0.4.1" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-datetime-jvm" Version="0.4.1" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-core" Version="1.5.1" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm" Version="1.5.1" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-json" Version="1.5.1" Bind="False" />
-		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm" Version="1.5.1" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-datetime" Version="0.5.0" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-datetime-jvm" Version="0.5.0" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-core" Version="1.6.2" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-core-jvm" Version="1.6.2" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-json" Version="1.6.2" Bind="False" />
+		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-serialization-json-jvm" Version="1.6.2" Bind="False" />
 		<AndroidMavenLibrary Include="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j" Version="1.7.2" Bind="False" />
 
 		<AndroidMavenLibrary Include="com.github.luben:zstd-jni" Version="1.5.2-5" Bind="False" />
 		<AndroidMavenLibrary Include="com.jaredrummler:android-device-names" Version="1.1.9" Bind="False" />
 		<AndroidMavenLibrary Include="com.neovisionaries:nv-i18n" Version="1.29" Bind="False" />
-		<AndroidMavenLibrary Include="com.scottyab:rootbeer-lib" Version="0.0.9" Bind="False" />
+		<AndroidMavenLibrary Include="com.scottyab:rootbeer-lib" Version="0.1.0" Bind="False" />
 		<AndroidMavenLibrary Include="org.apache.commons:commons-compress" Version="1.22" Bind="False" />
 		<AndroidMavenLibrary Include="org.brotli:dec" Version="0.1.2" Bind="False" />
 		<AndroidMavenLibrary Include="org.ow2.asm:asm" Version="9.4" Bind="False" />
 		<AndroidMavenLibrary Include="org.kamranzafar:jtar" Version="2.3" Bind="False" />
 		<AndroidMavenLibrary Include="org.slf4j:slf4j-api" Version="1.7.36" Bind="False" />
 		<AndroidMavenLibrary Include="org.tukaani:xz" Version="1.9" Bind="False" />
-		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-annotations" Version="2.14.1" Bind="False" />
-		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-core" Version="2.14.1" Bind="False" />
-		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-databind" Version="2.14.1" Bind="False" />
-		<AndroidMavenLibrary Include="dev.zacsweers.redacted:redacted-compiler-plugin-annotations" Version="1.4.0" Bind="False" />
-		
+		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-annotations" Version="2.16.1" Bind="False" />
+		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-core" Version="2.16.1" Bind="False" />
+		<AndroidMavenLibrary Include="com.fasterxml.jackson.core:jackson-databind" Version="2.16.1" Bind="False" />
+		<AndroidMavenLibrary Include="dev.zacsweers.redacted:redacted-compiler-plugin-annotations" Version="1.7.1" Bind="False" />
+
 		<AndroidMavenLibrary Include="io.ktor:ktor-io" Version="$(KtorVersion)" Bind="False" />
 		<AndroidMavenLibrary Include="io.ktor:ktor-io-jvm" Version="$(KtorVersion)" Bind="False" />
 		<AndroidMavenLibrary Include="io.ktor:ktor-http" Version="$(KtorVersion)" Bind="False" />
@@ -188,4 +188,5 @@
 		<AndroidMavenLibrary Include="io.reactivex.rxjava3:rxkotlin" Version="3.0.1" Bind="False" />
 		<None Include="$(CacheDirectory)/central/io.reactivex.rxjava3/rxkotlin/3.0.1/io.reactivex.rxjava3_rxkotlin.jar" Pack="True" CopyToOutputDirectory="PreserveNewest" PackagePath="lib/net7.0-android33.0" />
 	</ItemGroup>
+
 </Project>

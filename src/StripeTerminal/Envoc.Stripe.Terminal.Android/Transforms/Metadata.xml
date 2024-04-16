@@ -1,16 +1,17 @@
 ﻿<metadata>
 	<remove-node path="/api/package[@name='com.stripe.stripeterminal.dagger']"/>
 
-	<!--<remove-node path="/api/package[starts-with(@name, 'com.google')]" />-->
-	<!--<remove-node path="/api/package[starts-with(@name, 'kotlin')]" />-->
-	<!--<remove-node path="/api/package[starts-with(@name, 'org.jetbrains')]" />-->
-	<!--<remove-node path="/api/package[starts-with(@name, 'dagger')]" />-->
-	<!--<remove-node path="/api/package[starts-with(@name, 'com.e.c')]" />-->
-	<!--<remove-node path="/api/package[starts-with(@name, 'com.s.')]" />-->
+	<remove-node path="/api/package[starts-with(@name, 'com.google')]" />
+	<remove-node path="/api/package[starts-with(@name, 'kotlin')]" />
+	<remove-node path="/api/package[starts-with(@name, 'org.jetbrains')]" />
+	<remove-node path="/api/package[starts-with(@name, 'dagger')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.e.c')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.s.')]" />
 	<remove-node path="/api/package[starts-with(@name, 'com.mastercard')]" />
-	<!--<remove-node path="/api/package[starts-with(@name, 'com.stripe.cots.aidlservice.build')]" />-->
-<!--	<remove-node path="/api/package[starts-with(@name, 'com.stripe.cots')]" />-->
-
+	<remove-node path="/api/package[starts-with(@name, 'com.stripe.cots')]" />
+	<remove-node path="/api/package[starts-with(@name, 'com.stripe.core.featureflag.dagger')]" />
+	<remove-node path="/api/package[@name='com.stripe.stripeterminal.internal.common.callable']/class[@name='ProxyOfflineListener']" />
+	
 	<attr path="/api/package[starts-with(@name, 'com.s.')]/*/method[@name='get']" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='get']" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='methodFromString']" name="managedReturn">Com.Stripe.Core.Aidlrpc.IAidlMethods</attr>
@@ -23,114 +24,28 @@
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='newBuilder']" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='build']" name="managedReturn">Java.Lang.Object</attr>
 
-
-	<attr path="/api/package[@name='com.stripe.cots.aidlservice']/class[@name='Build']/field[@name='Build']" name="managedName">Build_1</attr>
-	<attr path="/api/package[@name='com.stripe.cots.aidlservice']/class[@name='Connect']/field[@name='Connect']" name="managedName">Connect_1</attr>
-	<attr path="/api/package[@name='com.s.ac']/class[@name='accessories']/field[@name='accessories']" name="managedName">accessories2</attr>
-
-
-	<attr path="/api/package[@name='com.s.ab']/class[@name='Dashboard']/method[@name='As' and count(parameter)=0]" name="managedName">InvokeAs</attr>
+	<attr path="/api/package[@name='com.stripe.proto.model.sdk']/class[@name='ChargeAmount']/field[@name='charge_amount']" name="name">mChargeAmount</attr>
+	<attr path="/api/package[@name='com.stripe.proto.terminal.terminal.pub.message.config']/class[@name='AidEntries']/field[@name='aid_entries']" name="name">mAidEntries</attr>
+	<attr path="/api/package[@name='com.stripe.proto.terminal.terminal.pub.message.config']/class[@name='AidEntriesList']/field[@name='aid_entries_list']" name="name">mAidEntriesList</attr>
+	<attr path="/api/package[@name='com.stripe.proto.terminal.terminal.pub.message.config']/class[@name='TippingConfigPb.FixedAmounts']/field[@name='fixed_amounts']" name="name">mFixedAmounts</attr>
+	<attr path="/api/package[@name='com.stripe.proto.terminal.terminal.pub.message.config']/class[@name='TippingConfigPb.Percentages']/field[@name='percentages']" name="name">mPercentages</attr>
 
 
+	<attr path="/api/package[@name='com.stripe.stripeterminal.dagger']/class[@name='DaggerTerminalComponent.Builder']/method[@name='build' and count(parameter)=0]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/class[@name='RootAccessModule_ProvideRootAccessDetectorFactory']/method[@name='provideRootAccessDetector']" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='get']" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='getApiLevelValidator' and count(parameter)=0]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='getLocationValidator' and count(parameter)=0]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='provideApiLevelValidator' and count(parameter)=2 and parameter[1][@type='java.lang.Object'] and parameter[2][@type='android.content.Context']]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='getRootAccessDetector' and count(parameter)=0]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[starts-with(@name, 'com.stripe')]/*/method[@name='provideLocationServicesValidator' and count(parameter)=2 and parameter[1][@type='java.lang.Object'] and parameter[2][@type='android.content.Context']]" name="managedReturn">Java.Lang.Object</attr>
 
-	<!-- Missing interface implementations -->
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='As']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='Billing']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='Build']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='Connect']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='Dashboard']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='SaaS']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.ag']/class[@name='You']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="getRoot" bridge="false" native="false" return="Android.Views.View" synchronized="false" synthetic="false" visibility="public" return-not-null="true" />
-    </add-node>
-
-
-	<add-node path="/api/package[@name='com.s.p']/class[@name='Build.Build']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Invoke" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.p']/class[@name='As.SDKs']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Invoke" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.p']/class[@name='As.Stripe']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Invoke" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.p']/class[@name='As.Terminal']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Invoke" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.p']/class[@name='Build.Connect']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Invoke" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.p']/class[@name='Build.Dashboard']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Invoke" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
+	<!-- Handle Covariance issues -->
+	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='removeAll']" name="managedType">System.Collections.ICollection</attr>
+	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='retainAll']" name="managedType">System.Collections.ICollection</attr>
+	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='set' and count(parameter)=2]/parameter[2]" name="managedType">Java.Lang.Object</attr>
+	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='set' and count(parameter)=2]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='remove' and count(parameter)=1 and parameter[1][@type='int']]" name="managedReturn">Java.Lang.Object</attr>
+	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='subList' and count(parameter)=2]" name="name">SubListWrap</attr>	
 	
-	<add-node path="/api/package[@name='com.s.al']/class[@name='Connect']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Get" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>	
-	<add-node path="/api/package[@name='com.s.u']/class[@name='Build']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Get" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-	<add-node path="/api/package[@name='com.s.x']/class[@name='Build']">
-      <method abstract="false" deprecated="not deprecated" final="false" name="Get" bridge="false" native="false" return="Java.Lang.Object" synchronized="false" synthetic="false" visibility="public" return-not-null="false" />
-    </add-node>
-
-
-	<!-- Class name clashing -->
-	<attr path="/api/package[@name='com.s.p']/class[@name='SDKs']" name="managedName">SDKs_1</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='As.SDKs']" name="managedName">SDKs_2</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='As.Stripe']" name="managedName">Stripe_2</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='SDKs.You']" name="managedName">You_0</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='SDKs.Billing']" name="managedName">Billing_0</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='SDKs.Connect']" name="managedName">Connect_0</attr>
-
-	<attr path="/api/package[starts-with(@name, 'com.s.')]/*/field[@name='Build']" name="managedName">Build_2</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='Build']" name="managedName">Build_0</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='Build.Build']" name="managedName">Build_1</attr>
-	<attr path="/api/package[@name='com.s.x']/class[@name='Connect.Build']" name="managedName">Build_1</attr>
-	<!--<attr path="/api/package[@name='com.s.u']/class[@name='Connect.Build']" name="managedName">Build_1</attr>-->
-	<attr path="/api/package[@name='com.s.x']/class[@name='Build']" name="managedName">Build_0</attr>
-	<attr path="/api/package[@name='com.s.u']/class[@name='Build']" name="managedName">Build_0</attr>
-<!--	<attr path="/api/package[@name='com.s.ag']/class[@name='Build']/field[@name='Build']" name="name">Build_1</attr>
-	<attr path="/api/package[@name='com.s.ac']/class[@name='Build']/field[@name='Build']" name="name">Build_1</attr>
-	<attr path="/api/package[@name='com.s.l']/class[@name='Build']/field[@name='Build']" name="name">Build_1</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='Build']/field[@name='Build']" name="name">Build_1</attr>-->
-
-	<attr path="/api/package[@name='com.s.p']/class[@name='As.Dashboard.Dashboard']" name="managedName">Dashboard_1</attr>
-	<attr path="/api/package[starts-with(@name, 'com.s.')]/*/field[@name='Dashboard']" name="managedName">Dashboard_2</attr>
-<!--	<attr path="/api/package[@name='com.s.ab']/class[@name='Stripe.Dashboard']/field[@name='Dashboard']" name="name">Dashboard2</attr>
-	<attr path="/api/package[@name='com.s.ae']/class[@name='Dashboard']/field[@name='Dashboard']" name="name">Dashboard2</attr>
-	<attr path="/api/package[@name='com.s.am']/class[@name='Dashboard']/field[@name='Dashboard']" name="name">Dashboard2</attr>-->
-
-	<attr path="/api/package[@name='com.s.p']/class[@name='As.As']" name="managedName">As_1</attr>
-	<attr path="/api/package[@name='com.s.ag']/class[@name='As']" name="managedName">As_1</attr>
-	<attr path="/api/package[starts-with(@name, 'com.s.')]/*/field[@name='As']" name="managedName">As_2</attr>
-<!--	<attr path="/api/package[@name='com.s.ag']/class[@name='As']/field[@name='As']" name="name">As2</attr>
-	<attr path="/api/package[@name='com.s.p']/class[@name='As']/field[@name='As']" name="name">As2</attr>-->
-
-	<!--<attr path="/api/package[starts-with(@name, 'com.s.')]/*/class[@name='Connect.Connect']" name="name">Connect_1</attr>-->
-	<attr path="/api/package[starts-with(@name, 'com.s.')]/*/field[@name='Connect']" name="managedName">Connect_2</attr>
-
-	<attr path="/api/package[@name='com.s.al']/class[@name='Connect']" name="managedName">Connect_0</attr>
-	<!--<attr path="/api/package[@name='com.s.ag']/class[@name='Connect.Connect']" name="managedName">Connect_1</attr>-->
-	<attr path="/api/package[@name='com.s.ak']/class[@name='Connect.Connect']" name="managedName">Connect_1</attr>
-	<attr path="/api/package[@name='com.s.al']/class[@name='Connect.Connect']" name="managedName">Connect_1</attr>
-	<!--<attr path="/api/package[@name='com.s.ag']/class[@name='Connect']/field[@name='Connect']" name="name">Connect_1</attr>-->
-
-
-	<attr path="/api/package[starts-with(@name, 'com.s.')]/*/field[@name='Billing']" name="managedName">Billing_2</attr>
-<!--	<attr path="/api/package[@name='com.s.b']/class[@name='Billing']/field[@name='Billing']" name="name">Dashboard2</attr>
-	<attr path="/api/package[@name='com.s.c']/class[@name='Billing']/field[@name='Billing']" name="name">Dashboard2</attr>-->
-
 </metadata>
