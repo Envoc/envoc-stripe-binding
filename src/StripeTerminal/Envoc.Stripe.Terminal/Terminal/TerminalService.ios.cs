@@ -390,7 +390,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
         try
         {
             var parameters =
-                new SCPPaymentIntentParameters(amount, "usd", new[] { "card_present" }, SCPCaptureMethod.Automatic)
+                new SCPPaymentIntentParameters(amount, payment.Currency, new[] { "card_present" }, SCPCaptureMethod.Automatic)
                 {
                     Metadata = payment.Metadata.ToNSDictionary()
                 };

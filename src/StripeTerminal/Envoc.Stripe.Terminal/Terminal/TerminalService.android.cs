@@ -512,7 +512,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         {
             var parameters =
                 new PaymentIntentParameters
-                    .Builder((long)amount, "usd", CaptureMethod.Automatic, new List<PaymentMethodType> { PaymentMethodType.CardPresent })
+                    .Builder((long)amount, payment.Currency, CaptureMethod.Automatic, new List<PaymentMethodType> { PaymentMethodType.CardPresent })
                     .SetMetadata(payment.Metadata)
                     .Build() as PaymentIntentParameters;
 
