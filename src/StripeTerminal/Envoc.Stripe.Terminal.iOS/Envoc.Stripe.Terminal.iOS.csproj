@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net7.0-ios</TargetFramework>
+		<TargetFrameworks>net7.0-ios;net8.0-ios</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>true</ImplicitUsings>
 		<IsBindingProject>true</IsBindingProject>		
@@ -11,8 +11,8 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.iOS</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.iOS</PackageId>
-		<Version>3.5.0</Version>
-		<StripeVersion>3.5.0</StripeVersion>
+		<Version>3.8.1</Version>
+		<StripeVersion>3.8.1</StripeVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>

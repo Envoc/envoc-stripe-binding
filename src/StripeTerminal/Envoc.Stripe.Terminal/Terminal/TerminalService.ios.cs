@@ -1,35 +1,48 @@
 ﻿using StripeTerminal.Bluetooth;
 using StripeTerminal.Connectivity;
+using StripeTerminal.Internet;
+using StripeTerminal.LocalMobile;
+using StripeTerminal.Offline;
 using StripeTerminal.Payment;
 
 namespace StripeTerminal;
 
 public partial class TerminalService : SCPDiscoveryDelegate
 {
-    private readonly SCPTerminalDelegate terminalDelegate; 
+    private readonly TerminalDelegate terminalDelegate; 
 
     private SCPCancelable paymentTask = null;
     private SCPCancelable discoveryTask = null;
     private List<SCPReader> lastRetrievedReaders = new();
-    private BluetoothConnector bluetoothConnector = null;
-    private ReaderReconnector readerReconnector = null;
+    private readonly BluetoothConnector bluetoothConnector = null;
+    private readonly ReaderReconnector readerReconnector = null;
+    private readonly LocalMobileConnector localMobileConnector = null;
+    private readonly OfflineConnector offlineConnector = null;
 
     public TerminalService(
         IStripeTerminalLogger logger,
         IConnectionTokenProviderService connectionTokenProviderService,
-        SCPTerminalDelegate terminalDelegate,
+        TerminalDelegate terminalDelegate,
         BluetoothConnector bluetoothConnector,
         ReaderReconnector readerReconnector,
-        IStripeReaderCache readerCache) : this(logger, connectionTokenProviderService, readerCache)
+        IStripeReaderCache readerCache,
+        IInternetReaderStatusService internetReaderStatusService) : this(logger, connectionTokenProviderService, readerCache, internetReaderStatusService)
     {
         this.terminalDelegate = terminalDelegate; 
-        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger);
+        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger, new EmptyBatteryUpdater());
         this.readerReconnector = readerReconnector ?? new ReaderReconnector();
+
+        //TODO: Add DI when implementing
+        this.localMobileConnector = new LocalMobileConnector(logger);
+        this.offlineConnector = new OfflineConnector();
 
         this.bluetoothConnector.ReaderUpdateAvailable += OnReaderUpdateAvailable;
         this.bluetoothConnector.ReaderUpdateProgress += OnReaderUpdateProgress;
         this.bluetoothConnector.ReaderUpdateLabel += OnReaderUpdateLabel;
+        this.bluetoothConnector.ReaderErrorMessage += OnReaderErrorMessage;
+        this.bluetoothConnector.ReaderBatteryUpdate += OnReaderBatteryUpdate;
         this.readerReconnector.ConnectionStatusChangedEvent += OnConnectionStatusChanged;
+        this.terminalDelegate.UnexpectedDisconnect += OnUnexpectedDisconnect;
     }
 
     protected SCPTerminal Instance => SCPTerminal.Shared;
@@ -88,6 +101,16 @@ public partial class TerminalService : SCPDiscoveryDelegate
             Instance.Delegate = terminalDelegate;
         }
 
+        //TODO: When implementing offline
+        /*
+        if (offlineConnector != null &&
+            Instance != null &&
+            Instance.OfflineDelegate == null)
+        {
+            Instance.OfflineDelegate = offlineConnector;
+        }
+        */
+
         return Task.FromResult(true);
     }
 
@@ -98,7 +121,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
     #region Discovery
 
-    private Task DiscoverReaders(StripeDiscoveryConfiguration config)
+    private async Task DiscoverReaders(StripeDiscoveryConfiguration config)
     {
         var discoveryMethod = config.DiscoveryMethod switch
         {
@@ -108,27 +131,43 @@ public partial class TerminalService : SCPDiscoveryDelegate
             _ => throw new NotImplementedException(),
         };
 
-        var configuration = new SCPDiscoveryConfiguration(discoveryMethod, config.IsSimulated)
+        var timeout = (nuint)(config.TimeOut ?? 15);
+
+        NSError error;
+        var configuration = config.DiscoveryMethod switch
         {
-            Timeout = (nuint)(config.TimeOut ?? 15),
+            /*
+            //https://stripe.dev/stripe-terminal-ios/docs/Reader%20Discovery%20%26%20Connection.html#/c:objc(cs)SCPBluetoothProximityDiscoveryConfiguration
+            //If your app will be used in a busy environment with multiple iOS devices pairing to multiple available readers at the same time, we recommend using this discovery method.
+            DiscoveryType.Bluetooth => new SCPBluetoothProximityDiscoveryConfigurationBuilder()
+                .SetSimulated(config.IsSimulated)
+                .Build(out error),
+            */
+
+            DiscoveryType.Bluetooth => new SCPBluetoothScanDiscoveryConfigurationBuilder()
+                .SetTimeout(timeout)
+                .SetSimulated(config.IsSimulated)
+                .Build(out error),
+
+            DiscoveryType.Internet => new SCPInternetDiscoveryConfigurationBuilder()
+                .SetLocationId(config.LocationId)
+                .SetSimulated(config.IsSimulated)
+                .Build(out error),
+
+            DiscoveryType.Local => new SCPLocalMobileDiscoveryConfigurationBuilder()
+                .SetSimulated(config.IsSimulated)
+                .Build(out error),
+
+            _ => throw new NotImplementedException(),
         };
 
-        if (discoveryTask != null && !discoveryTask.Completed)
-        {
-            discoveryTask.Cancel(error =>
-            {
-                if (error != null)
-                {
-                    Error("reader_discover_cancel_error", error);
-                }
-            });
-        }
+        await CancelDiscoveryImplementation();
 
         if (Instance.ConnectionStatus != SCPConnectionStatus.NotConnected && config.DiscoveryMethod == connectionType)
         {
             DidUpdateDiscoveredReaders(Instance, lastRetrievedReaders.ToArray());
 
-            return Task.CompletedTask;
+            return;
         }
 
         discoveryTask = Instance.DiscoverReaders(configuration, this, error =>
@@ -141,29 +180,42 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
             if (error != null && !ignoreErrors.Contains(error.Code))
             {
+                Trace($"Discovery ErrorCode: {error.Code}");
+                Trace($"Discovery ErrorMessage: {error.LocalizedDescription}");
                 Error("reader_discover_error", error);
+
+                //If it errors out, we want the loading to finish
+                onReadersDiscoveredAction?.Invoke([]);
+
+                ReaderErrorMessage?.Invoke(this, new ReaderUpdateLabelEventArgs(error.LocalizedDescription, showCancel: false));
             }
         });
-
-        return Task.CompletedTask;
     }
 
     public async Task CancelDiscovery()
     {
         await Initialize();
 
-        if (discoveryTask != null)
+        await CancelDiscoveryImplementation();
+    }
+
+    private async Task CancelDiscoveryImplementation()
+    {
+        if (discoveryTask != null && !discoveryTask.Completed)
         {
-            if (!discoveryTask.Completed)
+            var tcs = new TaskCompletionSource();
+
+            discoveryTask.Cancel(error =>
             {
-                discoveryTask.Cancel(error =>
+                if (error != null)
                 {
-                    if (error != null)
-                    {
-                        Error("reader_discover_cancel_error", error);
-                    }
-                });
-            }
+                    Error("reader_discover_cancel_error", error);
+                }
+
+                tcs.TrySetResult();
+            });
+
+            await tcs.Task;
         }
     }
 
@@ -228,68 +280,36 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
         var tcs = new TaskCompletionSource<Reader>();
 
+        NSError builderError;
         if (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Bluetooth)
         {
-            var connectionConfig = new SCPBluetoothConnectionConfiguration(
-              // When connecting to a physical reader, your integration should specify either the
-              // same location as the last connection (selectedReader.locationId) or a new location
-              // of your user's choosing.
-              //
-              locationId: locationId,
-              autoReconnectOnUnexpectedDisconnect: true,
-              readerReconnector
-            );
+            // When connecting to a physical reader, your integration should specify either the
+            // same location as the last connection (selectedReader.locationId) or a new location
+            // of your user's choosing.
+            var connectionConfig = new SCPBluetoothConnectionConfigurationBuilder()
+                .SetLocationId(locationId)
+                .SetAutoReconnectOnUnexpectedDisconnect(true)
+                .SetAutoReconnectionDelegate(readerReconnector)
+                .Build(out builderError);
 
-            Instance.ConnectBluetoothReader(selectedReader, @delegate: bluetoothConnector, connectionConfig: connectionConfig, async (connectedReader, error) =>
-            {
-                if (error != null)
-                {
-                    Error("reader_bluetooth_connection_error", error);
-                }
-
-                if (connectedReader != null)
-                {
-                    currentReader = request.Reader;
-                    connectionType = discoveryConfiguration.DiscoveryMethod;
-                    await readerCache.SetLastConnectedReader(currentReader, connectionType);
-
-                    tcs.SetResult(connectedReader.FromNative());
-                }
-                else
-                {
-                    tcs.SetResult(null);
-                }
-            });
+            Instance.ConnectBluetoothReader(selectedReader, bluetoothConnector, connectionConfig, SetConnectionDelegate);
         }
         else if (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Internet)
         {
-            try
-            {
-                Instance.ConnectInternetReader(selectedReader, connectionConfig: null, async (connectedReader, error) =>
-                {
-                    if (error != null)
-                    {
-                        Error("reader_internet_connection_error", error);
-                    }
+            var connectionConfig = new SCPInternetConnectionConfigurationBuilder()
+                .SetAllowCustomerCancel(true)
+                .SetFailIfInUse(true)
+                .Build(out builderError);
 
-                    if (connectedReader != null)
-                    {
-                        currentReader = request.Reader;
-                        connectionType = discoveryConfiguration.DiscoveryMethod;
-                        await readerCache.SetLastConnectedReader(currentReader, connectionType);
+            Instance.ConnectInternetReader(selectedReader, connectionConfig, SetConnectionDelegate);
+        }
+        else if (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Local)
+        {
+            var connectionConfig = new SCPLocalMobileConnectionConfigurationBuilder(locationId)
+                .SetLocationId(locationId)
+                .Build(out builderError);
 
-                        tcs.SetResult(connectedReader.FromNative());
-                    }
-                    else
-                    {
-                        tcs.SetResult(null);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                tcs.SetResult(null);
-            }
+            Instance.ConnectLocalMobileReader(selectedReader, localMobileConnector, connectionConfig, SetConnectionDelegate);
         }
         else
         {
@@ -297,14 +317,64 @@ public partial class TerminalService : SCPDiscoveryDelegate
         }
 
         return await tcs.Task;
+
+        /*
+        // Unused but corresponding method for the binding to Async method if we change to that in the future
+        async Task<Reader> SetConnectionTask(Task<SCPReader> readerTask, string readerType = null)
+        {
+            readerType ??= discoveryConfiguration.DiscoveryMethod.ToString().ToLower();
+
+            var reader = await readerTask;
+            if (readerTask.Exception != null && readerTask.Exception.GetBaseException() is NSErrorException ex)
+            {
+                Error($"reader_{readerType}_connection_error", ex.Error);
+            }
+
+            if (reader != null)
+            {
+                currentReader = request.Reader;
+                connectionType = discoveryConfiguration.DiscoveryMethod;
+                await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
+                return reader.FromNative();
+            }
+            else
+            {
+                return null;
+            }
+        }
+        */
+
+        async void SetConnectionDelegate(SCPReader connectedReader, NSError error)
+        {
+            var readerType = discoveryConfiguration.DiscoveryMethod.ToString().ToLower();
+
+            if (error != null)
+            {
+                Error($"reader_{readerType}_connection_error", error);
+            }
+
+            if (connectedReader != null)
+            {
+                currentReader = request.Reader;
+                connectionType = discoveryConfiguration.DiscoveryMethod;
+                await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
+                tcs.SetResult(connectedReader.FromNative());
+            }
+            else
+            {
+                var errorString = error?.LocalizedDescription ?? ConstantStrings.GenericReaderConnectionError;
+
+                ReaderErrorMessage?.Invoke(null, new ReaderUpdateLabelEventArgs(errorString, false));
+
+                tcs.SetResult(null);
+            }
+        }
     }
 
-    public async Task<bool> DisconnectReader()
-    {
-        await Initialize();
-
-        await readerCache.SetLastConnectedReader(null, null);
-
+    private async Task<bool> DisconnectReaderImplementation()
+    {        
         if (Instance.ConnectionStatus == SCPConnectionStatus.NotConnected)
         {
             return true;
@@ -360,18 +430,21 @@ public partial class TerminalService : SCPDiscoveryDelegate
             return;
         }
 
-        paymentTask.Cancel(error =>
+        lock (_locker)
         {
-            if (error == null)
+            paymentTask.Cancel(error =>
             {
-                return;
-            }
+                if (error == null)
+                {
+                    return;
+                }
 
-            Error("reader_payment_cancel_error", error);
-        });
+                Error("reader_payment_cancel_error", error);
+            });
+        }
     }
 
-    public async Task<PaymentResponse> CollectPayment(PaymentRequest payment)
+    public async Task<PaymentResponse> CollectPayment(PaymentRequest payment, CancellationToken token = default)
     {
         await Initialize();
 
@@ -387,17 +460,34 @@ public partial class TerminalService : SCPDiscoveryDelegate
             amount = StripeTestAmount.GetDeclinedAmount(amount);
         }
 
+        if (token.IsCancellationRequested)
+        {
+            return new PaymentResponse();
+        }
+
         try
         {
             var parameters =
-                new SCPPaymentIntentParameters(amount, "usd", new[] { "card_present" }, SCPCaptureMethod.Automatic)
-                {
-                    Metadata = payment.Metadata.ToNSDictionary()
-                };
+                new SCPPaymentIntentParametersBuilder(amount, "usd")
+                    //.SetAmount(amount)
+                    //.SetCurrency("usd")
+                    .SetPaymentMethodTypes(new[] { "card_present" })
+                    .SetCaptureMethod(SCPCaptureMethod.Automatic)
+                    .SetMetadata(payment.Metadata.ToNSDictionary())
+                    .Build(out var builderError);
 
             var tcs = new TaskCompletionSource<SCPPaymentIntent>();
 
-            var intentTask = Instance.CreatePaymentIntentAsync(parameters);
+            Task<SCPPaymentIntent> intentTask = null;
+            if (string.IsNullOrEmpty(payment.PaymentIntentSecret))
+            {
+                intentTask = Instance.CreatePaymentIntentAsync(parameters);
+            }
+            else
+            {
+                intentTask = Instance.RetrievePaymentIntentAsync(payment.PaymentIntentSecret);
+            }
+
             var intent = await intentTask;
 
             if (intent == null)
@@ -407,8 +497,17 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
             LogStatusStrings(Instance, intent);
 
-            intentTask = Instance.CollectPaymentMethodAsync(intent, out SCPCancelable cancelable);
-            paymentTask = cancelable;
+            //ensure that collect payment & cancel payment aren't executing at the same time
+            lock (_locker)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    return new PaymentResponse();
+                }
+
+                intentTask = Instance.CollectPaymentMethodAsync(intent, out SCPCancelable cancelable);
+                paymentTask = cancelable;
+            }
 
             intent = await intentTask;
 
@@ -419,6 +518,20 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
             LogStatusStrings(Instance, intent);
 
+            var paymentResult = await Instance.ConfirmPaymentIntentAsync(intent);
+            if (paymentResult == null)
+            {
+                return PaymentResponse.AsError("Failed to process payment");
+            }
+
+            LogStatusStrings(Instance, paymentResult?.PaymentIntent ?? intent);
+
+            if (!string.IsNullOrEmpty(paymentResult.Error?.RequestError?.LocalizedDescription))
+            {
+                return PaymentResponse.AsError(paymentResult.Error.RequestError.LocalizedDescription);
+            }
+
+            /*
             var paymentResult = await Instance.ProcessPaymentAsync(intent);
             if (paymentResult == null)
             {
@@ -431,6 +544,7 @@ public partial class TerminalService : SCPDiscoveryDelegate
             {
                 return PaymentResponse.AsError(paymentResult.Error.RequestError.LocalizedDescription);
             }
+            */
 
             ////Necessary if payment is successful?
             //if (intent.Status == SCPPaymentIntentStatus.Succeeded)
@@ -470,9 +584,31 @@ public partial class TerminalService : SCPDiscoveryDelegate
 
     public async Task<bool> RequestPermissions()
     {
-        //TODO: Implement
+        var result = CheckBluetoothPermission();
+        result &= CheckLocationPermission();
+        return result;
+    }
 
-        return true;
+    private bool CheckBluetoothPermission()
+    {
+        return CoreBluetooth.CBManager.Authorization == CoreBluetooth.CBManagerAuthorization.AllowedAlways;
+    }
+
+    private bool CheckLocationPermission()
+    {
+        if (!CoreLocation.CLLocationManager.LocationServicesEnabled)
+        {
+            return false;
+        }
+
+        var status = CoreLocation.CLLocationManager.Status;
+
+        return status switch
+        {
+            CoreLocation.CLAuthorizationStatus.AuthorizedAlways => true,
+            CoreLocation.CLAuthorizationStatus.AuthorizedWhenInUse => true,
+            _ => false
+        };
     }
 
     #endregion
@@ -502,6 +638,24 @@ public partial class TerminalService : SCPDiscoveryDelegate
         await Task.Delay(500);
 
         Instance.InstallAvailableUpdate();
+    }
+
+    #endregion
+
+    #region ISCPTerminalDelegate
+
+    private async void OnUnexpectedDisconnect(object sender, ReaderUnexpectedDisconnectEventArgs e)
+    {
+        try
+        {
+            await ReconnectToDisconnectedInternetReader(e.Reader);
+        }
+        catch (TaskCanceledException)
+        {
+            internetReaderCancellationToken = null;
+
+            Trace($"Reconnection cancelled");
+        }
     }
 
     #endregion

@@ -9,15 +9,13 @@ using Com.Stripe.Stripeterminal.External.Callable;
 using Com.Stripe.Stripeterminal.External.Models;
 using StripeTerminal.Bluetooth;
 using StripeTerminal.Connectivity;
+using StripeTerminal.Helpers;
+using StripeTerminal.Internet;
 using StripeTerminal.Payment;
+using System.Threading;
 using Models = Com.Stripe.Stripeterminal.External.Models;
 
 namespace StripeTerminal;
-
-public partial interface ITerminalService
-{
-    Task GetHandoffReaders(Action<IList<Reader>> readers, bool simulated = false);
-}
 
 public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDiscoveryListener, IHandoffReaderListener
 {
@@ -35,14 +33,17 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         IConnectionTokenProviderService connectionTokenProviderService,
         BluetoothConnector bluetoothConnector,
         ReaderReconnector readerReconnector,
-        IStripeReaderCache readerCache) : this(logger, connectionTokenProviderService, readerCache)
+        IStripeReaderCache readerCache,
+        IInternetReaderStatusService internetReaderStatusService) : this(logger, connectionTokenProviderService, readerCache, internetReaderStatusService)
     {
-        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger);
+        this.bluetoothConnector = bluetoothConnector ?? new BluetoothConnector(logger, new EmptyBatteryUpdater());
         this.readerReconnector = readerReconnector ?? new ReaderReconnector();
 
         this.bluetoothConnector.ReaderUpdateAvailable += OnReaderUpdateAvailable;
         this.bluetoothConnector.ReaderUpdateProgress += OnReaderUpdateProgress;
         this.bluetoothConnector.ReaderUpdateLabel += OnReaderUpdateLabel;
+        this.bluetoothConnector.ReaderErrorMessage += OnReaderErrorMessage;
+        this.bluetoothConnector.ReaderBatteryUpdate += OnReaderBatteryUpdate;
         this.readerReconnector.ConnectionStatusChangedEvent += OnConnectionStatusChanged;
     }
 
@@ -64,27 +65,45 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         TerminalService.activity = activity;
     }
 
+    public static void InitializeContext(Android.App.Application application)
+    {
+        TerminalApplicationDelegate.OnCreate(application);
+    }
+
     public async Task<bool> Initialize()
     {
-        if (!await RequestPermissions())
+        try
         {
-            return false;
+            if (!await RequestPermissions())
+            {
+                return false;
+            }
+
+            if (!Terminal.IsInitialized)
+            {
+                Terminal.InitTerminal(context, new ConnectionTokenProvider(connectionTokenProviderService), this);
+            }
+        }
+        catch (Exception ex)
+        {
+            ;
+            System.Diagnostics.Debug.WriteLine(ex);
+            System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+            throw;
         }
 
-        if (!Terminal.IsInitialized)
-        {
-            Terminal.InitTerminal(context, new ConnectionTokenProvider(connectionTokenProviderService), this);
-        }
 
         return true;
     }
 
     public ReaderConnectivityStatus GetConnectivityStatus(DiscoveryType? discoveryType)
     {
-        if (!IsTerminalConnected)
+        if (!IsTerminalInitialized)
         {
             return ReaderConnectivityStatus.Disconnected;
         }
+
+        var _ = Terminal.Instance.ConnectionStatus.ToString();
 
         if (Instance == null || Instance.ConnectionStatus == ConnectionStatus.NotConnected)
         {
@@ -118,52 +137,32 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     #region Discovery
 
-    public Task GetHandoffReaders(Action<IList<Reader>> readers, bool simulated = false)
+    private async Task DiscoverReaders(StripeDiscoveryConfiguration config)
     {
-        discoveryConfiguration = new StripeDiscoveryConfiguration
-        {
-            TimeOut = 15,
-            DiscoveryMethod = DiscoveryType.Handoff,
-            IsSimulated = simulated
-        };
+        var timeout = config.TimeOut ?? 15;
 
-        return GetReaders(discoveryConfiguration, readers);
-    }
-
-    private Task DiscoverReaders(StripeDiscoveryConfiguration config)
-    {
-        var discoveryMethod = config.DiscoveryMethod switch
+        IDiscoveryConfiguration configuration = config.DiscoveryMethod switch
         {
-            DiscoveryType.Bluetooth => DiscoveryMethod.BluetoothScan,
-            DiscoveryType.Internet => DiscoveryMethod.Internet,
-            DiscoveryType.Local => DiscoveryMethod.LocalMobile,
-            DiscoveryType.Handoff => DiscoveryMethod.Handoff,
+            DiscoveryType.Bluetooth => new IDiscoveryConfiguration.BluetoothDiscoveryConfiguration(timeout, config.IsSimulated),
+            DiscoveryType.Internet => new IDiscoveryConfiguration.InternetDiscoveryConfiguration(config.LocationId, config.IsSimulated),
+            DiscoveryType.Local => new IDiscoveryConfiguration.LocalMobileDiscoveryConfiguration(config.IsSimulated),
+            DiscoveryType.Handoff => new IDiscoveryConfiguration.HandoffDiscoveryConfiguration(),
             _ => throw new NotImplementedException(),
         };
 
-        var configuration = new DiscoveryConfiguration(config.TimeOut ?? 15, discoveryMethod, config.IsSimulated);
-
-        if (discoveryTask != null && !discoveryTask.IsCompleted)
-        {
-            discoveryTask.Cancel(new GenericCallback((ex) =>
-            {
-                if (ex != null)
-                {
-                    Exception($"Discovery cancel failed", ex);
-                }
-            }));
-        }
+        await CancelDiscoveryImplementation();
 
         if (Instance.ConnectionStatus != ConnectionStatus.NotConnected && config.DiscoveryMethod == connectionType)
         {
-            OnUpdateDiscoveredReaders(lastRetrievedReaders);
+            //Need to make a copy with .ToList() because the underlying method modifies the collection
+            OnUpdateDiscoveredReaders(lastRetrievedReaders.ToList());
 
-            return Task.CompletedTask;
+            return;
         }
 
         discoveryTask = Instance.DiscoverReaders(configuration, this, new GenericCallback((ex) =>
         {
-            Trace($"Discovery timeout");
+            Trace($"{config.DiscoveryMethod} Discovery timeout");
             string[] ignoreErrors =
             {
                 TerminalException.TerminalErrorCode.BluetoothScanTimedOut.ToString(),
@@ -175,10 +174,13 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
                 Trace($"Discovery ErrorCode: {ex.ErrorCode?.Name()}");
                 Trace($"Discovery ErrorMessage: {ex.ErrorMessage}");
                 Exception("reader_discover_error", ex);
+
+                //If it errors out, we want the loading to finish
+                onReadersDiscoveredAction?.Invoke([]);
+
+                ReaderErrorMessage?.Invoke(null, new ReaderUpdateLabelEventArgs(ex.ErrorMessage, showCancel: false));
             }
         }));
-
-        return Task.CompletedTask;
     }
 
     public async Task CancelDiscovery()
@@ -188,15 +190,26 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             return;
         }
 
+        await CancelDiscoveryImplementation();
+    }
+
+    private async Task CancelDiscoveryImplementation()
+    {
         if (discoveryTask != null && !discoveryTask.IsCompleted)
         {
+            var tcs = new TaskCompletionSource();
+
             discoveryTask.Cancel(new GenericCallback((error) =>
             {
                 if (error != null)
                 {
                     Exception("reader_discover_cancel_error", error);
                 }
+
+                tcs.TrySetResult();
             }));
+
+            await tcs.Task;
         }
     }
 
@@ -237,8 +250,8 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
         //TODO: Do we always overwrite the location?
         //locationId = selectedReader.LocationId ?? request.CurrentStripeLocationId
-        var locationId = request.CurrentStripeLocationId ?? selectedReader.Location.Id;
-        if (locationId == null)
+        var locationId = request.CurrentStripeLocationId ?? selectedReader.Location?.Id;
+        if (locationId == null && (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Bluetooth || discoveryConfiguration.DiscoveryMethod == DiscoveryType.Local))
         {
             Info("reader_location_empty");
             return null;
@@ -254,6 +267,9 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             else
             {
                 await GetReaders(discoveryConfiguration, null);
+                //Miniscule race condition
+                //HACK:Needed to ensure SDK finishes current operation 
+                await Task.Delay(100);
             }
         }
 
@@ -276,26 +292,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
               readerReconnector
             );
 
-            Instance.ConnectBluetoothReader(selectedReader, config: connectionConfig, listener: bluetoothConnector, new ConnectionCallback(async (connectedReader, error) =>
-            {
-                if (error != null)
-                {
-                    Exception("reader_bluetooth_connection_error", error);
-                }
-
-                if (connectedReader != null)
-                {
-                    currentReader = request.Reader;
-                    connectionType = discoveryConfiguration.DiscoveryMethod;
-                    await readerCache.SetLastConnectedReader(currentReader, connectionType);
-
-                    tcs.SetResult(connectedReader.FromNative());
-                }
-                else
-                {
-                    tcs.SetResult(null);
-                }
-            }));
+            Instance.ConnectBluetoothReader(selectedReader, config: connectionConfig, listener: bluetoothConnector, new ConnectionCallback(SetConnectionDelegate));
         }
         else if (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Internet)
         {
@@ -303,26 +300,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
             try
             {
-                Instance.ConnectInternetReader(selectedReader, config: connectionConfig, new ConnectionCallback(async (connectedReader, error) =>
-                {
-                    if (error != null)
-                    {
-                        Exception("reader_internet_connection_error", error);
-                    }
-
-                    if (connectedReader != null)
-                    {
-                        currentReader = request.Reader;
-                        connectionType = discoveryConfiguration.DiscoveryMethod;
-                        await readerCache.SetLastConnectedReader(currentReader, connectionType);
-
-                        tcs.SetResult(connectedReader.FromNative());
-                    }
-                    else
-                    {
-                        tcs.SetResult(null);
-                    }
-                }));
+                Instance.ConnectInternetReader(selectedReader, config: connectionConfig, new ConnectionCallback(SetConnectionDelegate));
             }
             catch (Exception ex)
             {
@@ -335,26 +313,20 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
             try
             {
-                Instance.ConnectHandoffReader(selectedReader, config: connectionConfig, listener: this, new ConnectionCallback(async (connectedReader, error) =>
-                {
-                    if (error != null)
-                    {
-                        Exception("reader_handoff_connection_error", error);
-                    }
+                Instance.ConnectHandoffReader(selectedReader, config: connectionConfig, listener: this, new ConnectionCallback(SetConnectionDelegate));
+            }
+            catch (Exception ex)
+            {
+                tcs.SetResult(null);
+            }
+        }
+        else if (discoveryConfiguration.DiscoveryMethod == DiscoveryType.Local)
+        {
+            var connectionConfig = new ConnectionConfiguration.LocalMobileConnectionConfiguration(locationId: locationId);
 
-                    if (connectedReader != null)
-                    {
-                        currentReader = request.Reader;
-                        connectionType = discoveryConfiguration.DiscoveryMethod;
-                        await readerCache.SetLastConnectedReader(currentReader, connectionType);
-
-                        tcs.SetResult(connectedReader.FromNative());
-                    }
-                    else
-                    {
-                        tcs.SetResult(null);
-                    }
-                }));
+            try
+            {
+                Instance.ConnectLocalMobileReader(selectedReader, config: connectionConfig, new ConnectionCallback(SetConnectionDelegate));
             }
             catch (Exception ex)
             {
@@ -367,17 +339,37 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         }
 
         return await tcs.Task;
+
+        async void SetConnectionDelegate(Models.Reader connectedReader, TerminalException error)
+        {
+            var readerType = discoveryConfiguration.DiscoveryMethod.ToString().ToLower();
+
+            if (error != null)
+            {
+                Exception($"reader_{readerType}_connection_error", error);
+            }
+
+            if (connectedReader != null)
+            {
+                currentReader = request.Reader;
+                connectionType = discoveryConfiguration.DiscoveryMethod;
+                await readerCache.SetLastConnectedReader(currentReader, connectionType);
+
+                tcs.SetResult(connectedReader.FromNative());
+            }
+            else
+            {
+                var errorString = error?.LocalizedMessage ?? ConstantStrings.GenericReaderConnectionError;
+
+                ReaderErrorMessage?.Invoke(null, new ReaderUpdateLabelEventArgs(errorString, false));
+
+                tcs.SetResult(null);
+            }
+        }
     }
 
-    public async Task<bool> DisconnectReader()
+    private async Task<bool> DisconnectReaderImplementation()
     {
-        if (!await Initialize())
-        {
-            return false;
-        }
-
-        await readerCache.SetLastConnectedReader(null, null);
-
         if (Instance.ConnectionStatus == ConnectionStatus.NotConnected)
         {
             return true;
@@ -489,7 +481,7 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     #region Payment
 
-    public async Task<PaymentResponse> CollectPayment(PaymentRequest payment)
+    public async Task<PaymentResponse> CollectPayment(PaymentRequest payment, CancellationToken token = default)
     {
         if (!await Initialize())
         {
@@ -508,6 +500,12 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             amount = StripeTestAmount.GetDeclinedAmount(amount);
         }
 
+        if (token.IsCancellationRequested)
+        {
+            return new PaymentResponse();
+        }
+
+        var intentTask = new TaskCompletionSource<PaymentIntent>();
         try
         {
             var parameters =
@@ -516,23 +514,21 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
                     .SetMetadata(payment.Metadata)
                     .Build() as PaymentIntentParameters;
 
-            var tcs = new TaskCompletionSource<PaymentIntent>();
+            var collectionConfig =
+                new CollectConfiguration
+                    .Builder()
+                    .Build() as CollectConfiguration;
 
-            var intentTask = new TaskCompletionSource<PaymentIntent>();
-
-            Instance.CreatePaymentIntent(parameters, new PaymentIntentCallback((intent, error) =>
+            if (string.IsNullOrEmpty(payment.PaymentIntentSecret))
             {
-                if (intent == null || error != null)
-                {
-                    intentTask.SetException(error);
-                }
-                else
-                {
-                    intentTask.SetResult(intent);
-                }
-            }));
+                Instance.CreatePaymentIntent(parameters, GetPaymentIntentCallback());
+            }
+            else
+            {
+                Instance.RetrievePaymentIntent(payment.PaymentIntentSecret, GetPaymentIntentCallback());
+            }
+
             var intent = await intentTask.Task;
-
             if (intent == null || intentTask.Task.Exception != null)
             {
                 return PaymentResponse.AsError(intentTask.Task.Exception);
@@ -541,20 +537,19 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             LogStatusStrings(Instance, intent);
 
             intentTask = new TaskCompletionSource<PaymentIntent>();
-            paymentTask = Instance.CollectPaymentMethod(intent, new PaymentIntentCallback((intent, error) =>
+
+            //ensure that collect payment & cancel payment aren't executing at the same time
+            lock (_locker)
             {
-                if (intent == null || error != null)
+                if (token.IsCancellationRequested)
                 {
-                    intentTask.SetException(error);
+                    return new PaymentResponse();
                 }
-                else
-                {
-                    intentTask.SetResult(intent);
-                }
-            }));
+
+                paymentTask = Instance.CollectPaymentMethod(intent, GetPaymentIntentCallback(), collectionConfig);
+            }
 
             intent = await intentTask.Task;
-
             if (intent == null || intentTask.Task.Exception != null)
             {
                 return PaymentResponse.AsError(intentTask.Task.Exception);
@@ -563,31 +558,15 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             LogStatusStrings(Instance, intent);
 
             intentTask = new TaskCompletionSource<PaymentIntent>();
-            Instance.ProcessPayment(intent, new PaymentIntentCallback((intent, error) =>
-            {
-                if (intent == null || error != null)
-                {
-                    intentTask.SetException(error);
-                }
-                else
-                {
-                    intentTask.SetResult(intent);
-                }
-            }));
+            Instance.ConfirmPaymentIntent(intent, GetPaymentIntentCallback());
 
             intent = await intentTask.Task;
-
             if (intent == null || intentTask.Task.Exception != null)
             {
                 return PaymentResponse.AsError("Failed to process payment");
             }
 
             LogStatusStrings(Instance, intent);
-
-            //if (!string.IsNullOrEmpty(intent.Error?.RequestError?.LocalizedDescription))
-            //{
-            //    return PaymentResponse.AsError(paymentResult.Error.RequestError.LocalizedDescription);
-            //}
 
             ////Necessary if payment is successful?
             //if (intent.Status == SCPPaymentIntentStatus.Succeeded)
@@ -608,6 +587,18 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
         {
             return PaymentResponse.AsError(ex.Message);
         }
+
+        PaymentIntentCallback GetPaymentIntentCallback() => new PaymentIntentCallback((intent, error) =>
+        {
+            if (intent == null || error != null)
+            {
+                intentTask.SetException(error);
+            }
+            else
+            {
+                intentTask.SetResult(intent);
+            }
+        });
     }
 
     private void LogStatusStrings(Terminal terminal, PaymentIntent intent)
@@ -638,15 +629,18 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
             return;
         }
 
-        paymentTask.Cancel(new GenericCallback(error =>
+        lock (_locker)
         {
-            if (error == null)
+            paymentTask.Cancel(new GenericCallback(error =>
             {
-                return;
-            }
+                if (error == null)
+                {
+                    return;
+                }
 
-            Exception("reader_payment_cancel_error", error);
-        }));
+                Exception("reader_payment_cancel_error", error);
+            }));
+        }
     }
 
     #endregion
@@ -693,11 +687,20 @@ public partial class TerminalService : Java.Lang.Object, ITerminalListener, IDis
 
     #region ITerminalListener
 
-    public void OnUnexpectedReaderDisconnect(Com.Stripe.Stripeterminal.External.Models.Reader reader)
+    public async void OnUnexpectedReaderDisconnect(Com.Stripe.Stripeterminal.External.Models.Reader reader)
     {
-        //TODO:
-        //throw new NotImplementedException();
         Trace("Unexpected Disconnected");
+
+        try
+        {
+            await ReconnectToDisconnectedInternetReader(reader.FromNative());
+        }
+        catch (TaskCanceledException)
+        {
+            internetReaderCancellationToken = null;
+
+            Trace($"Reconnection cancelled");
+        }
     }
 
     public void OnConnectionStatusChange(ConnectionStatus status)
