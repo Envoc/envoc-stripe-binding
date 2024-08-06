@@ -1001,7 +1001,7 @@ namespace StripeTerminal
 	}
 
 	// @interface SCPTerminal : NSObject
-	[iOS (13,0)]
+	//[iOS (13,0)]
 	[BaseType (typeof(NSObject))]
 	[DisableDefaultCtor]
 	interface SCPTerminal
@@ -1798,7 +1798,7 @@ namespace StripeTerminal
 	}
 
 	// @interface SCPToggleBuilder : SCPBuilder
-	[BaseType (typeof(SCPBuilder))]
+	[BaseType (typeof(SCPBuilder<SCPToggle>))]
 	[DisableDefaultCtor]
 	interface SCPToggleBuilder
 	{
@@ -3202,7 +3202,7 @@ namespace StripeTerminal
 		[Export ("performMockTransactionWithType:amount:currencyCode:error:")]
 		bool PerformMockTransactionWithType (SCPAppleBuiltInReaderTransactionType transactionType, [NullAllowed] NSDecimalNumber amount, string currencyCode, [NullAllowed] out NSError error);
 	}
-    //TODO: Should this be commented out? It was previously
+    /*
 	// @interface SCPAppleBuiltInReader : NSObject <SCPAppleBuiltInReader>
 	[BaseType (typeof(NSObject))]
 	[DisableDefaultCtor]
@@ -3287,7 +3287,7 @@ namespace StripeTerminal
 		[Export ("performMockTransactionWithType:amount:currencyCode:error:")]
 		bool PerformMockTransactionWithType (SCPAppleBuiltInReaderTransactionType transactionType, [NullAllowed] NSDecimalNumber amount, string currencyCode, [NullAllowed] out NSError error);
 	}
-//end of commented section
+	*/
 	// @protocol SCPAppleBuiltInReaderAccountLinkingDelegate <NSObject>
     [Protocol, Model]
 	[BaseType (typeof(NSObject))]
