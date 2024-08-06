@@ -11,8 +11,8 @@
 	<PropertyGroup>
 		<AssemblyName>Stripe.Terminal.iOS</AssemblyName>
 		<PackageId>Envoc.Stripe.Terminal.iOS</PackageId>
-		<Version>3.5.0</Version>
-		<StripeVersion>3.5.0</StripeVersion>
+		<Version>3.8.1</Version>
+		<StripeVersion>3.8.1</StripeVersion>
 		<Authors>Envoc</Authors>
 		<Company>Envoc</Company>
 	</PropertyGroup>

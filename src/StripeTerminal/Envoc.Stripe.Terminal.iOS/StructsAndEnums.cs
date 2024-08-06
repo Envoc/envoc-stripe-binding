@@ -10,33 +10,33 @@ namespace StripeTerminal
 		Critical,
 		Low,
 		Nominal
-    }
+	}
 
-    [Native]
-    public enum SCPDisconnectReason : ulong
-    {
-        Unknown,
-        DisconnectRequested,
-        RebootRequested,
-        SecurityReboot,
-        CriticallyLowBattery,
-        PoweredOff,
-        BluetoothDisabled
-    }
+	[Native]
+	public enum SCPDisconnectReason : ulong
+	{
+		Unknown,
+		DisconnectRequested,
+		RebootRequested,
+		SecurityReboot,
+		CriticallyLowBattery,
+		PoweredOff,
+		BluetoothDisabled
+	}
 
-    [Native]
+	[Native]
 	public enum SCPReaderDisplayMessage : ulong
-    {
-        RetryCard,
-        InsertCard,
-        InsertOrSwipeCard,
-        SwipeCard,
-        RemoveCard,
-        MultipleContactlessCardsDetected,
-        TryAnotherReadMethod,
-        TryAnotherCard,
-        CardRemovedTooEarly
-    }
+	{
+		RetryCard,
+		InsertCard,
+		InsertOrSwipeCard,
+		SwipeCard,
+		RemoveCard,
+		MultipleContactlessCardsDetected,
+		TryAnotherReadMethod,
+		TryAnotherCard,
+		CardRemovedTooEarly
+	}
 
 	[Native]
 	public enum SCPReaderEvent : ulong
@@ -71,22 +71,29 @@ namespace StripeTerminal
 	}
 
 	[Native]
+	public enum SCPCollectDataType : ulong
+	{
+		Unknown,
+		Magstripe
+	}
+
+	[Native]
 	public enum SCPConnectionStatus : ulong
 	{
 		NotConnected,
 		Connected,
 		Connecting
-    }
+	}
 
-    [Native]
-    public enum SCPOfflineBehavior : long
-    {
-        PreferOnline,
-        RequireOnline,
-        ForceOffline
-    }
+	[Native]
+	public enum SCPOfflineBehavior : long
+	{
+		PreferOnline,
+		RequireOnline,
+		ForceOffline
+	}
 
-    [Native]
+	[Native]
 	public enum SCPDeviceType : ulong
 	{
 		Chipper2X,
@@ -117,17 +124,17 @@ namespace StripeTerminal
 	{
 		None,
 		Verbose
-    }
+	}
 
-    [Native]
-    public enum SCPNetworkStatus : ulong
-    {
-        Unknown,
-        Offline,
-        Online
-    }
+	[Native]
+	public enum SCPNetworkStatus : ulong
+	{
+		Unknown,
+		Offline,
+		Online
+	}
 
-    [Native]
+	[Native]
 	public enum SCPCardPresentCaptureMethod : ulong
 	{
 		SCPCardPresentCaptureMethodManualPreferred
@@ -154,24 +161,25 @@ namespace StripeTerminal
 		Ready,
 		WaitingForInput,
 		Processing
-    }
+	}
 
-    [Native]
-    public enum SCPReadMethod : ulong
-    {
-        Unknown = 0,
-        ContactEMV = 5,
-        ContactlessEMV = 7,
-        MagneticStripeFallback = 80,
-        MagneticStripeTrack2 = 90,
-        ContactlessMagstripeMode = 91
-    }
+	[Native]
+	public enum SCPReadMethod : ulong
+	{
+		Unknown = 0,
+		ContactEMV = 5,
+		ContactlessEMV = 7,
+		MagneticStripeFallback = 80,
+		MagneticStripeTrack2 = 90,
+		ContactlessMagstripeMode = 91
+	}
 
-    [Native]
+	[Native]
 	public enum SCPPaymentIntentStatus : ulong
 	{
 		RequiresPaymentMethod,
 		RequiresConfirmation,
+		RequiresAction,
 		RequiresCapture,
 		Processing,
 		Canceled,
@@ -185,44 +193,45 @@ namespace StripeTerminal
 		None,
 		Required,
 		LowBattery,
+		LowBatterySucceedConnect,
 		Random
 	}
 
 	[Native]
 	public enum SCPSimulatedCardType : ulong
-    {
-        Visa = 0,
-        VisaDebit,
-        VisaUsCommonDebit,
-        Mastercard,
-        MasterDebit,
-        MastercardPrepaid,
-        Amex,
-        Amex2,
-        Discover,
-        Discover2,
-        Diners,
-        Diners14Digit,
-        Jcb,
-        UnionPay,
-        Interac,
-        EftposAuDebit,
-        EftposAuVisaDebit,
-        EftposAuDebitMastercard,
-        ChargeDeclined,
-        ChargeDeclinedInsufficientFunds,
-        ChargeDeclinedLostCard,
-        ChargeDeclinedStolenCard,
-        ChargeDeclinedExpiredCard,
-        ChargeDeclinedProcessingError,
-        RefundFailed,
-        OnlinePinCvm,
-        OnlinePinScaRetry,
-        OfflinePinCvm,
-        OfflinePinScaRetry
-    }
+	{
+		Visa = 0,
+		VisaDebit,
+		VisaUsCommonDebit,
+		Mastercard,
+		MasterDebit,
+		MastercardPrepaid,
+		Amex,
+		Amex2,
+		Discover,
+		Discover2,
+		Diners,
+		Diners14Digit,
+		Jcb,
+		UnionPay,
+		Interac,
+		EftposAuDebit,
+		EftposAuVisaDebit,
+		EftposAuDebitMastercard,
+		ChargeDeclined,
+		ChargeDeclinedInsufficientFunds,
+		ChargeDeclinedLostCard,
+		ChargeDeclinedStolenCard,
+		ChargeDeclinedExpiredCard,
+		ChargeDeclinedProcessingError,
+		RefundFailed,
+		OnlinePinCvm,
+		OnlinePinScaRetry,
+		OfflinePinCvm,
+		OfflinePinScaRetry
+	}
 
-    [Native]
+	[Native]
 	public enum SCPCardFundingType : long
 	{
 		Debit,
@@ -249,145 +258,148 @@ namespace StripeTerminal
 
 	[Native]
 	public enum SCPError : long
-    {
-        CancelFailedAlreadyCompleted = 1010,
-        NotConnectedToReader = 1100,
-        AlreadyConnectedToReader = 1110,
-        ConnectionTokenProviderCompletedWithNothing = 1510,
-        ConnectionTokenProviderCompletedWithNothingWhileForwarding = 1511,
-        ConfirmInvalidPaymentIntent = 1530,
-        NilPaymentIntent = 1540,
-        NilSetupIntent = 1542,
-        NilRefundPaymentMethod = 1550,
-        InvalidRefundParameters = 1555,
-        InvalidClientSecret = 1560,
-        InvalidDiscoveryConfiguration = 1590,
-        InvalidReaderForUpdate = 1861,
-        UnsupportedSDK = 1870,
-        FeatureNotAvailableWithConnectedReader = 1880,
-        FeatureNotAvailable = 1890,
-        InvalidListLocationsLimitParameter = 1900,
-        BluetoothConnectionInvalidLocationIdParameter = 1910,
-        InvalidRequiredParameter = 1920,
-        InvalidRequiredParameterOnBehalfOf = 1921,
-        AccountIdMismatchWhileForwarding = 1930,
-        UpdatePaymentIntentUnavailableWhileOffline = 1935,
-        UpdatePaymentIntentUnavailableWhileOfflineModeEnabled = 1936,
-        ForwardingTestModePaymentInLiveMode = 1937,
-        ForwardingLiveModePaymentInTestMode = 1938,
-        ReaderConnectionConfigurationInvalid = 1940,
-        RequestDynamicCurrencyConversionRequiresUpdatePaymentIntent = 1941,
-        DynamicCurrencyConversionNotAvailable = 1942,
-        ReaderTippingParameterInvalid = 1950,
-        InvalidLocationIdParameter = 1960,
-        CollectInputsInvalidParameter = 1997,
-        CollectInputsUnsupported = 1998,
-        Canceled = 2020,
-        LocationServicesDisabled = 2200,
-        BluetoothDisabled = 2320,
-        BluetoothAccessDenied = 2321,
-        BluetoothScanTimedOut = 2330,
-        BluetoothLowEnergyUnsupported = 2340,
-        ReaderSoftwareUpdateFailedBatteryLow = 2650,
-        ReaderSoftwareUpdateFailedInterrupted = 2660,
-        ReaderSoftwareUpdateFailedExpiredUpdate = 2670,
-        BluetoothConnectionFailedBatteryCriticallyLow = 2680,
-        CardInsertNotRead = 2810,
-        CardSwipeNotRead = 2820,
-        CardReadTimedOut = 2830,
-        CardRemoved = 2840,
-        CardLeftInReader = 2850,
-        OfflinePaymentsDatabaseTooLarge = 2860,
-        ReaderConnectionNotAvailableOffline = 2870,
-        ReaderConnectionOfflineLocationMismatch = 2871,
-        ReaderConnectionOfflineNeedsUpdate = 2872,
-        ReaderConnectionOfflinePairingUnseenDisabled = 2873,
-        NoLastSeenAccount = 2880,
-        AmountExceedsMaxOfflineAmount = 2890,
-        InvalidOfflineCurrency = 2891,
-        MissingEMVData = 2892,
-        CommandNotAllowed = 2900,
-        UnsupportedMobileDeviceConfiguration = 2910,
-        PasscodeNotEnabled = 2920,
-        CommandNotAllowedDuringCall = 2930,
-        InvalidAmount = 2940,
-        InvalidCurrency = 2950,
-        AppleBuiltInReaderTOSAcceptanceRequiresiCloudSignIn = 2960,
-        AppleBuiltInReaderTOSAcceptanceCanceled = 2970,
-        CollectInputsTimedOut = 2971,
-        UsbDiscoveryTimedOut = 2972,
-        ReaderBusy = 3010,
-        IncompatibleReader = 3030,
-        ReaderCommunicationError = 3060,
-        NFCDisabled = 3100,
-        BluetoothError = 3200,
-        BluetoothConnectTimedOut = 3210,
-        BluetoothDisconnected = 3230,
-        BluetoothPeerRemovedPairingInformation = 3240,
-        BluetoothAlreadyPairedWithAnotherDevice = 3241,
-        ReaderSoftwareUpdateFailed = 3800,
-        ReaderSoftwareUpdateFailedReaderError = 3830,
-        ReaderSoftwareUpdateFailedServerError = 3840,
-        UnsupportedReaderVersion = 3850,
-        UnknownReaderIpAddress = 3860,
-        InternetConnectTimeOut = 3870,
-        ConnectFailedReaderIsInUse = 3880,
-        BluetoothReconnectStarted = 3890,
-        ReaderNotAccessibleInBackground = 3900,
-        AppleBuiltInReaderFailedToPrepare = 3910,
-        AppleBuiltInReaderDeviceBanned = 3920,
-        AppleBuiltInReaderTOSNotYetAccepted = 3930,
-        AppleBuiltInReaderTOSAcceptanceFailed = 3940,
-        AppleBuiltInReaderMerchantBlocked = 3950,
-        AppleBuiltInReaderInvalidMerchant = 3960,
-        AppleBuiltInReaderAccountDeactivated = 3970,
-        ReaderMissingEncryptionKeys = 3980,
-        UsbDisconnected = 3990,
-        UnexpectedSdkError = 5000,
-        UnexpectedReaderError = 5001,
-        EncryptionKeyFailure = 5002,
-        EncryptionKeyStillInitializing = 5003,
-        CollectInputsApplicationError = 5004,
-        DeclinedByStripeAPI = 6000,
-        DeclinedByReader = 6500,
-        CommandRequiresCardholderConsent = 6700,
-        RefundFailed = 6800,
-        CardSwipeNotAvailable = 6900,
-        InteracNotSupportedOffline = 6901,
-        OfflineAndCardExpired = 6902,
-        OfflineTransactionDeclined = 6903,
-        OfflineCollectAndConfirmMismatch = 6904,
-        OnlinePinNotSupportedOffline = 6905,
-        OfflineTestCardInLivemode = 6906,
-        NotConnectedToInternet = 9000,
-        RequestTimedOut = 9010,
-        StripeAPIError = 9020,
-        StripeAPIResponseDecodingError = 9030,
-        InternalNetworkError = 9040,
-        ConnectionTokenProviderCompletedWithError = 9050,
-        ConnectionTokenProviderCompletedWithErrorWhileForwarding = 9051,
-        ConnectionTokenProviderTimedOut = 9052,
-        SessionExpired = 9060,
-        NotConnectedToInternetAndOfflineBehaviorRequireOnline = 10106,
-        OfflineBehaviorForceOfflineWithFeatureDisabled = 10107
-    }
+	{
+		CancelFailedAlreadyCompleted = 1010,
+		NotConnectedToReader = 1100,
+		AlreadyConnectedToReader = 1110,
+		ConnectionTokenProviderCompletedWithNothing = 1510,
+		ConnectionTokenProviderCompletedWithNothingWhileForwarding = 1511,
+		ConfirmInvalidPaymentIntent = 1530,
+		NilPaymentIntent = 1540,
+		NilSetupIntent = 1542,
+		NilRefundPaymentMethod = 1550,
+		InvalidRefundParameters = 1555,
+		InvalidClientSecret = 1560,
+		InvalidDiscoveryConfiguration = 1590,
+		InvalidReaderForUpdate = 1861,
+		UnsupportedSDK = 1870,
+		FeatureNotAvailableWithConnectedReader = 1880,
+		FeatureNotAvailable = 1890,
+		InvalidListLocationsLimitParameter = 1900,
+		BluetoothConnectionInvalidLocationIdParameter = 1910,
+		InvalidRequiredParameter = 1920,
+		InvalidRequiredParameterOnBehalfOf = 1921,
+		AccountIdMismatchWhileForwarding = 1930,
+		UpdatePaymentIntentUnavailableWhileOffline = 1935,
+		UpdatePaymentIntentUnavailableWhileOfflineModeEnabled = 1936,
+		ForwardingTestModePaymentInLiveMode = 1937,
+		ForwardingLiveModePaymentInTestMode = 1938,
+		ReaderConnectionConfigurationInvalid = 1940,
+		RequestDynamicCurrencyConversionRequiresUpdatePaymentIntent = 1941,
+		DynamicCurrencyConversionNotAvailable = 1942,
+		SurchargingNotAvailable = 1943,
+		ReaderTippingParameterInvalid = 1950,
+		SurchargeNoticeRequiresUpdatePaymentIntent = 1951,
+		SurchargeUnavailableWithDynamicCurrencyConversion = 1952,
+		InvalidLocationIdParameter = 1960,
+		CollectInputsInvalidParameter = 1997,
+		CollectInputsUnsupported = 1998,
+		Canceled = 2020,
+		LocationServicesDisabled = 2200,
+		BluetoothDisabled = 2320,
+		BluetoothAccessDenied = 2321,
+		BluetoothScanTimedOut = 2330,
+		BluetoothLowEnergyUnsupported = 2340,
+		ReaderSoftwareUpdateFailedBatteryLow = 2650,
+		ReaderSoftwareUpdateFailedInterrupted = 2660,
+		ReaderSoftwareUpdateFailedExpiredUpdate = 2670,
+		BluetoothConnectionFailedBatteryCriticallyLow = 2680,
+		CardInsertNotRead = 2810,
+		CardSwipeNotRead = 2820,
+		CardReadTimedOut = 2830,
+		CardRemoved = 2840,
+		CardLeftInReader = 2850,
+		OfflinePaymentsDatabaseTooLarge = 2860,
+		ReaderConnectionNotAvailableOffline = 2870,
+		ReaderConnectionOfflineLocationMismatch = 2871,
+		ReaderConnectionOfflineNeedsUpdate = 2872,
+		ReaderConnectionOfflinePairingUnseenDisabled = 2873,
+		NoLastSeenAccount = 2880,
+		AmountExceedsMaxOfflineAmount = 2890,
+		InvalidOfflineCurrency = 2891,
+		MissingEMVData = 2892,
+		CommandNotAllowed = 2900,
+		UnsupportedMobileDeviceConfiguration = 2910,
+		PasscodeNotEnabled = 2920,
+		CommandNotAllowedDuringCall = 2930,
+		InvalidAmount = 2940,
+		InvalidCurrency = 2950,
+		AppleBuiltInReaderTOSAcceptanceRequiresiCloudSignIn = 2960,
+		AppleBuiltInReaderTOSAcceptanceCanceled = 2970,
+		CollectInputsTimedOut = 2971,
+		UsbDiscoveryTimedOut = 2972,
+		ReaderBusy = 3010,
+		IncompatibleReader = 3030,
+		ReaderCommunicationError = 3060,
+		NFCDisabled = 3100,
+		BluetoothError = 3200,
+		BluetoothConnectTimedOut = 3210,
+		BluetoothDisconnected = 3230,
+		BluetoothPeerRemovedPairingInformation = 3240,
+		BluetoothAlreadyPairedWithAnotherDevice = 3241,
+		ReaderSoftwareUpdateFailed = 3800,
+		ReaderSoftwareUpdateFailedReaderError = 3830,
+		ReaderSoftwareUpdateFailedServerError = 3840,
+		UnsupportedReaderVersion = 3850,
+		UnknownReaderIpAddress = 3860,
+		InternetConnectTimeOut = 3870,
+		ConnectFailedReaderIsInUse = 3880,
+		BluetoothReconnectStarted = 3890,
+		ReaderNotAccessibleInBackground = 3900,
+		AppleBuiltInReaderFailedToPrepare = 3910,
+		AppleBuiltInReaderDeviceBanned = 3920,
+		AppleBuiltInReaderTOSNotYetAccepted = 3930,
+		AppleBuiltInReaderTOSAcceptanceFailed = 3940,
+		AppleBuiltInReaderMerchantBlocked = 3950,
+		AppleBuiltInReaderInvalidMerchant = 3960,
+		AppleBuiltInReaderAccountDeactivated = 3970,
+		ReaderMissingEncryptionKeys = 3980,
+		UsbDisconnected = 3990,
+		UnexpectedSdkError = 5000,
+		UnexpectedReaderError = 5001,
+		EncryptionKeyFailure = 5002,
+		EncryptionKeyStillInitializing = 5003,
+		CollectInputsApplicationError = 5004,
+		DeclinedByStripeAPI = 6000,
+		DeclinedByReader = 6500,
+		CommandRequiresCardholderConsent = 6700,
+		RefundFailed = 6800,
+		CardSwipeNotAvailable = 6900,
+		InteracNotSupportedOffline = 6901,
+		OfflineAndCardExpired = 6902,
+		OfflineTransactionDeclined = 6903,
+		OfflineCollectAndConfirmMismatch = 6904,
+		OnlinePinNotSupportedOffline = 6905,
+		OfflineTestCardInLivemode = 6906,
+		NotConnectedToInternet = 9000,
+		RequestTimedOut = 9010,
+		StripeAPIError = 9020,
+		StripeAPIResponseDecodingError = 9030,
+		InternalNetworkError = 9040,
+		ConnectionTokenProviderCompletedWithError = 9050,
+		ConnectionTokenProviderCompletedWithErrorWhileForwarding = 9051,
+		ConnectionTokenProviderTimedOut = 9052,
+		SessionExpired = 9060,
+		NotConnectedToInternetAndOfflineBehaviorRequireOnline = 10106,
+		OfflineBehaviorForceOfflineWithFeatureDisabled = 10107
+	}
 
-    [Native]
-    public enum SCPToggleValue : ulong
-    {
-        Enabled,
-        Disabled
-    }
+	[Native]
+	public enum SCPToggleValue : ulong
+	{
+		Enabled,
+		Disabled
+	}
 
-    [Native]
-    public enum SCPToggleResult : ulong
-    {
-        Enabled,
-        Disabled,
-        Skipped
-    }
+	[Native]
+	public enum SCPToggleResult : ulong
+	{
+		Enabled,
+		Disabled,
+		Skipped
+	}
 
-    [Native]
+	[Native]
 	public enum SCPLocationStatus : ulong
 	{
 		Unknown,
@@ -406,22 +418,22 @@ namespace StripeTerminal
 
 	[Native]
 	public enum SCPReaderNetworkStatus : ulong
-    {
-        Offline,
-        Online,
-        Unknown
-    }
+	{
+		Offline,
+		Online,
+		Unknown
+	}
 
-    [Native]
-    public enum SCPReaderTextToSpeechStatus : ulong
-    {
-        Unknown,
-        Off,
-        Headphones,
-        Speakers
-    }
+	[Native]
+	public enum SCPReaderTextToSpeechStatus : ulong
+	{
+		Unknown,
+		Off,
+		Headphones,
+		Speakers
+	}
 
-    [Native]
+	[Native]
 	public enum SCPUpdateTimeEstimate : ulong
 	{
 		LessThan1Minute,
@@ -447,16 +459,16 @@ namespace StripeTerminal
 		Pending,
 		Failed,
 		Unknown
-    }
+	}
 
-    [Native]
-    public enum SCPSelectionButtonStyle : ulong
-    {
-        Primary,
-        Secondary
-    }
+	[Native]
+	public enum SCPSelectionButtonStyle : ulong
+	{
+		Primary,
+		Secondary
+	}
 
-    [Native]
+	[Native]
 	public enum SCPSetupIntentStatus : ulong
 	{
 		RequiresPaymentMethod,
@@ -475,79 +487,79 @@ namespace StripeTerminal
 	}
 
 	[Native]
-    public enum SCPAppleBuiltInReaderErrorCode : long
-    {
-        Unknown = 0,
-        UnexpectedNil = 1,
-        InvalidTransactionType = 2,
-        PasscodeDisabled = 3,
-        NotAllowed = 4,
-        BackgroundRequestNotAllowed = 5,
-        Unsupported = 6,
-        OsVersionNotSupported = 7,
-        ModelNotSupported = 8,
-        NetworkError = 9,
-        NetworkAuthenticationError = 10,
-        ServiceConnectionError = 11,
-        NotReady = 12,
-        EmptyReaderToken = 13,
-        InvalidReaderToken = 14,
-        PrepareFailed = 15,
-        PrepareExpired = 16,
-        TokenExpired = 17,
-        DeviceBanned = 18,
-        ReaderMemoryFull = 19,
-        ReaderBusy = 20,
-        AccountNotLinked = 21,
-        AccountLinkingFailed = 22,
-        AccountLinkingRequiresiCloudSignIn = 23,
-        AccountLinkingCancelled = 24,
-        AccountLinkingCheckFailed = 25,
-        AccountDeactivated = 26,
-        MerchantBlocked = 27,
-        InvalidMerchant = 28,
-        ReadNotAllowed = 29,
-        ReadFromBackgroundError = 30,
-        ReaderServiceConnectionError = 31,
-        ReaderServiceError = 32,
-        NoReaderSession = 33,
-        ReaderSessionExpired = 34,
-        ReaderTokenExpired = 35,
-        ReaderSessionNetworkError = 36,
-        ReaderSessionAuthenticationError = 37,
-        ReaderSessionBusy = 38,
-        ReadCancelled = 39,
-        InvalidAmount = 40,
-        InvalidCurrency = 41,
-        NfcDisabled = 42,
-        ReadNotAllowedDuringCall = 43,
-        CardReadFailed = 44,
-        PaymentReadFailed = 45,
-        PaymentCardDeclined = 46,
-        InvalidPreferredAID = 47,
-        PinEntryFailed = 48,
-        PinTokenInvalid = 49,
-        PinEntryTimeout = 50,
-        PinCancelled = 51,
-        PinNotAllowed = 52
-    }
+	public enum SCPAppleBuiltInReaderErrorCode : long
+	{
+		Unknown = 0,
+		UnexpectedNil = 1,
+		InvalidTransactionType = 2,
+		PasscodeDisabled = 3,
+		NotAllowed = 4,
+		BackgroundRequestNotAllowed = 5,
+		Unsupported = 6,
+		OsVersionNotSupported = 7,
+		ModelNotSupported = 8,
+		NetworkError = 9,
+		NetworkAuthenticationError = 10,
+		ServiceConnectionError = 11,
+		NotReady = 12,
+		EmptyReaderToken = 13,
+		InvalidReaderToken = 14,
+		PrepareFailed = 15,
+		PrepareExpired = 16,
+		TokenExpired = 17,
+		DeviceBanned = 18,
+		ReaderMemoryFull = 19,
+		ReaderBusy = 20,
+		AccountNotLinked = 21,
+		AccountLinkingFailed = 22,
+		AccountLinkingRequiresiCloudSignIn = 23,
+		AccountLinkingCancelled = 24,
+		AccountLinkingCheckFailed = 25,
+		AccountDeactivated = 26,
+		MerchantBlocked = 27,
+		InvalidMerchant = 28,
+		ReadNotAllowed = 29,
+		ReadFromBackgroundError = 30,
+		ReaderServiceConnectionError = 31,
+		ReaderServiceError = 32,
+		NoReaderSession = 33,
+		ReaderSessionExpired = 34,
+		ReaderTokenExpired = 35,
+		ReaderSessionNetworkError = 36,
+		ReaderSessionAuthenticationError = 37,
+		ReaderSessionBusy = 38,
+		ReadCancelled = 39,
+		InvalidAmount = 40,
+		InvalidCurrency = 41,
+		NfcDisabled = 42,
+		ReadNotAllowedDuringCall = 43,
+		CardReadFailed = 44,
+		PaymentReadFailed = 45,
+		PaymentCardDeclined = 46,
+		InvalidPreferredAID = 47,
+		PinEntryFailed = 48,
+		PinTokenInvalid = 49,
+		PinEntryTimeout = 50,
+		PinCancelled = 51,
+		PinNotAllowed = 52
+	}
 
-    [Native]
+	[Native]
 	public enum SCPAppleBuiltInReaderTransactionEventCode : long
-    {
-        Unknown = 0,
-        ReadyForTap = 1,
-        CardDetected = 2,
-        RemoveCard = 3,
-        Completed = 4,
-        Retry = 5,
-        ReadCanceled = 6,
-        ReadNotCompleted = 7,
-        PinEntryRequested = 8,
-        PinEntryCompleted = 9
-    }
+	{
+		Unknown = 0,
+		ReadyForTap = 1,
+		CardDetected = 2,
+		RemoveCard = 3,
+		Completed = 4,
+		Retry = 5,
+		ReadCanceled = 6,
+		ReadNotCompleted = 7,
+		PinEntryRequested = 8,
+		PinEntryCompleted = 9
+	}
 
-    [Native]
+	[Native]
 	public enum SCPAppleBuiltInReaderTransactionType : long
 	{
 		Unknown = 0,
