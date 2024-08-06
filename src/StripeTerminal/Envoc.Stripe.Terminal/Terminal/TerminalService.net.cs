@@ -57,7 +57,7 @@ public partial class TerminalService
         return Task.FromResult<Reader>(null);
     }
 
-    public Task<bool> DisconnectReader()
+    private Task<bool> DisconnectReaderImplementation()
     {
         NotImplementedCheck();
         return Task.FromResult(true);
@@ -72,7 +72,7 @@ public partial class TerminalService
         NotImplementedCheck();
     }
 
-    public Task<PaymentResponse> CollectPayment(PaymentRequest payment)
+    public Task<PaymentResponse> CollectPayment(PaymentRequest payment, CancellationToken token = default)
     {
         NotImplementedCheck();
         return Task.FromResult<PaymentResponse>(null);

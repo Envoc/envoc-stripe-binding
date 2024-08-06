@@ -4,7 +4,7 @@ public class ReaderReconnector : SCPReconnectionDelegate
 {
     public event EventHandler<ConnectionStatusEventArgs> ConnectionStatusChangedEvent;
 
-    public override void Terminal(SCPTerminal terminal, SCPCancelable cancelable)
+    public override void ReaderDidStartReconnect(SCPReader reader, SCPCancelable cancelable)
     {
         var timer = new System.Timers.Timer(StripeConstants.ReconnectInterval)
         {
@@ -29,12 +29,12 @@ public class ReaderReconnector : SCPReconnectionDelegate
         ConnectionStatusChangedEvent?.Invoke(this, new ConnectionStatusEventArgs(ReaderConnectivityStatus.Connecting, ConnectionType.Bluetooth));
     }
 
-    public override void TerminalDidFailReaderReconnect(SCPTerminal terminal)
+    public override void ReaderDidFailReconnect(SCPReader reader)
     {
         ConnectionStatusChangedEvent?.Invoke(this, new ConnectionStatusEventArgs(ReaderConnectivityStatus.Disconnected, ConnectionType.Bluetooth));
     }
 
-    public override void TerminalDidSucceedReaderReconnect(SCPTerminal terminal)
+    public override void ReaderDidSucceedReconnect(SCPReader reader)
     {
         ConnectionStatusChangedEvent?.Invoke(this, new ConnectionStatusEventArgs(ReaderConnectivityStatus.Bluetooth, ConnectionType.Bluetooth));
     }

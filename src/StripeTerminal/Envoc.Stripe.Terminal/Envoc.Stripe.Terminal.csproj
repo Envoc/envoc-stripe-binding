@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net7.0-ios;net7.0-android;net7.0</TargetFrameworks>
+		<TargetFrameworks>net7.0-ios;net7.0-android;net7.0;net8.0-ios</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
 		<!--<Nullable>enable</Nullable>-->
 
 	</PropertyGroup>
@@ -21,17 +22,19 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(TargetFramework.Contains('-ios')) OR $(TargetFramework.Contains('-android'))">
+		<DefineConstants>SUPPORTED_PLATFORM</DefineConstants>
+	</PropertyGroup>
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-ios'))">
-		<PackageReference Include="Envoc.Stripe.Terminal.iOS" Version="2.19.2" />
+		<PackageReference Include="Envoc.Stripe.Terminal.iOS" Version="3.8.1" />
 		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.iOS\Envoc.Stripe.Terminal.iOS.csproj" />-->
 	</ItemGroup>
 
 
 	<ItemGroup Condition="$(TargetFramework.Contains('-android'))">
 		<!--<ProjectReference Include="..\Envoc.Stripe.Terminal.Android\Envoc.Stripe.Terminal.Android.csproj" />-->
-		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="2.19.3" />
-		<PackageReference Include="Xamarin.AndroidX.Core" Version="1.9.0.1" />
+		<PackageReference Include="Envoc.Stripe.Terminal.Android" Version="3.2.1.2" />
 		<PackageReference Include="Xamarin.Google.Guava.ListenableFuture" ExcludeAssets="build;buildTransitive">
 			<Version>9999.0.0</Version>
 		</PackageReference>

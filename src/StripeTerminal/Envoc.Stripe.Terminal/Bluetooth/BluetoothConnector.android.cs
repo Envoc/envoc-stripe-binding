@@ -3,25 +3,36 @@ using Models = Com.Stripe.Stripeterminal.External.Models;
 
 namespace StripeTerminal.Bluetooth;
 
-public class BluetoothConnector : Java.Lang.Object, IBluetoothReaderListener
+public class BluetoothConnector : Java.Lang.Object, IReaderListener
 {
     private readonly IStripeTerminalLogger logger;
+    private readonly IStripeBatteryUpdater batteryUpdater;
 
-    public BluetoothConnector(IStripeTerminalLogger logger)
+    public BluetoothConnector(IStripeTerminalLogger logger, IStripeBatteryUpdater batteryUpdater)
     {
         this.logger = logger;
+        this.batteryUpdater = batteryUpdater;
     }
 
     public event EventHandler<ReaderUpdateEventArgs> ReaderUpdateProgress;
     public event EventHandler<ReaderSoftwareUpdateEventArgs> ReaderUpdateAvailable;
     public event EventHandler<ReaderUpdateLabelEventArgs> ReaderUpdateLabel;
+    public event EventHandler<ReaderUpdateLabelEventArgs> ReaderErrorMessage;
+    public event EventHandler<ReaderBatteryUpdateEventArgs> ReaderBatteryUpdate;
+
 
     public void OnBatteryLevelUpdate(float batteryLevel, Models.BatteryStatus status, bool isCharging)
     {
+        float batteryPct = batteryLevel * 100;
+
+        batteryUpdater?.UpdateBatteryStatus(new ReaderBatteryUpdateEventArgs { BatteryLevel = batteryPct, IsCharging = isCharging });
+        ReaderBatteryUpdate?.Invoke(null, new ReaderBatteryUpdateEventArgs { BatteryLevel = batteryPct, IsCharging = isCharging });
     }
 
     public void OnReportLowBatteryWarning()
     {
+        batteryUpdater?.UpdateBatteryStatus(new ReaderBatteryUpdateEventArgs { IsLow = true });
+        ReaderBatteryUpdate?.Invoke(null, new ReaderBatteryUpdateEventArgs { IsLow = true });
     }
 
     public void OnReportReaderSoftwareUpdateProgress(float progress)
@@ -61,11 +72,19 @@ public class BluetoothConnector : Java.Lang.Object, IBluetoothReaderListener
         //ReaderUpdateAvailable.Invoke(null, new ReaderSoftwareUpdateEventArgs(update, reader.SerialNumber));
     }
 
-    public async void OnFinishInstallingUpdate(Models.ReaderSoftwareUpdate update, Models.TerminalException error)
+    public void OnFinishInstallingUpdate(Models.ReaderSoftwareUpdate update, Models.TerminalException error)
     {
-        ReaderUpdateProgress?.Invoke(null, new ReaderUpdateEventArgs());
-        //await dialogService.HideProgress();
+        if (error is null)
+        {
+            ReaderUpdateProgress?.Invoke(null, new ReaderUpdateEventArgs());
+        }
+        else
+        {
+            ReaderErrorMessage?.Invoke(null, new ReaderUpdateLabelEventArgs(error.ErrorMessage, showCancel: false));
+        }
     }
+
+    //TODO: Figure out Android event for error alert
 }
 
 public class ReaderSoftwareUpdateEventArgs : ReaderEventArgs

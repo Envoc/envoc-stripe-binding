@@ -72,9 +72,22 @@ public class ReaderUpdateLabelEventArgs : EventArgs
     public bool ShowCancel { get; }
 }
 
+public class ReaderUnexpectedDisconnectEventArgs(Reader reader) : EventArgs
+{
+    public Reader Reader { get; } = reader;
+}
+
+public class ReaderBatteryUpdateEventArgs : EventArgs
+{
+    public float? BatteryLevel { get; set; }
+    public bool IsLow { get; set; }
+    public bool IsCharging { get; set; }
+}
+
 public enum ConnectionType
 {
     Internet,
     Bluetooth,
-    Local
+    Local,
+    Handoff
 }
