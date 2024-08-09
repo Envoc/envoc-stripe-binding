@@ -47,5 +47,8 @@
 	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='set' and count(parameter)=2]" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='remove' and count(parameter)=1 and parameter[1][@type='int']]" name="managedReturn">Java.Lang.Object</attr>
 	<attr path="/api/package[@name='com.stripe.readerupdate']/class[@name='UpdatePackage']/method[@name='subList' and count(parameter)=2]" name="name">SubListWrap</attr>	
-	
+
+	<!-- Event name clash because of method overloads -->
+	<!--<remove-node path="/api/package[@name='com.stripe.stripeterminal.dagger']/class[@name='TerminalModule_ProvidesSupportedLanguagesFactory']"/>-->
+	<attr path="/api/package[@name='com.stripe.stripeterminal.external.callable']/interface[@name='ReaderReconnectionListener']/method[@name='onReaderReconnectStarted' and count(parameter)=3 and parameter[1][@type='com.stripe.stripeterminal.external.models.Reader'] and parameter[2][@type='com.stripe.stripeterminal.external.callable.Cancelable'] and parameter[3][@type='com.stripe.stripeterminal.external.models.DisconnectReason']]" name="managedName">OnReaderReconnectStartedWithReason</attr>
 </metadata>
